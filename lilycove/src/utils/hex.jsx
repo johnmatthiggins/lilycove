@@ -1,6 +1,3 @@
-import styles from './App.module.css';
-import { createSignal } from 'solid-js';
-
 const ASCII_UPPER_CASE_A = 0x41;
 const ASCII_LOWER_CASE_A = 0x61;
 const ASCII_ZERO = 0x30;
@@ -36,37 +33,9 @@ function convertPokemonStrToASCII(pokemonByteStr) {
 }
 
 function parseTrainerName(bytes) {
-  console.log(bytes);
   return convertPokemonStrToASCII(bytes);
 }
 
-function App() {
-  const [buffer, setBuffer] = createSignal([]);
-  const [bits, setBits] = createSignal([]);
-
-  const trainerName = () => {
-    return parseTrainerName(bits().slice(0x6000, 0x6008));
-  };
-
-  return (
-    <div class={styles.App}>
-      <header class={styles.header}>
-        <div class="rounded-lg bg-cyan-200 w-64">
-          <h3 class="text-3xl">Lilycove City</h3>
-          <h2 class="text-2xl">A Generation III Hex Editor</h2>
-          <input
-            type="file"
-            accept=".sav"
-            onChange={async (e) => {
-              const file = e.target.files[0];
-              const bytes = await file.bytes();
-              setBits(bytes);
-            }} />
-          <pre class="text-left whitespace-pre">{trainerName()}</pre>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+export default {
+  parseTrainerName,
+};

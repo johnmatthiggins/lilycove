@@ -603,6 +603,14 @@ video {
   width: 16rem;
 }
 
+.w-1\/2 {
+  width: 50%;
+}
+
+.w-1 {
+  width: 0.25rem;
+}
+
 .border-collapse {
   border-collapse: collapse;
 }
@@ -648,6 +656,10 @@ video {
 .bg-cyan-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(165 243 252 / var(--tw-bg-opacity));
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-2xl {
