@@ -80,11 +80,17 @@ function App() {
   return (
     <div class="h-full justify-center">
       <div class="flex h-full justify-center items-center">
-        <div class="rounded-lg bg-cyan-200 p-2">
-          <h3 class="text-3xl font-bold">Lilycove City</h3>
+        <div class="rounded-lg bg-white p-2 shadow-md border border-solid border-slate-200">
+          <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
           <h2 class="text-md">A Generation III Hex Editor</h2>
-          <label>
-            <span class="text-white px-2 py-1 bg-teal-400 rounded-md hover:cursor-pointer" role="button">Upload Save</span>
+          <img class="sharp-pixels" src="https://archives.bulbagarden.net/media/upload/7/70/Spr_3r_005.png" />
+          <label class="flex justify-center">
+            <span
+              class="text-teal-400 hover:text-white text-lg px-2 py-1 border border-solid border-teal-400 hover:bg-teal-400 rounded-md hover:cursor-pointer transition"
+              role="button"
+            >
+              Upload Save
+            </span>
             <input
               type="file"
               accept=".sav"
