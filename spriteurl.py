@@ -7,15 +7,20 @@ from bs4 import BeautifulSoup
 BASE_URL = 'https://archives.bulbagarden.net/wiki/File:Spr_3r_%s.png'
 
 def main():
+    print(sys.argv[1:3])
     num = int(sys.argv[1])
+    path = sys.argv[2]
     padded_num = f'{num:03}'
     webpage_url = BASE_URL % str(padded_num)
 
     html = get_webpage_html(webpage_url)
     soup = BeautifulSoup(html, features="html.parser")
     result = soup.find(alt=f"File:Spr 3r {padded_num}.png")
-    print(result.attrs['src'])
+    image_url = result.attrs['src']
 
+    response = httpx.get(image_url)
+    with open(path, 'wb') as f:
+        f.write(response.content)
 
 def get_webpage_html(url):
     response = httpx.get(url)
