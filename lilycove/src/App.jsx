@@ -1,4 +1,3 @@
-import styles from './App.module.css';
 import { createEffect, createSignal, Show } from 'solid-js';
 
 const ASCII_UPPER_CASE_A = 0x41;
@@ -10,6 +9,14 @@ const PKMN_LOWER_CASE_A = 0xd5;
 const PKMN_LEFT_ARROW = 0xd5;
 const PKMN_ZERO = 0xa1;
 const PKMN_BANG = 0xab;
+
+function getSaveIndexes(bits) {
+  const SAVE_INDEX_A_POSITION = 0x0FFC;
+  const SAVE_INDEX_B_POSITION = 0xEFFC;
+  const saveIndexA = bits.slice(SAVE_INDEX_A_POSITION, SAVE_INDEX_A_POSITION + 1);
+  const saveIndexB = bits.slice(SAVE_INDEX_B_POSITION, SAVE_INDEX_B_POSITION + 1);
+  return [new Uint32Array(saveIndexA)[0], new Uint32Array(saveIndexB)[0]];
+}
 
 function convertPokemonCharToASCII(pokemonChar) {
   if (pokemonChar >= PKMN_UPPER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A) {
@@ -52,7 +59,7 @@ function parseTrainerId(bytes) {
 }
 
 const SAVE_B_OFFSET = 0x00E000;
-const TRAINER_NAME_POSITION = 0x6000;
+const TRAINER_NAME_POSITION = 0x0;
 
 function App() {
   const [bits, setBits] = createSignal([]);
@@ -68,9 +75,13 @@ function App() {
     const newTrainerId = parseTrainerId(bits().slice(0x600a, 0x600c));
 
     let gender = 'M';
-    if (bits[TRAINER_NAME_POSITION + 7] === 1) {
+    if (bits()[TRAINER_NAME_POSITION + 8] === 1) {
       gender = 'F';
     }
+
+    // let hoursPlayed = bits()[];
+    const [saveIndexA, saveIndexB] = getSaveIndexes(bits());
+    console.log(saveIndexA, saveIndexB);
 
     setTrainerGender(gender)
     setTrainerName(trainerNameA.trim() || trainerNameB);
@@ -83,7 +94,6 @@ function App() {
         <div class="rounded-lg bg-white p-2 shadow-md border border-solid border-slate-200">
           <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
           <h2 class="text-md">A Generation III Hex Editor</h2>
-          <img class="sharp-pixels" src="https://archives.bulbagarden.net/media/upload/7/70/Spr_3r_005.png" />
           <label class="flex justify-center">
             <span
               class="text-teal-400 hover:text-white text-lg px-2 py-1 border border-solid border-teal-400 hover:bg-teal-400 rounded-md hover:cursor-pointer transition"
