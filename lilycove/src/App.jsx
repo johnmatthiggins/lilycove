@@ -25,6 +25,13 @@ function getGameCode(saveOffset, bits) {
   return new Uint32Array(bytes)[0];
 }
 
+function getInGameTime(saveOffset, bits) {
+  const offset = saveOffset + 0xE;
+  const hours = new Uint16Array([bits[offset], bits[offset + 1]])[0];
+  const minutes = bits[offset + 2];
+  return `${hours}:${minutes}`
+}
+
 function getGameTitle(bits) {
   const saveOffset = getSaveOffset(bits);
   const gameCode = getGameCode(saveOffset, bits);
@@ -46,6 +53,39 @@ function getGreatestSaveIndex(bits) {
   const saveIndexA = bits.slice(SAVE_INDEX_A_POSITION, SAVE_INDEX_A_POSITION + 1);
   const saveIndexB = bits.slice(SAVE_INDEX_B_POSITION, SAVE_INDEX_B_POSITION + 1);
   return [new Uint32Array(saveIndexA)[0], new Uint32Array(saveIndexB)[0]];
+}
+
+function parsePokemonBuffer(buffer) {
+  const otIdOffset = 0x4;
+  const nicknameOffset = 0x8;
+  const otId = new Uint32Array(buffer.slice(otIdOffset, otIdOffset + 2));
+
+  const nickname = convertPokemonStrToASCII(
+    buffer.slice(nicknameOffset, nicknameOffset + 10)
+  );
+  return {
+    nickname,
+    otId,
+  };
+}
+
+function getPokemonInParty(saveOffset, bits) {
+  const teamSectionOffset = saveOffset + 0xF2C;
+  const teamCountBytes = bits.slice(teamSectionOffset + 0x234, teamSectionOffset + 0x238);
+  console.log(teamCountBytes);
+  const teamCount = new Uint32Array(teamCountBytes)[0];
+
+  let currentOffset = teamSectionOffset + 0x4;
+
+  const pokemon = [];
+
+  for (let i = 0; i < teamCount; i += 1) {
+    currentOffset = (teamSectionOffset + 0x4) + (100 * i);
+    const nextPokemon = parsePokemonBuffer(bits.slice(currentOffset, currentOffset + 100));
+    pokemon.push(nextPokemon);
+  }
+
+  return pokemon;
 }
 
 function convertPokemonCharToASCII(pokemonChar) {
@@ -95,6 +135,7 @@ function App() {
   const [bits, setBits] = createSignal([]);
   const [gameTitle, setGameTitle] = createSignal('N/A');
   const [trainerName, setTrainerName] = createSignal('N/A');
+  const [gameTime, setGameTime] = createSignal('N/A');
   const [trainerId, setTrainerId] = createSignal('N/A');
   const [trainerGender, setTrainerGender] = createSignal('N/A');
 
@@ -111,6 +152,9 @@ function App() {
       gender = 'F';
     }
 
+    const pokemon = getPokemonInParty(saveOffset, bits());
+
+    setGameTime(getInGameTime(saveOffset, bits()));
     setGameTitle(getGameTitle(bits()));
     setTrainerGender(gender)
     setTrainerId(newTrainerId);
@@ -145,6 +189,7 @@ function App() {
             <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
             <pre class="text-left whitespace-pre">ID: {trainerId()}</pre>
             <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
+            <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
           </Show>
         </div>
       </div>
