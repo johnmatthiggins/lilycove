@@ -10,7 +10,37 @@ const PKMN_LEFT_ARROW = 0xd5;
 const PKMN_ZERO = 0xa1;
 const PKMN_BANG = 0xab;
 
-function getSaveIndexes(bits) {
+function getSaveOffset(bits) {
+  let saveOffset = SAVE_B_OFFSET;
+  const [indexA, indexB] = getGreatestSaveIndex(bits);
+  if (indexA > indexB) {
+    saveOffset = 0x0;
+  }
+  return saveOffset;
+}
+
+function getGameCode(saveOffset, bits) {
+  const gameCodePosition = saveOffset + 0xAC;
+  const bytes = bits.slice(gameCodePosition, gameCodePosition + 4);
+  return new Uint32Array(bytes)[0];
+}
+
+function getGameTitle(bits) {
+  const saveOffset = getSaveOffset(bits);
+  const gameCode = getGameCode(saveOffset, bits);
+
+  let title;
+  if (gameCode === 0x0) {
+    title = "Ruby and Sapphire";
+  } else if (gameCode == 0x1) {
+    title = "Fire Red and Leaf Green";
+  } else {
+    title = "Emerald";
+  }
+  return title;
+}
+
+function getGreatestSaveIndex(bits) {
   const SAVE_INDEX_A_POSITION = 0x0FFC;
   const SAVE_INDEX_B_POSITION = 0xEFFC;
   const saveIndexA = bits.slice(SAVE_INDEX_A_POSITION, SAVE_INDEX_A_POSITION + 1);
@@ -58,33 +88,31 @@ function parseTrainerId(bytes) {
   return bytesToNumber(bytes);
 }
 
-const SAVE_B_OFFSET = 0x00E000;
+const SAVE_B_OFFSET = 0x004000;
 const TRAINER_NAME_POSITION = 0x0;
 
 function App() {
   const [bits, setBits] = createSignal([]);
-  const [trainerName, setTrainerName] = createSignal('');
-  const [trainerId, setTrainerId] = createSignal('');
-  const [trainerGender, setTrainerGender] = createSignal('?');
+  const [gameTitle, setGameTitle] = createSignal('N/A');
+  const [trainerName, setTrainerName] = createSignal('N/A');
+  const [trainerId, setTrainerId] = createSignal('N/A');
+  const [trainerGender, setTrainerGender] = createSignal('N/A');
 
   createEffect(() => {
-    const offsetA = TRAINER_NAME_POSITION;
-    const offsetB = SAVE_B_OFFSET + TRAINER_NAME_POSITION;
-    const trainerNameA = parseTrainerName(bits().slice(offsetA, offsetA + 7));
-    const trainerNameB = parseTrainerName(bits().slice(offsetB, offsetB + 7));
-    const newTrainerId = parseTrainerId(bits().slice(0x600a, 0x600c));
+    const saveOffset = getSaveOffset(bits());
+
+    const newTrainerName = parseTrainerName(bits().slice(saveOffset, saveOffset + 7));
+    setTrainerName(newTrainerName.trim());
+
+    const newTrainerId = parseTrainerId(bits().slice(saveOffset + 0xA, saveOffset + 0xA + 0x2));
 
     let gender = 'M';
-    if (bits()[TRAINER_NAME_POSITION + 8] === 1) {
+    if (bits()[saveOffset + TRAINER_NAME_POSITION + 8] === 1) {
       gender = 'F';
     }
 
-    // let hoursPlayed = bits()[];
-    const [saveIndexA, saveIndexB] = getSaveIndexes(bits());
-    console.log(saveIndexA, saveIndexB);
-
+    setGameTitle(getGameTitle(bits()));
     setTrainerGender(gender)
-    setTrainerName(trainerNameA.trim() || trainerNameB);
     setTrainerId(newTrainerId);
   });
 
@@ -112,6 +140,7 @@ function App() {
               }} />
           </label>
           <Show when={bits().length}>
+            <pre class="text-left">Game: {gameTitle}</pre>
             <h3 class="text-2xl">Trainer Data</h3>
             <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
             <pre class="text-left whitespace-pre">ID: {trainerId()}</pre>
