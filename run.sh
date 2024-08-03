@@ -1,3 +1,2 @@
 #!/usr/bin/env sh
-QUART_APP=server:app
-poetry run quart run
+poetry run ./manage.py runserver 0.0.0.0:3001
