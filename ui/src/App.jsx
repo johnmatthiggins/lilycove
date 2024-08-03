@@ -38,11 +38,11 @@ function getGameTitle(bits) {
 
   let title;
   if (gameCode === 0x0) {
-    title = "Ruby and Sapphire";
+    title = "Pokemon Ruby or Pokemon Sapphire";
   } else if (gameCode == 0x1) {
-    title = "Fire Red and Leaf Green";
+    title = "Pokemon Fire Red or Pokemon Leaf Green";
   } else {
-    title = "Emerald";
+    title = "Pokemon Emerald";
   }
   return title;
 }
@@ -127,7 +127,7 @@ function parseTrainerId(bytes) {
   return bytesToNumber(bytes);
 }
 
-const SAVE_B_OFFSET = 0x004000;
+const SAVE_B_OFFSET = 0x005000;
 const TRAINER_NAME_POSITION = 0x0;
 
 function App() {
@@ -160,14 +160,22 @@ function App() {
   });
 
   return (
-    <div class="h-full justify-center">
-      <div class="flex h-full justify-center items-center">
-        <div class="rounded-lg bg-white p-2 shadow-md border border-solid border-slate-200">
+    <div class="flex h-full w-full justify-center">
+      <div class="grow justify-center items-center">
+        <div class="rounded-lg bg-white p-2 shadow-md border border-solid border-slate-200 w-1/2 mx-auto">
           <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
-          <h2 class="text-md">A Generation III Hex Editor</h2>
+          <h2 class="text-md text-center">A Generation III Hex Editor</h2>
+          <Show when={bits().length}>
+            <pre class="text-left">Game: {gameTitle}</pre>
+            <h3 class="text-2xl">Trainer Data</h3>
+            <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
+            <pre class="text-left whitespace-pre">ID: {trainerId()}</pre>
+            <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
+            <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
+          </Show>
           <label class="flex justify-center">
             <span
-              class="text-teal-400 hover:text-white text-lg px-2 py-1 border border-solid border-teal-400 hover:bg-teal-400 rounded-md hover:cursor-pointer transition"
+              class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-full hover:cursor-pointer transition"
               role="button"
             >
               Upload Save
@@ -182,14 +190,6 @@ function App() {
                 setBits(bytes);
               }} />
           </label>
-          <Show when={bits().length}>
-            <pre class="text-left">Game: {gameTitle}</pre>
-            <h3 class="text-2xl">Trainer Data</h3>
-            <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
-            <pre class="text-left whitespace-pre">ID: {trainerId()}</pre>
-            <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
-            <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
-          </Show>
         </div>
       </div>
     </div>
