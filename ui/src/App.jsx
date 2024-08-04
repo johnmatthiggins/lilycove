@@ -63,9 +63,7 @@ function App() {
       }
       nameBuffer = nameBuffer.concat(padding);
     }
-    return nameBuffer.map((b) => {
-      return convertASCIICodeToPokemonCharCode(b);
-    });
+    return nameBuffer.map((b) => convertASCIICodeToPokemonCharCode(b));
   };
 
   const trainerIdBuffer = () => {
@@ -181,13 +179,13 @@ function App() {
               </label>
             </div>
           </Show>
+          <Show when={bits().length}>
+            <GameInfo
+              bits={bits}
+              searchBytes={searchBytes}
+            />
+          </Show>
         </div>
-        <Show when={bits().length}>
-          <GameInfo
-            bits={bits}
-            searchBytes={searchBytes}
-          />
-        </Show>
       </div>
     </div>
   );
