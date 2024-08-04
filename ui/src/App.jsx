@@ -32,28 +32,6 @@ function convertASCIICodeToPokemonCharCode(asciiChar) {
   return 0xff;
 }
 
-
-function trainerIdToBuffer(trainerId) {
-  const lsb = trainerId & 0xff;
-  const msb = trainerId >> 8;
-
-  return [lsb, msb];
-}
-
-function trainerNameToBuffer(trainerName) {
-  let utf8Encode = new TextEncoder();
-  let nameBuffer = [...utf8Encode.encode(trainerName)];
-
-  if (nameBuffer.length < 8) {
-    const diff = 8 - nameBuffer.length;
-    const padding = new Array(diff).map((_) => 0xff);
-    nameBuffer = nameBuffer.concat(padding);
-  }
-  return nameBuffer.map((b) => {
-    return convertASCIICodeToPokemonCharCode(b);
-  });
-}
-
 async function bytesFromFile(file) {
   let array = [];
   for await (const chunk of file.stream()) {
@@ -67,12 +45,42 @@ function App() {
 
   const [trainerName, setTrainerName] = createSignal('');
   const [trainerId, setTrainerId] = createSignal('');
+  const [trainerGender, setTrainerGender] = createSignal(0);
 
   const handleNameChange = (event) => setTrainerName(event.target.value);
   const handleIdChange = (event) => setTrainerId(event.target.value);
+  const handleGenderChange = (event) => setTrainerGender(event.target.value);
 
-  const trainerNameBuffer = () => trainerNameToBuffer(trainerName());
-  const trainerIdBuffer = () => trainerIdToBuffer(trainerId());
+  const trainerNameBuffer = () => {
+    let utf8Encode = new TextEncoder();
+    let nameBuffer = [...utf8Encode.encode(trainerName())];
+
+    if (nameBuffer.length < 8) {
+      const diff = 8 - nameBuffer.length;
+      const padding = new Array(diff);
+      for (let i = 0; i < diff; i += 1) {
+        padding[i] = 0xff;
+      }
+      nameBuffer = nameBuffer.concat(padding);
+    }
+    return nameBuffer.map((b) => {
+      return convertASCIICodeToPokemonCharCode(b);
+    });
+  };
+
+  const trainerIdBuffer = () => {
+    const lsb = trainerId() & 0xff;
+    const msb = trainerId() >> 8;
+
+    return [lsb, msb];
+  };
+
+  const trainerGenderBuffer = () => {
+    if (trainerGender() === 'male') {
+      return [0];
+    }
+    return [1];
+  };
 
   const bufferToText =
     (buffer) => buffer.map((b) => {
@@ -86,6 +94,12 @@ function App() {
   const trainerNameBufferText = () => bufferToText(trainerNameBuffer());
   const trainerIdBufferText = () => bufferToText(trainerIdBuffer());
 
+  const searchBytes = () => trainerNameBuffer()
+    .concat(
+      trainerGenderBuffer(),
+      trainerIdBuffer()
+    );
+
   return (
     <div class="flex h-full w-full justify-center">
       <div class="grow justify-center items-center">
@@ -94,66 +108,90 @@ function App() {
           <h2 class="text-md text-center">A Generation III Hex Editor</h2>
           <p class="text-center">Enter trainer name and trainer ID and we can parse your save data!</p>
           <div class="my-2">
-            <label
-              for="trainer-name-input"
-              class="font-bold"
-            >
-              Trainer Name
-            </label>
-            <input
-              name="trainer-name-input"
-              id="trainer-name-input"
-              type="text"
-              class="font-mono block rounded-md border border-solid border-slate-200 p-1"
-              tabIndex="0"
-              onKeyUp={handleNameChange}
-            />
-            <Show when={trainerName().length > 0}>
-              <div class="font-mono bg-slate-200 w-fit px-2 mt-1 rounded-full">
-                {trainerNameBufferText()}
-              </div>
+            <div class="w-fit mb-1">
+              <label
+                for="trainer-name-input"
+                class="font-bold"
+              >
+                Trainer Name
+              </label>
+              <input
+                name="trainer-name-input"
+                id="trainer-name-input"
+                type="text"
+                class="font-mono block rounded-md border border-solid border-slate-200 p-1 w-full"
+                tabIndex="0"
+                onInput={handleNameChange}
+              />
+              <Show when={trainerName().length > 0}>
+                <div class="font-mono bg-slate-200 w-fit px-2 mt-1 rounded-full">
+                  {trainerNameBufferText()}
+                </div>
+              </Show>
+              <label
+                for="trainer-id-input"
+                class="font-bold"
+              >
+                Trainer ID
+              </label>
+              <input
+                id="trainer-id-input"
+                type="number"
+                class="font-mono block rounded-md border border-solid border-slate-200 p-1 w-full"
+                min="1"
+                max="65535"
+                tabIndex="0"
+                onInput={handleIdChange}
+              />
+              <Show when={trainerId()}>
+                <div class="font-mono bg-slate-200 w-fit px-2 mt-1 rounded-full">
+                  {trainerIdBufferText()}
+                </div>
+              </Show>
+              <label for="trainer-gender-input" class="font-bold">Trainer Gender</label>
+              <select
+                id="trainer-id-input"
+                class="block rounded-md border border-solid border-slate-200 bg-white p-2 w-full"
+                tabIndex="0"
+                onInput={handleGenderChange}
+              >
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </select>
+
+              <input
+                disabled
+                type="text"
+                class="rounded-md p-2 border border-solid border-slate-200 mt-1"
+                value={bufferToText(searchBytes())} />
+            </div>
+            <Show when={bits().length}>
+              <GameInfo
+                bits={bits}
+                searchBytes={searchBytes}
+              />
             </Show>
-            <label
-              for="trainer-id-input"
-              class="font-bold"
-            >
-              Trainer ID
+            <label class="flex justify-center w-fit">
+              <span
+                class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-full hover:cursor-pointer transition"
+                role="button"
+              >
+                Upload Save
+              </span>
+              <input
+                type="file"
+                accept=".sav"
+                class="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  let bytes = [];
+                  for await (const chunk of file.stream()) {
+                    bytes = bytes.concat([...chunk]);
+                  }
+                  setBits(bytes);
+                }} />
             </label>
-            <input
-              id="trainer-id-input"
-              type="number"
-              class="font-mono block rounded-md border border-solid border-slate-200 p-1"
-              min="1"
-              max="65535"
-              tabIndex="0"
-              onKeyUp={handleIdChange}
-            />
-            <Show when={trainerId()}>
-              <div class="font-mono bg-slate-200 w-fit px-2 mt-1 rounded-full">
-                {trainerIdBufferText()}
-              </div>
-            </Show>
           </div>
-          <Show when={bits().length}>
-            <GameInfo bits={bits} />
-          </Show>
-          <label class="flex justify-center w-fit">
-            <span
-              class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-full hover:cursor-pointer transition"
-              role="button"
-            >
-              Upload Save
-            </span>
-            <input
-              type="file"
-              accept=".sav"
-              class="hidden"
-              onChange={async (e) => {
-                const file = e.target.files[0];
-                const bytes = await bytesFromFile(file);
-                setBits(bytes);
-              }} />
-          </label>
         </div>
       </div>
     </div>

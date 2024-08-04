@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createMemo, createSignal } from 'solid-js';
 
 const ASCII_UPPER_CASE_A = 0x41;
 const ASCII_LOWER_CASE_A = 0x61;
@@ -59,22 +59,52 @@ function parsePokemonBuffer(buffer) {
   };
 }
 
+function detectSavePositions(bits, searchBytes) {
+  const savePositions = [];
+  for (let i = 0; i < bits.length; i += 1) {
+    for (let j = 0; j < searchBytes.length; j += 1) {
+      if (bits[i] == searchBytes[j]) {
+        // continue onward...
+        if (j === searchBytes.length - 1) {
+          // record position as start of save data...
+          savePositions.push(i);
 
-function getGreatestSaveIndex(bits) {
-  const SAVE_INDEX_A_POSITION = 0x0FFC;
-  const SAVE_INDEX_B_POSITION = 0xEFFC;
-  const saveIndexA = bits.slice(SAVE_INDEX_A_POSITION, SAVE_INDEX_A_POSITION + 1);
-  const saveIndexB = bits.slice(SAVE_INDEX_B_POSITION, SAVE_INDEX_B_POSITION + 1);
-  return [new Uint32Array(saveIndexA)[0], new Uint32Array(saveIndexB)[0]];
+          if (savePositions.length === 2) {
+            return savePositions;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+  }
+
+  return savePositions;
 }
 
-function getSaveOffset(bits, trainerName, trainerId) {
-  let saveOffset = SAVE_B_OFFSET;
-  const [indexA, indexB] = getGreatestSaveIndex(bits);
-  if (indexA > indexB) {
-    saveOffset = 0x0;
+
+function getSaveIndexes(bits, saveOffsets) {
+  const saveIndexes = [];
+
+  const SAVE_INDEX_OFFSET = 0x0FFC;
+
+  for (let i = 0; i < saveOffsets.length; i += 1) {
+    const saveIndex = bits.slice(
+      saveOffsets[i] + SAVE_INDEX_OFFSET,
+      saveOffsets[i] + SAVE_INDEX_OFFSET + 4);
+    saveIndexes.push(new Uint32Array(saveIndex)[0]);
   }
-  return saveOffset;
+
+  return saveIndexes;
+}
+
+function getSaveOffset(bits, searchBytes) {
+  const saveOffsets = detectSavePositions(bits, searchBytes);
+  const [indexA, indexB] = getSaveIndexes(bits, saveOffsets);
+  if (indexA > indexB) {
+    return saveOffsets[0];
+  }
+  return saveOffsets[1];
 }
 
 function getGameCode(saveOffset, bits) {
@@ -83,8 +113,8 @@ function getGameCode(saveOffset, bits) {
   return new Uint32Array(bytes)[0];
 }
 
-function getGameTitle(bits) {
-  const saveOffset = getSaveOffset(bits);
+function getGameTitle(bits, searchBytes) {
+  const saveOffset = getSaveOffset(bits, searchBytes);
   const gameCode = getGameCode(saveOffset, bits);
 
   let title;
@@ -122,28 +152,29 @@ function parseTrainerName(bytes) {
   return convertPokemonStrToASCII(bytes);
 }
 
-function GameInfo({ bits, trainerName, trainerId }) {
+function GameInfo({ bits, searchBytes }) {
   const [gameTitle, setGameTitle] = createSignal('N/A');
   const [gameTime, setGameTime] = createSignal('N/A');
   const [trainerGender, setTrainerGender] = createSignal('N/A');
 
-  const saveOffset = getSaveOffset(bits(), trainerName, trainerId);
+  const saveOffset = createMemo(() => getSaveOffset(bits(), searchBytes()));
+  console.log(saveOffset());
 
   let gender = 'M';
-  if (bits()[saveOffset + TRAINER_NAME_POSITION + 8] === 1) {
+  if (bits()[saveOffset() + TRAINER_NAME_POSITION + 8] === 1) {
     gender = 'F';
   }
 
-  setGameTime(getInGameTime(saveOffset, bits()));
-  setGameTitle(getGameTitle(bits()));
+  setGameTime(getInGameTime(saveOffset(), bits()));
+  setGameTitle(getGameTitle(bits(), searchBytes()));
   setTrainerGender(gender)
 
   return (
     <div>
       <pre class="text-left">Game: {gameTitle}</pre>
       <h3 class="text-2xl">Trainer Data</h3>
-      <pre class="text-left whitespace-pre">Name: {trainerName}</pre>
-      <pre class="text-left whitespace-pre">ID: {trainerId}</pre>
+      {/* <pre class="text-left whitespace-pre">Name: {trainerName}</pre>
+      <pre class="text-left whitespace-pre">ID: {trainerId}</pre> */}
       <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
     </div>
