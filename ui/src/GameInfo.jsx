@@ -1,4 +1,5 @@
 import { createMemo, createSignal } from 'solid-js';
+import GamePicture from './GamePicture';
 
 const ASCII_UPPER_CASE_A = 0x41;
 const ASCII_LOWER_CASE_A = 0x61;
@@ -30,11 +31,6 @@ function detectSavePositions(bits, searchBytes) {
   const savePositions = [];
   for (let i = 0; i < bits.length; i += 1) {
     for (let j = 0; j < searchBytes.length; j += 1) {
-      if (i === 0x4000) {
-        console.log(
-          bits[i + j], searchBytes[j]
-        );
-      }
       if (bits[i + j] === searchBytes[j]) {
         if (j === searchBytes.length - 1) {
           savePositions.push(i);
@@ -85,10 +81,7 @@ function getGameCode(saveOffset, bits) {
   return new Uint32Array(bytes)[0];
 }
 
-function getGameTitle(bits, searchBytes) {
-  const saveOffset = getSaveOffset(bits, searchBytes);
-  const gameCode = getGameCode(saveOffset, bits);
-
+function getGameTitle(gameCode) {
   let title;
   if (gameCode === 0x0) {
     title = "Pokemon Ruby or Pokemon Sapphire";
@@ -125,15 +118,15 @@ function GameInfo({ bits, searchBytes }) {
 
   const saveOffset = () => getSaveOffset(bits(), searchBytes());
 
+  const gameCode = () => getGameCode(saveOffset(), bits());
+
   setGameTime(getInGameTime(saveOffset(), bits()));
-  setGameTitle(getGameTitle(bits(), searchBytes()));
+  setGameTitle(getGameTitle(gameCode()));
 
   return (
     <div>
-      <pre class="text-left">Game: {gameTitle}</pre>
+      <GamePicture gameCode={gameCode} />
       <h3 class="text-2xl">Trainer Data</h3>
-      {/* <pre class="text-left whitespace-pre">Name: {trainerName}</pre>
-      <pre class="text-left whitespace-pre">ID: {trainerId}</pre> */}
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
     </div>
   )
