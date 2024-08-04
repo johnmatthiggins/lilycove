@@ -12,24 +12,6 @@ const PKMN_BANG = 0xab;
 
 const TRAINER_NAME_POSITION = 0x0;
 
-function getPokemonInParty(saveOffset, bits) {
-  const teamSectionOffset = saveOffset + 0xF2C;
-  const teamCountBytes = bits.slice(teamSectionOffset + 0x234, teamSectionOffset + 0x238);
-  const teamCount = new Uint32Array(teamCountBytes)[0];
-
-  let currentOffset = teamSectionOffset + 0x4;
-
-  const pokemon = [];
-
-  for (let i = 0; i < teamCount; i += 1) {
-    currentOffset = (teamSectionOffset + 0x4) + (100 * i);
-    const nextPokemon = parsePokemonBuffer(bits.slice(currentOffset, currentOffset + 100));
-    pokemon.push(nextPokemon);
-  }
-
-  return pokemon;
-}
-
 function convertPokemonCharToASCII(pokemonChar) {
   if (pokemonChar >= PKMN_UPPER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A) {
     const charCode = ASCII_UPPER_CASE_A + (Number(pokemonChar) - PKMN_UPPER_CASE_A);
@@ -42,20 +24,6 @@ function convertPokemonCharToASCII(pokemonChar) {
     return String.fromCharCode(Number(charCode));
   }
   return ' ';
-}
-
-function parsePokemonBuffer(buffer) {
-  const otIdOffset = 0x4;
-  const nicknameOffset = 0x8;
-  const otId = new Uint32Array(buffer.slice(otIdOffset, otIdOffset + 2));
-
-  const nickname = convertPokemonStrToASCII(
-    buffer.slice(nicknameOffset, nicknameOffset + 10)
-  );
-  return {
-    nickname,
-    otId,
-  };
 }
 
 function detectSavePositions(bits, searchBytes) {
