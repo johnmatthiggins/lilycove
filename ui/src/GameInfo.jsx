@@ -11,8 +11,6 @@ const PKMN_LEFT_ARROW = 0xd5;
 const PKMN_ZERO = 0xa1;
 const PKMN_BANG = 0xab;
 
-const TRAINER_NAME_POSITION = 0x0;
-
 function convertPokemonCharToASCII(pokemonChar) {
   if (pokemonChar >= PKMN_UPPER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A) {
     const charCode = ASCII_UPPER_CASE_A + (Number(pokemonChar) - PKMN_UPPER_CASE_A);
@@ -41,7 +39,9 @@ function detectSavePositions(bits, searchBytes) {
         }
       } else {
         if (j > 0) {
-          console.log(`missed at i = ${i}`);
+          console.log('missed at 0x' + i.toString(16));
+          console.log('search = ', searchBytes);
+          console.log('bits = ', bits.slice(i, i + 12));
         }
         break;
       }
@@ -94,22 +94,10 @@ function getGameTitle(gameCode) {
 }
 
 function getInGameTime(saveOffset, bits) {
-  console.log(saveOffset);
   const offset = saveOffset + 0xE;
   const hours = new Uint16Array([bits[offset], bits[offset + 1]])[0];
   const minutes = bits[offset + 2];
   return `${hours}:${minutes}`
-}
-
-
-function convertPokemonStrToASCII(pokemonByteStr) {
-  // We need to spread the array because it is
-  // probably a typed array...
-  return pokemonByteStr
-    .slice()
-    .map((byte) => {
-      return convertPokemonCharToASCII(byte);
-    }).join("");
 }
 
 function GameInfo({ bits, searchBytes }) {
@@ -126,7 +114,7 @@ function GameInfo({ bits, searchBytes }) {
   return (
     <div>
       <GamePicture gameCode={gameCode} />
-      <h3 class="text-2xl">Trainer Data</h3>
+      <h3 class="text-3xl font-bold">Trainer Data</h3>
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
     </div>
   )
