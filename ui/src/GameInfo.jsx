@@ -63,18 +63,16 @@ function detectSavePositions(bits, searchBytes) {
   const savePositions = [];
   for (let i = 0; i < bits.length; i += 1) {
     for (let j = 0; j < searchBytes.length; j += 1) {
-      if (bits[i] == searchBytes[j]) {
-        // continue onward...
+      if (bits[i + j] === searchBytes[j]) {
         if (j === searchBytes.length - 1) {
-          // record position as start of save data...
           savePositions.push(i);
 
           if (savePositions.length === 2) {
             return savePositions;
           }
-        } else {
-          break;
         }
+      } else {
+        break;
       }
     }
   }
@@ -158,7 +156,6 @@ function GameInfo({ bits, searchBytes }) {
   const [trainerGender, setTrainerGender] = createSignal('N/A');
 
   const saveOffset = createMemo(() => getSaveOffset(bits(), searchBytes()));
-  console.log(saveOffset());
 
   let gender = 'M';
   if (bits()[saveOffset() + TRAINER_NAME_POSITION + 8] === 1) {

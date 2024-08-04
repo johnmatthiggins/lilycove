@@ -77,9 +77,9 @@ function App() {
 
   const trainerGenderBuffer = () => {
     if (trainerGender() === 'male') {
-      return [0];
+      return [0, 0];
     }
-    return [1];
+    return [0, 1];
   };
 
   const bufferToText =
