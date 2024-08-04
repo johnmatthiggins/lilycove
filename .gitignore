@@ -1,5 +1,8 @@
 static/images/
+
 **/.DS_Store
 */.DS_Store
 .DS_Store
 db.sqlite3
+
+ui/public/pokemon_images/*
