@@ -75,12 +75,7 @@ function App() {
     return [lsb, msb];
   };
 
-  const trainerGenderBuffer = () => {
-    if (trainerGender() === 'male') {
-      return [0, 0];
-    }
-    return [0, 1];
-  };
+  const trainerGenderBuffer = () => [0, trainerGender()];
 
   const bufferToText =
     (buffer) => buffer.map((b) => {
@@ -94,11 +89,13 @@ function App() {
   const trainerNameBufferText = () => bufferToText(trainerNameBuffer());
   const trainerIdBufferText = () => bufferToText(trainerIdBuffer());
 
-  const searchBytes = () => trainerNameBuffer()
-    .concat(
-      trainerGenderBuffer(),
-      trainerIdBuffer()
-    );
+  const searchBytes = () => {
+    return trainerNameBuffer()
+      .concat(
+        trainerGenderBuffer(),
+        trainerIdBuffer()
+      );
+  };
 
   return (
     <div class="flex h-full w-full justify-center">
@@ -120,6 +117,7 @@ function App() {
                 id="trainer-name-input"
                 type="text"
                 class="font-mono block rounded-md border border-solid border-slate-200 p-1 w-full"
+                maxlength="7"
                 tabIndex="0"
                 onInput={handleNameChange}
               />
@@ -136,10 +134,10 @@ function App() {
               </label>
               <input
                 id="trainer-id-input"
-                type="number"
+                type="text"
+                pattern="\d*"
                 class="font-mono block rounded-md border border-solid border-slate-200 p-1 w-full"
-                min="1"
-                max="65535"
+                inputmode="numeric"
                 tabIndex="0"
                 onInput={handleIdChange}
               />
@@ -155,15 +153,10 @@ function App() {
                 tabIndex="0"
                 onInput={handleGenderChange}
               >
-                <option value="female">Female</option>
                 <option value="male">Male</option>
+                <option value="female">Female</option>
               </select>
-
-              <input
-                disabled
-                type="text"
-                class="rounded-md p-2 border border-solid border-slate-200 mt-1"
-                value={bufferToText(searchBytes())} />
+              <div class="font-mono px-1">{bufferToText(searchBytes())}</div>
             </div>
             <Show when={bits().length}>
               <GameInfo

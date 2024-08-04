@@ -10,7 +10,6 @@ const PKMN_LEFT_ARROW = 0xd5;
 const PKMN_ZERO = 0xa1;
 const PKMN_BANG = 0xab;
 
-const SAVE_B_OFFSET = 0x006000;
 const TRAINER_NAME_POSITION = 0x0;
 
 function getPokemonInParty(saveOffset, bits) {
@@ -63,6 +62,11 @@ function detectSavePositions(bits, searchBytes) {
   const savePositions = [];
   for (let i = 0; i < bits.length; i += 1) {
     for (let j = 0; j < searchBytes.length; j += 1) {
+      if (i === 0x4000) {
+        console.log(
+          bits[i + j], searchBytes[j]
+        );
+      }
       if (bits[i + j] === searchBytes[j]) {
         if (j === searchBytes.length - 1) {
           savePositions.push(i);
@@ -72,6 +76,9 @@ function detectSavePositions(bits, searchBytes) {
           }
         }
       } else {
+        if (j > 0) {
+          console.log(`missed at i = ${i}`);
+        }
         break;
       }
     }
@@ -83,7 +90,6 @@ function detectSavePositions(bits, searchBytes) {
 
 function getSaveIndexes(bits, saveOffsets) {
   const saveIndexes = [];
-
   const SAVE_INDEX_OFFSET = 0x0FFC;
 
   for (let i = 0; i < saveOffsets.length; i += 1) {
@@ -126,8 +132,8 @@ function getGameTitle(bits, searchBytes) {
   return title;
 }
 
-
 function getInGameTime(saveOffset, bits) {
+  console.log(saveOffset);
   const offset = saveOffset + 0xE;
   const hours = new Uint16Array([bits[offset], bits[offset + 1]])[0];
   const minutes = bits[offset + 2];
@@ -145,26 +151,14 @@ function convertPokemonStrToASCII(pokemonByteStr) {
     }).join("");
 }
 
-
-function parseTrainerName(bytes) {
-  return convertPokemonStrToASCII(bytes);
-}
-
 function GameInfo({ bits, searchBytes }) {
   const [gameTitle, setGameTitle] = createSignal('N/A');
   const [gameTime, setGameTime] = createSignal('N/A');
-  const [trainerGender, setTrainerGender] = createSignal('N/A');
 
-  const saveOffset = createMemo(() => getSaveOffset(bits(), searchBytes()));
-
-  let gender = 'M';
-  if (bits()[saveOffset() + TRAINER_NAME_POSITION + 8] === 1) {
-    gender = 'F';
-  }
+  const saveOffset = () => getSaveOffset(bits(), searchBytes());
 
   setGameTime(getInGameTime(saveOffset(), bits()));
   setGameTitle(getGameTitle(bits(), searchBytes()));
-  setTrainerGender(gender)
 
   return (
     <div>
@@ -172,7 +166,6 @@ function GameInfo({ bits, searchBytes }) {
       <h3 class="text-2xl">Trainer Data</h3>
       {/* <pre class="text-left whitespace-pre">Name: {trainerName}</pre>
       <pre class="text-left whitespace-pre">ID: {trainerId}</pre> */}
-      <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
     </div>
   )
