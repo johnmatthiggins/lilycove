@@ -159,7 +159,7 @@ function App() {
                 </select>
                 <div class="font-mono px-1">{bufferToText(searchBytes())}</div>
               </div>
-              <label class="flex justify-center w-fit">
+              <label class="flex justify-center w-full">
                 <span
                   class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-full hover:cursor-pointer transition"
                   role="button"

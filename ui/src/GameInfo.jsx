@@ -1,4 +1,4 @@
-import { createMemo, createSignal } from 'solid-js';
+import { createSignal } from 'solid-js';
 import GamePicture from './GamePicture';
 
 const ASCII_UPPER_CASE_A = 0x41;
@@ -38,11 +38,6 @@ function detectSavePositions(bits, searchBytes) {
           }
         }
       } else {
-        if (j > 0) {
-          console.log('missed at 0x' + i.toString(16));
-          console.log('search = ', searchBytes);
-          console.log('bits = ', bits.slice(i, i + 12));
-        }
         break;
       }
     }
@@ -68,7 +63,11 @@ function getSaveIndexes(bits, saveOffsets) {
 
 function getSaveOffset(bits, searchBytes) {
   const saveOffsets = detectSavePositions(bits, searchBytes);
-  const [indexA, indexB] = getSaveIndexes(bits, saveOffsets);
+  const saveIndexes = getSaveIndexes(bits, saveOffsets);
+  if (saveIndexes.length === 1) {
+    return saveOffsets[0];
+  }
+  const [indexA, indexB] = saveIndexes;
   if (indexA > indexB) {
     return saveOffsets[0];
   }
@@ -94,6 +93,7 @@ function getGameTitle(gameCode) {
 }
 
 function getInGameTime(saveOffset, bits) {
+  console.log('saveOffset', saveOffset);
   const offset = saveOffset + 0xE;
   const hours = new Uint16Array([bits[offset], bits[offset + 1]])[0];
   const minutes = bits[offset + 2];
