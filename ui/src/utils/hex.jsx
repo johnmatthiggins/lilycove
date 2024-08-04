@@ -11,15 +11,12 @@ const PKMN_BANG = 0xab;
 function convertPokemonCharToASCII(pokemonChar) {
   if (pokemonChar >= PKMN_UPPER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A) {
     const charCode = ASCII_UPPER_CASE_A + (pokemonChar - PKMN_UPPER_CASE_A);
-    console.log(String.fromCharCode(charCode));
     return String.fromCharCode(charCode);
   } else if (pokemonChar >= PKMN_LOWER_CASE_A && pokemonChar < PKMN_LEFT_ARROW) {
     const charCode = ASCII_LOWER_CASE_A + (pokemonChar - PKMN_LOWER_CASE_A);
-    console.log(String.fromCharCode(charCode));
     return String.fromCharCode(charCode);
   } else if (pokemonChar >= PKMN_ZERO && pokemonChar < PKMN_BANG) {
     const charCode = ASCII_ZERO + (pokemonChar - PKMN_BANG);
-    console.log(String.fromCharCode(charCode));
     return String.fromCharCode(charCode);
   } else {
     return ' ';
@@ -38,4 +35,5 @@ function parseTrainerName(bytes) {
 
 export default {
   parseTrainerName,
+  convertPokemonStrToASCII,
 };
