@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 BASE_URL = 'https://archives.bulbagarden.net/wiki/File:Spr_3r_%s.png'
 
 def main():
-    print(sys.argv[1:3])
     num = int(sys.argv[1])
     path = sys.argv[2]
     padded_num = f'{num:03}'
