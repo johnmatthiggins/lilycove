@@ -51,13 +51,13 @@ function _asUint32(bytes) {
 
 // write function that finds most recent save block
 
-function findSectionAddreses(bits, saveBlockOffset) {
-  const blockSize = 0xE000;
+function findSectionAddresses(bits, saveBlockOffset) {
+  const SAVE_BLOCK_SIZE = 0xE000;
 
   // carve out bits for desired save block...
   const blockBits = bits.slice(
     saveBlockOffset,
-    saveBlockOffset + blockSize
+    saveBlockOffset + SAVE_BLOCK_SIZE
   );
 
   const [magicAddress] = findBitVector(blockBits, MAGIC_BITS);
@@ -84,5 +84,5 @@ function findSectionAddreses(bits, saveBlockOffset) {
 }
 
 export default {
-  findSectionAddreses,
+  findSectionAddresses,
 };

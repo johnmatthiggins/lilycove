@@ -1,5 +1,7 @@
 import { createMemo } from 'solid-js';
 
+import { findSectionAddresses } from './utils/save.jsx';
+
 import GamePicture from './GamePicture';
 
 const ASCII_UPPER_CASE_A = 0x41;
@@ -61,8 +63,18 @@ function getSaveIndexes(bits, saveOffsets) {
   return saveIndexes;
 }
 
-function getSaveOffset(bits, searchBytes) {
-  const saveOffsets = detectSavePositions(bits, searchBytes);
+// TODO: convert this into a function that builds the position
+// map of all sections.
+// HINT: use findSectionAddresses to build map.
+// PSEUDO:
+//  - find save counters for both save blocks.
+//  - select offset based on which save counter is higher.
+//  - once block offset is found run the findSectionAddresses
+//    function on a indexes = [offset, offset + 0xE000)
+function getSaveOffsets(bits, searchBytes) {
+  const saveBlockLength = 0xE000;
+
+  const saveOffsets = [0x0, 0xE000];
   const saveIndexes = getSaveIndexes(bits, saveOffsets);
   if (saveIndexes.length === 1) {
     return saveOffsets[0];
@@ -90,7 +102,7 @@ function getInGameTime(saveOffset, bits) {
 const OPTIONS_OFFSET = 0x13;
 
 function GameInfo({ bits, searchBytes }) {
-  const saveOffset = createMemo(() => getSaveOffset(bits(), searchBytes()));
+  const sectionOffsets = createMemo(() => getSaveOffset(bits(), searchBytes()));
   const gameCode = () => getGameCode(saveOffset(), bits());
   const gameTime = () => getInGameTime(saveOffset(), bits());
   const soundType = () => {
