@@ -1,4 +1,5 @@
 import { createMemo } from 'solid-js';
+
 import GamePicture from './GamePicture';
 
 const ASCII_UPPER_CASE_A = 0x41;
