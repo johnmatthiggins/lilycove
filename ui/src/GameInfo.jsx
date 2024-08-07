@@ -52,6 +52,16 @@ function GameInfo({ bits }) {
     const nameBits = bits().slice(offset, offset + 8);
     return convertPokemonStrToASCII(nameBits);
   };
+
+  const trainerGender = () => {
+    const offset = trainerInfoOffset() + 0x8;
+    const genderBit = bits()[offset];
+    if (genderBit) {
+      return 'F';
+    }
+    return 'M';
+  };
+
   const trainerId = () => {
     const offset = trainerInfoOffset() + 0xA;
     const idBits = bits().slice(offset, offset + 2).reverse();
@@ -105,6 +115,7 @@ function GameInfo({ bits }) {
       <h3 class="text-3xl font-bold">Trainer Data</h3>
       <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
       <pre class="text-left whitespace-pre">ID NO: {trainerId()}</pre>
+      <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
       <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
