@@ -11,25 +11,25 @@ const PKMN_BANG = 0xab;
 function barrelShiftRight(array, count) {
   const right = array.slice(0, array.length - count);
   const left = array.slice(array.length - count, array.length);
-  return left.concat(right);
+  const buffer = left.concat(right);
+  return buffer;
 }
 
 // returns array of occurrences of bit vector
 function findBitVector(bits, search) {
-  const savePositions = [];
+  const occurrences = [];
   for (let i = 0; i < bits.length; i += 1) {
     for (let j = 0; j < search.length; j += 1) {
       if (bits[i + j] === search[j]) {
         if (j === search.length - 1) {
-          savePositions.push(i);
+          occurrences.push(i);
         }
       } else {
         break;
       }
     }
   }
-
-  return savePositions;
+  return occurrences;
 }
 
 function convertPokemonCharToASCII(pokemonChar) {
@@ -57,8 +57,9 @@ function parseTrainerName(bytes) {
   return convertPokemonStrToASCII(bytes);
 }
 
-export default {
+export {
   findBitVector,
   parseTrainerName,
   convertPokemonStrToASCII,
+  barrelShiftRight,
 };

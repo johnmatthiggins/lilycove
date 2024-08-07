@@ -3,6 +3,7 @@ import { createMemo } from 'solid-js';
 import { findSectionAddresses } from './utils/save.jsx';
 
 import GamePicture from './GamePicture';
+import { convertPokemonStrToASCII } from './utils/hex.jsx';
 
 const ASCII_UPPER_CASE_A = 0x41;
 const ASCII_LOWER_CASE_A = 0x61;
@@ -63,29 +64,6 @@ function getSaveIndexes(bits, saveOffsets) {
   return saveIndexes;
 }
 
-// TODO: convert this into a function that builds the position
-// map of all sections.
-// HINT: use findSectionAddresses to build map.
-// PSEUDO:
-//  - find save counters for both save blocks.
-//  - select offset based on which save counter is higher.
-//  - once block offset is found run the findSectionAddresses
-//    function on a indexes = [offset, offset + 0xE000)
-function getSaveOffsets(bits, searchBytes) {
-  const saveBlockLength = 0xE000;
-
-  const saveOffsets = [0x0, 0xE000];
-  const saveIndexes = getSaveIndexes(bits, saveOffsets);
-  if (saveIndexes.length === 1) {
-    return saveOffsets[0];
-  }
-  const [indexA, indexB] = saveIndexes;
-  if (indexA > indexB) {
-    return saveOffsets[0];
-  }
-  return saveOffsets[1];
-}
-
 function getGameCode(saveOffset, bits) {
   const gameCodePosition = saveOffset + 0xAC;
   const bytes = bits.slice(gameCodePosition, gameCodePosition + 4);
@@ -101,13 +79,19 @@ function getInGameTime(saveOffset, bits) {
 
 const OPTIONS_OFFSET = 0x13;
 
-function GameInfo({ bits, searchBytes }) {
-  const sectionOffsets = createMemo(() => getSaveOffset(bits(), searchBytes()));
-  const gameCode = () => getGameCode(saveOffset(), bits());
-  const gameTime = () => getInGameTime(saveOffset(), bits());
+function GameInfo({ bits }) {
+  const sectionOffsets = createMemo(() => findSectionAddresses(bits()));
+  const trainerInfoOffset = () => sectionOffsets()['trainer_info'];
+  const trainerName = () => {
+    const offset = trainerInfoOffset();
+    const nameBits = bits().slice(offset, offset + 8);
+    return convertPokemonStrToASCII(nameBits);
+  }
+  const gameCode = () => getGameCode(trainerInfoOffset, bits());
+  const gameTime = () => getInGameTime(trainerInfoOffset(), bits());
   const soundType = () => {
     const soundOptionsOffset = 0x15;
-    const offset = saveOffset() + OPTIONS_OFFSET + soundOptionsOffset;
+    const offset = trainerInfoOffset() + OPTIONS_OFFSET + soundOptionsOffset;
 
     let soundType = 'Stereo';
     if (bits()[offset] & 0x1) {
@@ -118,7 +102,7 @@ function GameInfo({ bits, searchBytes }) {
 
   const textSpeed = () => {
     const textSpeedOffset = 0x14;
-    const offset = saveOffset() + OPTIONS_OFFSET + textSpeedOffset;
+    const offset = trainerInfoOffset() + OPTIONS_OFFSET + textSpeedOffset;
     const textSpeedByte = bits()[offset] & 0x7;
 
     let textSpeed;
@@ -134,7 +118,7 @@ function GameInfo({ bits, searchBytes }) {
 
   const battleStyle = () => {
     const battleStyleOffset = 0x15;
-    const offset = saveOffset() + OPTIONS_OFFSET + battleStyleOffset;
+    const offset = trainerInfoOffset() + OPTIONS_OFFSET + battleStyleOffset;
     const battleStyleByte = (bits()[offset] ^ 0x5) >> 1;
     if (battleStyleByte) {
       return 'Set';
@@ -148,6 +132,7 @@ function GameInfo({ bits, searchBytes }) {
         <GamePicture gameCode={gameCode} />
       </div>
       <h3 class="text-3xl font-bold">Trainer Data</h3>
+      <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
       <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
