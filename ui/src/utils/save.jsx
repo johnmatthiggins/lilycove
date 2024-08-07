@@ -71,7 +71,6 @@ function findSectionAddresses(bits) {
   const shiftCount = saveCounter % SAVE_BLOCK_SECTION_COUNT;
 
   const currentOrdering = barrelShiftRight(DEFAULT_SAVE_BLOCK_SECTION_ORDER, shiftCount);
-  console.log('currentOrdering/= ', currentOrdering);
   const offsets = {};
   let currentAddress = 0x0;
 
@@ -82,8 +81,6 @@ function findSectionAddresses(bits) {
     // add offset to next section...
     currentAddress += SAVE_BLOCK_SECTION_SIZE;
   }
-
-  console.log(offsets);
   return offsets;
 }
 
