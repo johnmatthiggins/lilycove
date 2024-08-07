@@ -42,7 +42,6 @@ function App() {
           <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
           <h2 class="text-md text-center">A Generation III Hex Editor</h2>
           <Show when={bits().length === 0}>
-            <p class="text-center">Enter trainer name and trainer ID and we can parse your save data!</p>
             <div class="my-2">
               <label class="flex justify-center w-full">
                 <span

@@ -5,7 +5,6 @@ import { findBitVector, barrelShiftRight } from './hex';
 // goes to 1 and it gets shifted from this to having
 // pc_buffer_I at the front.
 const DEFAULT_SAVE_BLOCK_SECTION_ORDER = [
-  "trainer_info",
   "team_and_items",
   "game_state",
   "misc_data",
@@ -18,6 +17,8 @@ const DEFAULT_SAVE_BLOCK_SECTION_ORDER = [
   "pc_buffer_F",
   "pc_buffer_G",
   "pc_buffer_H",
+  "pc_buffer_I",
+  "trainer_info",
 ];
 
 const SAVE_BLOCK_SECTION_COUNT = DEFAULT_SAVE_BLOCK_SECTION_ORDER.length;
@@ -70,6 +71,7 @@ function findSectionAddresses(bits) {
   const shiftCount = saveCounter % SAVE_BLOCK_SECTION_COUNT;
 
   const currentOrdering = barrelShiftRight(DEFAULT_SAVE_BLOCK_SECTION_ORDER, shiftCount);
+  console.log('currentOrdering/= ', currentOrdering);
   const offsets = {};
   let currentAddress = 0x0;
 
@@ -80,6 +82,8 @@ function findSectionAddresses(bits) {
     // add offset to next section...
     currentAddress += SAVE_BLOCK_SECTION_SIZE;
   }
+
+  console.log(offsets);
   return offsets;
 }
 

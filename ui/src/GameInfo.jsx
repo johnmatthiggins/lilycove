@@ -29,41 +29,6 @@ function convertPokemonCharToASCII(pokemonChar) {
   return ' ';
 }
 
-function detectSavePositions(bits, searchBytes) {
-  const savePositions = [];
-  for (let i = 0; i < bits.length; i += 1) {
-    for (let j = 0; j < searchBytes.length; j += 1) {
-      if (bits[i + j] === searchBytes[j]) {
-        if (j === searchBytes.length - 1) {
-          savePositions.push(i);
-
-          if (savePositions.length === 2) {
-            return savePositions;
-          }
-        }
-      } else {
-        break;
-      }
-    }
-  }
-
-  return savePositions;
-}
-
-function getSaveIndexes(bits, saveOffsets) {
-  const saveIndexes = [];
-  const SAVE_INDEX_OFFSET = 0x0FFC;
-
-  for (let i = 0; i < saveOffsets.length; i += 1) {
-    const saveIndex = bits.slice(
-      saveOffsets[i] + SAVE_INDEX_OFFSET,
-      saveOffsets[i] + SAVE_INDEX_OFFSET + 4);
-    saveIndexes.push(new Uint32Array(saveIndex)[0]);
-  }
-
-  return saveIndexes;
-}
-
 function getGameCode(saveOffset, bits) {
   const gameCodePosition = saveOffset + 0xAC;
   const bytes = bits.slice(gameCodePosition, gameCodePosition + 4);
@@ -86,8 +51,14 @@ function GameInfo({ bits }) {
     const offset = trainerInfoOffset();
     const nameBits = bits().slice(offset, offset + 8);
     return convertPokemonStrToASCII(nameBits);
-  }
-  const gameCode = () => getGameCode(trainerInfoOffset, bits());
+  };
+  const trainerId = () => {
+    const offset = trainerInfoOffset() + 0xA;
+    const idBits = bits().slice(offset, offset + 2).reverse();
+    const id = (idBits[0] << 8) | idBits[1];
+    return id;
+  };
+  const gameCode = () => getGameCode(trainerInfoOffset(), bits());
   const gameTime = () => getInGameTime(trainerInfoOffset(), bits());
   const soundType = () => {
     const soundOptionsOffset = 0x15;
@@ -133,6 +104,7 @@ function GameInfo({ bits }) {
       </div>
       <h3 class="text-3xl font-bold">Trainer Data</h3>
       <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
+      <pre class="text-left whitespace-pre">ID NO: {trainerId()}</pre>
       <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
       <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
