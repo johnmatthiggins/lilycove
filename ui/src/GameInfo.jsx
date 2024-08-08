@@ -4,6 +4,7 @@ import { findSectionAddresses } from './utils/save.jsx';
 
 import GamePicture from './GamePicture';
 import { convertPokemonStrToASCII } from './utils/hex.jsx';
+import { BoxPokemon } from './utils/pokemonDataStructure.jsx';
 
 const ASCII_UPPER_CASE_A = 0x41;
 const ASCII_LOWER_CASE_A = 0x61;
@@ -81,6 +82,26 @@ function GameInfo({ bits }) {
     return soundType;
   };
 
+  const boxPokemon = () => {
+    const firstBoxOffset = sectionOffsets()['pc_buffer_A'];
+    const firstPokemonOffset = firstBoxOffset + 0x4;
+    const boxPokemonSize = 0x50;
+
+    const pokemonBuffer = bits().slice(firstPokemonOffset, 420 * boxPokemonSize);
+    const pokemon = [];
+
+    for (let i = 0; i < 420; i += 1) {
+      const offset = i * 0x50;
+      const newPokemon = new BoxPokemon(
+        pokemonBuffer.slice(offset, offset + boxPokemonSize)
+      );
+
+      pokemon.push(newPokemon);
+    }
+
+    return pokemon;
+  };
+
   const textSpeed = () => {
     const textSpeedOffset = 0x14;
     const offset = trainerInfoOffset() + OPTIONS_OFFSET + textSpeedOffset;
@@ -106,6 +127,7 @@ function GameInfo({ bits }) {
     }
     return 'Switch';
   };
+  console.log(boxPokemon().map((p) => p.getSpeciesId()));
 
   return (
     <div>

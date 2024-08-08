@@ -1,13 +1,237 @@
 import { convertPokemonStrToASCII } from './hex.jsx';
 
-class PokemonData {
+function _padZeros(buffer, desiredLength) {
+  const paddingLength = desiredLength - buffer.length;
+  const padding = new Array(paddingLength).map((_) => 0);
+
+  return buffer.concat(padding);
+}
+
+// length in bytes of the data section
+// of the pokemon data structure
+const DATA_SECTION_LENGTH = 48;
+
+function _getDataSectionOffsets(
+  personalityValue
+) {
+  // const encryptionKey = personalityValue ^ originalTrainerId;
+  // let unencryptedBuffer = new Array(DATA_SECTION_LENGTH).map((_) => 0x0);
+  //
+  // for (let i = 0; i < dataSectionBuffer; i += 4) {
+  //   for (let j = 0; j < 4; i += 1) {
+  //     unencryptedBuffer[i + j] = encryptionKey[j] ^ dataSectionBuffer[i + j];
+  //   }
+  // }
+
+  switch (personalityValue) {
+    case 0:
+      return {
+        "data_section_growth": 0,
+        "data_section_attacks": 12,
+        "data_section_condition": 24,
+        "data_section_misc": 36,
+      };
+    case 1:
+      return {
+        "data_section_growth": 0,
+        "data_section_attacks": 12,
+        "data_section_misc": 24,
+        "data_section_condition": 36,
+      };
+    case 2:
+      return {
+        "data_section_growth": 0,
+        "data_section_condition": 12,
+        "data_section_attacks": 24,
+        "data_section_misc": 36,
+      };
+    case 3:
+      return {
+        "data_section_growth": 0,
+        "data_section_condition": 12,
+        "data_section_attacks": 24,
+        "data_section_misc": 36,
+      };
+    case 4:
+      return {
+        "data_section_growth": 0,
+        "data_section_misc": 12,
+        "data_section_attacks": 24,
+        "data_section_condition": 36,
+      };
+    case 5:
+      return {
+        "data_section_growth": 0,
+        "data_section_misc": 12,
+        "data_section_condition": 24,
+        "data_section_attacks": 36,
+      };
+    case 6:
+      return {
+        "data_section_attacks": 0,
+        "data_section_growth": 12,
+        "data_section_condition": 24,
+        "data_section_misc": 36,
+      };
+    case 7:
+      return {
+        "data_section_attacks": 0,
+        "data_section_growth": 12,
+        "data_section_misc": 24,
+        "data_section_condition": 36,
+      };
+    case 8:
+      return {
+        "data_section_attacks": 0,
+        "data_section_condition": 12,
+        "data_section_growth": 24,
+        "data_section_misc": 36,
+      };
+    case 9:
+      return {
+        "data_section_attacks": 0,
+        "data_section_condition": 12,
+        "data_section_misc": 24,
+        "data_section_growth": 36,
+      };
+    case 10:
+      return {
+        "data_section_growth": 0,
+        "data_section_misc": 12,
+        "data_section_attacks": 24,
+        "data_section_condition": 36,
+      };
+    case 11:
+      return {
+        "data_section_attacks": 0,
+        "data_section_misc": 12,
+        "data_section_condition": 24,
+        "data_section_growth": 36,
+      };
+    case 12:
+      return {
+        "data_section_condition": 0,
+        "data_section_growth": 12,
+        "data_section_attacks": 24,
+        "data_section_misc": 36,
+      };
+    case 13:
+      return {
+        "data_section_condition": 0,
+        "data_section_growth": 12,
+        "data_section_misc": 24,
+        "data_section_attacks": 36,
+      };
+    case 14:
+      return {
+        "data_section_condition": 0,
+        "data_section_attacks": 12,
+        "data_section_growth": 24,
+        "data_section_misc": 36,
+      };
+    case 15:
+      return {
+        "data_section_condition": 0,
+        "data_section_attacks": 12,
+        "data_section_misc": 24,
+        "data_section_growth": 36,
+      };
+    case 16:
+      return {
+        "data_section_condition": 0,
+        "data_section_misc": 12,
+        "data_section_growth": 24,
+        "data_section_attacks": 36,
+      };
+    case 17:
+      return {
+        "data_section_condition": 0,
+        "data_section_misc": 12,
+        "data_section_attacks": 24,
+        "data_section_growth": 36,
+      };
+    case 18:
+      return {
+        "data_section_misc": 0,
+        "data_section_growth": 12,
+        "data_section_attacks": 24,
+        "data_section_condition": 36,
+      };
+    case 19:
+      return {
+        "data_section_misc": 0,
+        "data_section_growth": 12,
+        "data_section_condition": 24,
+        "data_section_attacks": 36,
+      };
+    case 20:
+      return {
+        "data_section_misc": 0,
+        "data_section_attacks": 12,
+        "data_section_growth": 24,
+        "data_section_condition": 36,
+      };
+    case 21:
+      return {
+        "data_section_misc": 0,
+        "data_section_attacks": 12,
+        "data_section_condition": 24,
+        "data_section_growth": 36,
+      };
+    case 22:
+      return {
+        "data_section_misc": 0,
+        "data_section_condition": 12,
+        "data_section_growth": 24,
+        "data_section_attacks": 36,
+      };
+    case 23:
+      return {
+        "data_section_misc": 0,
+        "data_section_condition": 12,
+        "data_section_attacks": 24,
+        "data_section_growth": 36,
+      };
+    default:
+      return {};
+  }
+}
+
+function _buildBoxPokemonOffsetMap(buffer) {
+  const personalityBits = buffer.slice(0x0, 0x4);
+  const personalityValue = new Uint32Array(personalityBits)[0];
+
+  const dataOffset = 0x20;
+
+  // add 0x20 to all the offsets found here...
+  const dataSectionOffsets = Object.fromEntries(Object.entries(
+    _getDataSectionOffsets(personalityValue)
+  ).map(([key, value]) => ([key, value + dataOffset])));
+
+  const offsetMap = {
+    "personality_value": 0x0,
+    "ot_id": 0x04,
+    "nickname": 0x08,
+    "language": 0x12,
+    "misc_flags": 0x13,
+    "ot_name": 0x14,
+    "markings": 0x1b,
+    "checksum": 0x1c,
+    "unknown_section": 0x1e,
+    "data": 0x20,
+    ...dataSectionOffsets,
+  };
+
+  return offsetMap;
+}
+
+class BoxPokemon {
   constructor(buffer) {
     this._buffer = buffer;
+    this._offsetMap = _buildBoxPokemonOffsetMap(buffer);
 
-    const otIdOffset = 0x4;
-    const personalityValue = new Uint32Array(buffer.slice(0, 0x4))[0];
-    const otId = new Uint32Array(buffer.slice(otIdOffset, otIdOffset + 2))[0];
-
+    const personalityValue = this._readInt32(0);
+    const otId = this._readInt32(0x4);
     const encryptionKey = personalityValue ^ otId;
     this._encryptionKey = encryptionKey;
   }
@@ -65,52 +289,30 @@ class PokemonData {
     return name;
   }
 
-  _readDoubleByte(offset) {
-    const offset = 0x5A;
-    const [value] = new Uint16Array(
-      this._buffer.slice(offset, offset + 2));
+  _readShort(offset) {
+    const [value] =
+      new Uint16Array(this._buffer.slice(offset, offset + 2));
+
+    return value;
+  }
+
+  _readInt32(offset) {
+    const [value] =
+      new Uint32Array(this._buffer.slice(offset, offset + 4));
 
     return value;
   }
 
   getLevel() {
     const offset = 0x54;
-    return this._readDoubleByte(offset);
+    return this._readShort(offset);
   }
 
-  getCurrentHP() {
-    const offset = 0x56;
-    return this._readDoubleByte(offset);
-  }
+  getSpeciesId() {
+    const speciesOffset = this._offsetMap['data_section_growth'];
+    const species = this._readShort(speciesOffset);
 
-  getHPStat() {
-    const offset = 0x58;
-    return this._readDoubleByte(offset);
-  }
-
-  getAttackStat() {
-    const offset = 0x5A;
-    return this._readDoubleByte(offset);
-  }
-
-  getDefenseStat() {
-    const offset = 0x5C;
-    return this._readDoubleByte(offset);
-  }
-
-  getSpeedStat() {
-    const offset = 0x5E;
-    return this._readDoubleByte(offset);
-  }
-
-  getSpecialAttackStat() {
-    const offset = 0x60;
-    return this._readDoubleByte(offset);
-  }
-
-  getSpecialDefenseStat() {
-    const offset = 0x62;
-    return this._readDoubleByte(offset);
+    return species;
   }
 
   serialize() {
@@ -156,7 +358,7 @@ function getPokemonInParty(saveOffset, bits) {
 }
 
 
-export default {
-  PokemonData,
+export {
+  BoxPokemon,
   getPokemonInParty,
 }
