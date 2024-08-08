@@ -147,8 +147,17 @@ function GameInfo({ bits }) {
       <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
       <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
+      <h3 class="text-3xl">Pokemon</h3>
+      <div style={{ display: 'flex' }}>
+        {boxPokemon().map((p) => {
+          const id = String(p.getSpeciesId()).padStart(3, '0');
+          return (
+            <img class="sharp-pixels" src={`/pokemon_images/${id}.png`} />
+          );
+        })}
+      </div>
     </div>
-  )
+  );
 }
 
 export default GameInfo;
