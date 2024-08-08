@@ -646,6 +646,34 @@ video {
   width: 100%;
 }
 
+.w-\[64px\] {
+  width: 64px;
+}
+
+.w-\[44px\] {
+  width: 44px;
+}
+
+.w-\[60px\] {
+  width: 60px;
+}
+
+.w-\[100px\] {
+  width: 100px;
+}
+
+.w-\[80px\] {
+  width: 80px;
+}
+
+.w-\[90px\] {
+  width: 90px;
+}
+
+.min-w-\[100px\] {
+  min-width: 100px;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -787,6 +815,10 @@ video {
   padding: 0.5rem;
 }
 
+.p-\[5px\] {
+  padding: 5px;
+}
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -820,6 +852,16 @@ video {
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+}
+
+.px-\[10px\] {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.px-\[5px\] {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .pt-1 {
@@ -944,6 +986,10 @@ video {
   src: url(fonts/pokemon.woff2);
 }
 
+.hover\:w-\[100px\]:hover {
+  width: 100px;
+}
+
 .hover\:cursor-pointer:hover {
   cursor: pointer;
 }
@@ -951,6 +997,11 @@ video {
 .hover\:bg-indigo-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(99 102 241 / var(--tw-bg-opacity));
+}
+
+.hover\:px-0:hover {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .hover\:text-white:hover {

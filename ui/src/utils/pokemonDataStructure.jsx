@@ -292,7 +292,6 @@ class BoxPokemon {
 
   _readShort(offset) {
     const shortBits = this._buffer.slice(offset, offset + 2);
-    console.log('shortBits = ', shortBits);
     const [value] = new Uint16Array(shortBits);
 
     return value;
@@ -307,17 +306,15 @@ class BoxPokemon {
 
   getLevel() {
     const offset = 0x54;
-    console.log('buffer = ', this._buffer);
     return this._readShort(offset);
   }
 
   getSpeciesId() {
     const speciesOffset = this._offsetMap['data_section_growth'];
-    const species = this._readShort(speciesOffset) ^ (
-      this._encryptionKey & 0xffff0000
-    );
+    const encryptedSpecies = this._readShort(speciesOffset);
+    const species = encryptedSpecies ^ (this._encryptionKey & 0x0000FFFF);
 
-    return species;
+    return species + 1;
   }
 
   getEffortValues() {
@@ -325,7 +322,7 @@ class BoxPokemon {
     const effortValueBits = this._buffer
       .slice(evOffset, evOffset + 0x6)
       .map((b, i) => {
-        const keyBit = (this._encryptionKey >> (i % 4)) & 0xff;
+        const keyBit = (this._encryptionKey >> ((i % 4) * 8)) & 0xff;
         return keyBit ^ b;
       });
 

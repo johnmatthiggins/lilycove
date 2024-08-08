@@ -87,7 +87,7 @@ function GameInfo({ bits }) {
     const firstPokemonOffset = firstBoxOffset + 0x4;
     const boxPokemonSize = 0x50;
 
-    const pokemonBuffer = bits().slice(firstPokemonOffset, firstPokemonOffset + 20 * boxPokemonSize);
+    const pokemonBuffer = bits().slice(firstPokemonOffset, firstPokemonOffset + (40 * boxPokemonSize));
     const pokemon = [];
 
     for (let i = 0; i < 20; i += 1) {
@@ -129,10 +129,6 @@ function GameInfo({ bits }) {
     }
     return 'Switch';
   };
-  boxPokemon().map((p) => {
-    console.log('species id = ', p.getSpeciesId());
-    console.log('evs = ', p.getEffortValues());
-  });
 
   return (
     <div>
@@ -148,11 +144,13 @@ function GameInfo({ bits }) {
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
       <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
       <h3 class="text-3xl">Pokemon</h3>
-      <div style={{ display: 'flex' }}>
+      <div class="flex gap-1">
         {boxPokemon().map((p) => {
           const id = String(p.getSpeciesId()).padStart(3, '0');
           return (
-            <img class="sharp-pixels" src={`/pokemon_images/${id}.png`} />
+            <div class="min-w-[100px] rounded-md border border-solid border-slate-200">
+              <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/${id}.png`} />
+            </div>
           );
         })}
       </div>
