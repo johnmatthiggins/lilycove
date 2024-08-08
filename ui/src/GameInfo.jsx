@@ -87,16 +87,18 @@ function GameInfo({ bits }) {
     const firstPokemonOffset = firstBoxOffset + 0x4;
     const boxPokemonSize = 0x50;
 
-    const pokemonBuffer = bits().slice(firstPokemonOffset, 420 * boxPokemonSize);
+    const pokemonBuffer = bits().slice(firstPokemonOffset, firstPokemonOffset + 20 * boxPokemonSize);
     const pokemon = [];
 
-    for (let i = 0; i < 420; i += 1) {
+    for (let i = 0; i < 20; i += 1) {
       const offset = i * 0x50;
-      const newPokemon = new BoxPokemon(
-        pokemonBuffer.slice(offset, offset + boxPokemonSize)
-      );
+      const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
 
-      pokemon.push(newPokemon);
+      // if it's not all zeroes then try processing it...
+      if (newPokemonBits.some((b) => b > 0)) {
+        const newPokemon = new BoxPokemon(newPokemonBits);
+        pokemon.push(newPokemon);
+      }
     }
 
     return pokemon;
@@ -127,7 +129,10 @@ function GameInfo({ bits }) {
     }
     return 'Switch';
   };
-  console.log(boxPokemon().map((p) => p.getSpeciesId()));
+  boxPokemon().map((p) => {
+    console.log('species id = ', p.getSpeciesId());
+    console.log('evs = ', p.getEffortValues());
+  });
 
   return (
     <div>

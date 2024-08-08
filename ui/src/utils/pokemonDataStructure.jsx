@@ -199,7 +199,7 @@ function _getDataSectionOffsets(
 
 function _buildBoxPokemonOffsetMap(buffer) {
   const personalityBits = buffer.slice(0x0, 0x4);
-  const personalityValue = new Uint32Array(personalityBits)[0];
+  const personalityValue = new Uint32Array(personalityBits)[0] % 24;
 
   const dataOffset = 0x20;
 
@@ -227,12 +227,13 @@ function _buildBoxPokemonOffsetMap(buffer) {
 
 class BoxPokemon {
   constructor(buffer) {
-    this._buffer = buffer;
-    this._offsetMap = _buildBoxPokemonOffsetMap(buffer);
+    this._buffer = [...buffer];
+    this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
 
     const personalityValue = this._readInt32(0);
     const otId = this._readInt32(0x4);
     const encryptionKey = personalityValue ^ otId;
+
     this._encryptionKey = encryptionKey;
   }
 
@@ -290,8 +291,9 @@ class BoxPokemon {
   }
 
   _readShort(offset) {
-    const [value] =
-      new Uint16Array(this._buffer.slice(offset, offset + 2));
+    const shortBits = this._buffer.slice(offset, offset + 2);
+    console.log('shortBits = ', shortBits);
+    const [value] = new Uint16Array(shortBits);
 
     return value;
   }
@@ -305,14 +307,37 @@ class BoxPokemon {
 
   getLevel() {
     const offset = 0x54;
+    console.log('buffer = ', this._buffer);
     return this._readShort(offset);
   }
 
   getSpeciesId() {
     const speciesOffset = this._offsetMap['data_section_growth'];
-    const species = this._readShort(speciesOffset);
+    const species = this._readShort(speciesOffset) ^ (
+      this._encryptionKey & 0xffff0000
+    );
 
     return species;
+  }
+
+  getEffortValues() {
+    const evOffset = this._offsetMap['data_section_condition'];
+    const effortValueBits = this._buffer
+      .slice(evOffset, evOffset + 0x6)
+      .map((b, i) => {
+        const keyBit = (this._encryptionKey >> (i % 4)) & 0xff;
+        return keyBit ^ b;
+      });
+
+    const [hpEv, atkEv, defEv, spdEv, spAtkEv, spDefEv] = effortValueBits;
+    return {
+      "HP": hpEv,
+      "Attack": atkEv,
+      "Defense": defEv,
+      "Speed": spdEv,
+      "Special Attack": spAtkEv,
+      "Special Defense": spDefEv,
+    };
   }
 
   serialize() {
