@@ -87,16 +87,17 @@ function GameInfo({ bits }) {
     const firstPokemonOffset = firstBoxOffset + 0x4;
     const boxPokemonSize = 0x50;
 
-    const pokemonBuffer = bits().slice(firstPokemonOffset, firstPokemonOffset + (40 * boxPokemonSize));
+    const pokemonBuffer = bits();
     const pokemon = [];
 
     for (let i = 0; i < 20; i += 1) {
-      const offset = i * 0x50;
+      const offset = firstPokemonOffset + i * boxPokemonSize;
+      console.log('offset = ', offset);
       const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
+      const newPokemon = new BoxPokemon(newPokemonBits);
 
       // if it's not all zeroes then try processing it...
-      if (newPokemonBits.some((b) => b > 0)) {
-        const newPokemon = new BoxPokemon(newPokemonBits);
+      if (newPokemon.hasSpecies()) {
         pokemon.push(newPokemon);
       }
     }
@@ -144,12 +145,13 @@ function GameInfo({ bits }) {
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
       <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
       <h3 class="text-3xl">Pokemon</h3>
-      <div class="flex gap-1">
+      <div class="flex gap-1 flex-wrap">
         {boxPokemon().map((p) => {
           const id = String(p.getSpeciesId()).padStart(3, '0');
           return (
-            <div class="min-w-[100px] rounded-md border border-solid border-slate-200">
+            <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
               <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/${id}.png`} />
+              <p class="text-center">{p.getName()}</p>
             </div>
           );
         })}

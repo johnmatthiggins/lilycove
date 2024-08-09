@@ -275,6 +275,12 @@ class BoxPokemon {
     );
   }
 
+  hasSpecies() {
+    const hasSpeciesByteOffset = 0x13;
+    const bit = this._buffer[hasSpeciesByteOffset] & 0x2;
+    return bit > 0;
+  }
+
   getOTId() {
     const otIdOffset = 0x4;
     const otId = new Uint32Array(buffer.slice(otIdOffset, otIdOffset + 2))[0];

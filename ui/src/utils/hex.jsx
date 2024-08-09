@@ -36,11 +36,11 @@ function convertPokemonCharToASCII(pokemonChar) {
   if (pokemonChar >= PKMN_UPPER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A) {
     const charCode = ASCII_UPPER_CASE_A + (pokemonChar - PKMN_UPPER_CASE_A);
     return String.fromCharCode(charCode);
-  } else if (pokemonChar >= PKMN_LOWER_CASE_A && pokemonChar < PKMN_LEFT_ARROW) {
+  } else if (pokemonChar >= PKMN_LOWER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A + 26) {
     const charCode = ASCII_LOWER_CASE_A + (pokemonChar - PKMN_LOWER_CASE_A);
     return String.fromCharCode(charCode);
-  } else if (pokemonChar >= PKMN_ZERO && pokemonChar < PKMN_BANG) {
-    const charCode = ASCII_ZERO + (pokemonChar - PKMN_BANG);
+  } else if (pokemonChar >= PKMN_ZERO && pokemonChar < PKMN_ZERO + 10) {
+    const charCode = ASCII_ZERO + (pokemonChar - PKMN_ZERO);
     return String.fromCharCode(charCode);
   } else {
     return ' ';
@@ -48,6 +48,7 @@ function convertPokemonCharToASCII(pokemonChar) {
 }
 
 function convertPokemonStrToASCII(pokemonByteStr) {
+  console.log(pokemonByteStr.map((b) => b.toString(16)));
   return pokemonByteStr
     .map((byte) => convertPokemonCharToASCII(byte))
     .join("");
