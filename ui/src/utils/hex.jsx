@@ -48,7 +48,6 @@ function convertPokemonCharToASCII(pokemonChar) {
 }
 
 function convertPokemonStrToASCII(pokemonByteStr) {
-  console.log(pokemonByteStr.map((b) => b.toString(16)));
   return pokemonByteStr
     .map((byte) => convertPokemonCharToASCII(byte))
     .join("");

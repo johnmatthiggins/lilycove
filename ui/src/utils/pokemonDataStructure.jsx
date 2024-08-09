@@ -229,12 +229,18 @@ class BoxPokemon {
   constructor(buffer) {
     this._buffer = buffer;
     this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
+  }
 
-    const personalityValue = this._readInt32(0);
-    const otId = this._readInt32(0x4);
-    const encryptionKey = personalityValue ^ otId;
+  _getEncryptionKey() {
+    const personalityValue = this._buffer.slice(0, 4);
+    const otId = this._buffer.slice(0x4, 0x8);
+    const encryptionKey = Array(4).map((_) => 0);
 
-    this._encryptionKey = encryptionKey;
+    for (let i = 0; i < encryptionKey.length; i += 1) {
+      encryptionKey[i] = personalityValue[i] ^ otId[i];
+    }
+
+    return encryptionKey;
   }
 
   getLanguage() {
@@ -320,8 +326,16 @@ class BoxPokemon {
 
   getSpeciesId() {
     const speciesOffset = this._offsetMap['data_section_growth'];
-    const encryptedSpecies = this._readShort(speciesOffset);
-    const species = encryptedSpecies ^ (this._encryptionKey & 0x0000FFFF);
+    const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2).reverse();
+    const encryptedSpecies = e1 | e0 << 8;
+    const fullKey = this._getEncryptionKey().reverse();
+    const [b0, b1] = fullKey;
+    const halfKey = b1 | b0 << 8;
+
+    const species = encryptedSpecies ^ halfKey;
+    if (species > 251) {
+      return species + 25;
+    }
 
     return species;
   }
