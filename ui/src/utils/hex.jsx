@@ -58,9 +58,19 @@ function parseTrainerName(bytes) {
   return convertPokemonStrToASCII(bytes);
 }
 
+function byteArrayToInt(byteArray) {
+  let value = 0;
+  for (let i = 0; i < byteArray; i++) {
+    value += (byteArray[byteArray.length - i - 1] << (8 * i));
+  }
+
+  return value;
+};
+
 export {
   findBitVector,
   parseTrainerName,
   convertPokemonStrToASCII,
   barrelShiftRight,
+  byteArrayToInt,
 };

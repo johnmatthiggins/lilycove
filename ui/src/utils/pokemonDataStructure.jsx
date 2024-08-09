@@ -1,4 +1,4 @@
-import { convertPokemonStrToASCII } from './hex.jsx';
+import { byteArrayToInt, convertPokemonStrToASCII } from './hex.jsx';
 
 function _padZeros(buffer, desiredLength) {
   const paddingLength = desiredLength - buffer.length;
@@ -49,8 +49,8 @@ function _getDataSectionOffsets(
       return {
         "data_section_growth": 0,
         "data_section_condition": 12,
-        "data_section_attacks": 24,
-        "data_section_misc": 36,
+        "data_section_misc": 24,
+        "data_section_attacks": 36,
       };
     case 4:
       return {
@@ -96,9 +96,9 @@ function _getDataSectionOffsets(
       };
     case 10:
       return {
-        "data_section_growth": 0,
-        "data_section_misc": 12,
-        "data_section_attacks": 24,
+        "data_section_attacks": 0,
+        "data_section_growth": 12,
+        "data_section_misc": 24,
         "data_section_condition": 36,
       };
     case 11:
@@ -227,7 +227,7 @@ function _buildBoxPokemonOffsetMap(buffer) {
 
 class BoxPokemon {
   constructor(buffer) {
-    this._buffer = [...buffer];
+    this._buffer = buffer;
     this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
 
     const personalityValue = this._readInt32(0);
@@ -298,14 +298,17 @@ class BoxPokemon {
 
   _readShort(offset) {
     const shortBits = this._buffer.slice(offset, offset + 2);
-    const [value] = new Uint16Array(shortBits);
+    const [b0, b1] = shortBits;
+    const value = b0 | (b1 << 8);
 
     return value;
   }
 
   _readInt32(offset) {
-    const [value] =
-      new Uint32Array(this._buffer.slice(offset, offset + 4));
+    const bits = this._buffer.slice(offset, offset + 4);
+    const [b0, b1, b2, b3] = bits;
+    const value = (b0 << 0) | (b1 << 8) | (b2 << 16) | (b3 << 24);
+    console.log(value.toString(16));
 
     return value;
   }
@@ -320,7 +323,7 @@ class BoxPokemon {
     const encryptedSpecies = this._readShort(speciesOffset);
     const species = encryptedSpecies ^ (this._encryptionKey & 0x0000FFFF);
 
-    return species + 1;
+    return species;
   }
 
   getEffortValues() {

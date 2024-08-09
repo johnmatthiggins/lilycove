@@ -90,9 +90,8 @@ function GameInfo({ bits }) {
     const pokemonBuffer = bits();
     const pokemon = [];
 
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < 200; i += 1) {
       const offset = firstPokemonOffset + i * boxPokemonSize;
-      console.log('offset = ', offset);
       const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
       const newPokemon = new BoxPokemon(newPokemonBits);
 
