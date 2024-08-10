@@ -5,18 +5,12 @@ function PokemonCard({ pokemon }) {
   const id = String(pokemon.getSpeciesId()).padStart(3, '0');
   const [open, setOpen] = createSignal(false);
 
-  const [position, setPosition] = createSignal({ left: 0, bottom: 0 });
-
   return (
     <div>
       <div
         ref={ref}
         class="min-w-1/8 rounded-md border border-solid border-slate-200"
-        onMouseEnter={() => {
-          const { bottom } = ref.getBoundingClientRect();
-          setPosition({ left: 0, bottom });
-          setOpen(true);
-        }}
+        onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
         <img class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition" src={`/pokemon_images/${id}.png`} />
@@ -24,9 +18,8 @@ function PokemonCard({ pokemon }) {
       </div >
 
       <div
-        class="border border-solid border-slate-200 rounded-lg"
+        class="shadow-sm"
         style={{
-          "box-shadow": 1,
           background: 'white',
           display: open() ? 'block' : 'none',
           position: 'fixed',
@@ -44,7 +37,7 @@ function PokemonCard({ pokemon }) {
           </div>
           <div class="text-left">
             <h3 class="text-3xl font-bold">{pokemon.getName()}</h3>
-            <h3 class="text-3xl font-bold">Language: {pokemon.getLanguage()}</h3>
+            <h3 class="text-3xl font-bold">Nature: {pokemon.getNature()}</h3>
             <hr />
             <div class="flex flex-row gap-1">
               <div>

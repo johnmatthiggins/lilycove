@@ -1,12 +1,39 @@
 import { convertPokemonStrToASCII } from './hex.jsx';
 
+const NATURES = [
+  "Hardy",
+  "Lonely",
+  "Brave",
+  "Adamant",
+  "Naughty",
+  "Bold",
+  "Docile",
+  "Relaxed",
+  "Impish",
+  "Lax",
+  "Timid",
+  "Hasty",
+  "Serious",
+  "Jolly",
+  "Naive",
+  "Modest",
+  "Mild",
+  "Quiet",
+  "Bashful",
+  "Rash",
+  "Calm",
+  "Gentle",
+  "Sassy",
+  "Careful",
+  "Quirky",
+];
+
 function _getDataSectionOffsets(
   personalityValue
 ) {
   // personalityValue needs to be a big int
   // please don't ask me why
   const modValue = personalityValue % BigInt(24);
-  console.log('modValue = ', Number(modValue));
   switch (Number(modValue)) {
     case 0:
       return {
@@ -195,8 +222,6 @@ function _buildBoxPokemonOffsetMap(buffer) {
     ).map(([key, value]) => ([key, value + dataOffset]))
   );
 
-  console.log(dataSectionOffsets);
-
   const offsetMap = {
     "personality_value": 0x0,
     "ot_id": 0x04,
@@ -320,9 +345,12 @@ class BoxPokemon {
   }
 
   _getPersonalityValue() {
-    const personalityBits = this._buffer.slice(0x0, 0x4);
+    const personalityBits = this
+      ._buffer
+      .slice(0x0, 0x4)
+      .map((b) => BigInt(b));
     const [b0, b1, b2, b3] = personalityBits;
-    const personalityValue = b0 | b1 << 8 | b2 << 16 | b3 << 24;
+    const personalityValue = b0 | b1 << 8n | b2 << 16n | b3 << 24n;
 
     return personalityValue;
   }
@@ -338,6 +366,11 @@ class BoxPokemon {
     }
 
     return species;
+  }
+
+  getNature() {
+    const natureIndex = this._getPersonalityValue() % BigInt(NATURES.length);
+    return NATURES[natureIndex];
   }
 
   getEffortValues() {
