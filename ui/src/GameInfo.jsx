@@ -63,10 +63,12 @@ function GameInfo({ bits }) {
     return 'M';
   };
 
+  // Wow I managed to f up the bit alignment on this one...
   const trainerId = () => {
     const offset = trainerInfoOffset() + 0xA;
-    const idBits = bits().slice(offset, offset + 2).reverse();
-    const id = (idBits[0] << 8) | idBits[1];
+    const idBits = bits().slice(offset, offset + 2);
+    const [b0, b1] = idBits;
+    const id = (b1 << 8) | b0;
     return id;
   };
   const gameCode = () => getGameCode(trainerInfoOffset(), bits());
@@ -95,10 +97,7 @@ function GameInfo({ bits }) {
       const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
       const newPokemon = new BoxPokemon(newPokemonBits);
 
-      // if it's not all zeroes then try processing it...
-      if (newPokemon.hasSpecies()) {
-        pokemon.push(newPokemon);
-      }
+      pokemon.push(newPokemon);
     }
 
     return pokemon;
@@ -146,13 +145,21 @@ function GameInfo({ bits }) {
       <h3 class="text-3xl">Pokemon</h3>
       <div class="flex gap-1 flex-wrap">
         {boxPokemon().map((p) => {
-          const id = String(p.getSpeciesId()).padStart(3, '0');
+          if (p.hasSpecies()) {
+            const id = String(p.getSpeciesId()).padStart(3, '0');
+            return (
+              <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
+                <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/${id}.png`} />
+                <p class="text-center">{p.getName()}</p>
+              </div>
+            );
+          }
           return (
             <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
-              <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/${id}.png`} />
-              <p class="text-center">{p.getName()}</p>
+              <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/201.png`} />
+              <p class="text-center">[Empty Space]</p>
             </div>
-          );
+          )
         })}
       </div>
     </div>

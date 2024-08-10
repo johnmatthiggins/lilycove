@@ -23,7 +23,9 @@ function _getDataSectionOffsets(
   //   }
   // }
 
-  switch (personalityValue) {
+  // personalityValue needs to be a big int
+  const modValue = personalityValue % BigInt(24);
+  switch (Number(modValue)) {
     case 0:
       return {
         "data_section_growth": 0,
@@ -199,7 +201,11 @@ function _getDataSectionOffsets(
 
 function _buildBoxPokemonOffsetMap(buffer) {
   const personalityBits = buffer.slice(0x0, 0x4);
-  const personalityValue = new Uint32Array(personalityBits)[0] % 24;
+  const hexValue = personalityBits.map(
+    (b) => b.toString(16).padStart(2, '0')
+  ).join('');
+  const personalityValue = BigInt(`0x${hexValue}`);
+  console.log('personalityValue = ', personalityValue);
 
   const dataOffset = 0x20;
 
@@ -207,6 +213,8 @@ function _buildBoxPokemonOffsetMap(buffer) {
   const dataSectionOffsets = Object.fromEntries(Object.entries(
     _getDataSectionOffsets(personalityValue)
   ).map(([key, value]) => ([key, value + dataOffset])));
+
+  console.log(dataSectionOffsets);
 
   const offsetMap = {
     "personality_value": 0x0,
@@ -232,13 +240,9 @@ class BoxPokemon {
   }
 
   _getEncryptionKey() {
-    const personalityValue = this._buffer.slice(0, 4);
-    const otId = this._buffer.slice(0x4, 0x8);
-    const encryptionKey = Array(4).map((_) => 0);
-
-    for (let i = 0; i < encryptionKey.length; i += 1) {
-      encryptionKey[i] = personalityValue[i] ^ otId[i];
-    }
+    const encryptionKey = [0, 0, 0, 0].map(
+      (_, i) => this._buffer[i] ^ this._buffer[i + 4]
+    );
 
     return encryptionKey;
   }
@@ -289,7 +293,8 @@ class BoxPokemon {
 
   getOTId() {
     const otIdOffset = 0x4;
-    const otId = new Uint32Array(buffer.slice(otIdOffset, otIdOffset + 2))[0];
+    const [b0, b1] = buffer.slice(otIdOffset, otIdOffset + 2);
+    const otId = b0 | b1 << 8;
 
     return otId;
   }
@@ -314,7 +319,6 @@ class BoxPokemon {
     const bits = this._buffer.slice(offset, offset + 4);
     const [b0, b1, b2, b3] = bits;
     const value = (b0 << 0) | (b1 << 8) | (b2 << 16) | (b3 << 24);
-    console.log(value.toString(16));
 
     return value;
   }
@@ -324,18 +328,30 @@ class BoxPokemon {
     return this._readShort(offset);
   }
 
+  _getPersonalityValue() {
+    const personalityBits = this._buffer.slice(0x0, 0x4);
+    const [b0, b1, b2, b3] = personalityBits;
+    const personalityValue = b0 | b1 << 8 | b2 << 16 | b3 << 24;
+
+    return personalityValue;
+  }
+
   getSpeciesId() {
     const speciesOffset = this._offsetMap['data_section_growth'];
-    const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2).reverse();
-    const encryptedSpecies = e1 | e0 << 8;
-    const fullKey = this._getEncryptionKey().reverse();
+    console.log('personalityValue = ', this._getPersonalityValue().toString(16));
+
+    const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2);
+    const encryptedSpecies = e1 << 8 | e0;
+
+    const fullKey = this._getEncryptionKey();
+    console.log('key = ', fullKey.map((b) => b.toString(16).padStart(2, '0')));
     const [b0, b1] = fullKey;
-    const halfKey = b1 | b0 << 8;
+    const halfKey = b1 << 8 | b0;
 
     const species = encryptedSpecies ^ halfKey;
-    if (species > 251) {
-      return species + 25;
-    }
+    // if (species > 251) {
+    //   return species - 31;
+    // }
 
     return species;
   }
@@ -345,7 +361,7 @@ class BoxPokemon {
     const effortValueBits = this._buffer
       .slice(evOffset, evOffset + 0x6)
       .map((b, i) => {
-        const keyBit = (this._encryptionKey >> ((i % 4) * 8)) & 0xff;
+        const keyBit = (this._getEncryptionKey() >> ((i % 4) * 8)) & 0xff;
         return keyBit ^ b;
       });
 
