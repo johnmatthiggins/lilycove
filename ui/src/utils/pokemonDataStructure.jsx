@@ -3,17 +3,10 @@ import { convertPokemonStrToASCII } from './hex.jsx';
 function _getDataSectionOffsets(
   personalityValue
 ) {
-  // const encryptionKey = personalityValue ^ originalTrainerId;
-  // let unencryptedBuffer = new Array(DATA_SECTION_LENGTH).map((_) => 0x0);
-  //
-  // for (let i = 0; i < dataSectionBuffer; i += 4) {
-  //   for (let j = 0; j < 4; i += 1) {
-  //     unencryptedBuffer[i + j] = encryptionKey[j] ^ dataSectionBuffer[i + j];
-  //   }
-  // }
-
   // personalityValue needs to be a big int
+  // please don't ask me why
   const modValue = personalityValue % BigInt(24);
+  console.log('modValue = ', Number(modValue));
   switch (Number(modValue)) {
     case 0:
       return {
@@ -189,19 +182,18 @@ function _getDataSectionOffsets(
 }
 
 function _buildBoxPokemonOffsetMap(buffer) {
-  const personalityBits = buffer.slice(0x0, 0x4);
-  const hexValue = personalityBits.map(
-    (b) => b.toString(16).padStart(2, '0')
-  ).join('');
-  const personalityValue = BigInt(`0x${hexValue}`);
-  console.log('personalityValue = ', personalityValue);
+  const personalityBits = buffer.slice(0x0, 0x4).map((b) => BigInt(b));
+  const [b0, b1, b2, b3] = personalityBits;
+  const personalityValue = b0 | (b1 << 8n) | (b2 << 16n) | (b3 << 24n);
 
   const dataOffset = 0x20;
 
   // add 0x20 to all the offsets found here...
-  const dataSectionOffsets = Object.fromEntries(Object.entries(
-    _getDataSectionOffsets(personalityValue)
-  ).map(([key, value]) => ([key, value + dataOffset])));
+  const dataSectionOffsets = Object.fromEntries(
+    Object.entries(
+      _getDataSectionOffsets(personalityValue)
+    ).map(([key, value]) => ([key, value + dataOffset]))
+  );
 
   console.log(dataSectionOffsets);
 
@@ -226,6 +218,8 @@ class BoxPokemon {
   constructor(buffer) {
     this._buffer = buffer;
     this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
+
+    this._decryptDataSection();
   }
 
   _getEncryptionKey() {
@@ -234,6 +228,14 @@ class BoxPokemon {
     );
 
     return encryptionKey;
+  }
+
+  _decryptDataSection() {
+    const key = this._getEncryptionKey();
+    const dataSectionOffset = this._offsetMap['data'];
+    for (let i = 0; i < 48; i += 1) {
+      this._buffer[dataSectionOffset + i] ^= key[i % key.length];
+    }
   }
 
   getLanguage() {
@@ -327,17 +329,11 @@ class BoxPokemon {
 
   getSpeciesId() {
     const speciesOffset = this._offsetMap['data_section_growth'];
-    console.log('personalityValue = ', this._getPersonalityValue().toString(16));
 
     const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2);
-    const encryptedSpecies = e1 << 8 | e0;
+    const species = e1 << 8 | e0;
+    console.log(species);
 
-    const fullKey = this._getEncryptionKey();
-    console.log('key = ', fullKey.map((b) => b.toString(16).padStart(2, '0')));
-    const [b0, b1] = fullKey;
-    const halfKey = b1 << 8 | b0;
-
-    const species = encryptedSpecies ^ halfKey;
     // if (species > 251) {
     //   return species - 31;
     // }
@@ -348,11 +344,7 @@ class BoxPokemon {
   getEffortValues() {
     const evOffset = this._offsetMap['data_section_condition'];
     const effortValueBits = this._buffer
-      .slice(evOffset, evOffset + 0x6)
-      .map((b, i) => {
-        const keyBit = (this._getEncryptionKey() >> ((i % 4) * 8)) & 0xff;
-        return keyBit ^ b;
-      });
+      .slice(evOffset, evOffset + 0x6);
 
     const [hpEv, atkEv, defEv, spdEv, spAtkEv, spDefEv] = effortValueBits;
     return {
