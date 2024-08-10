@@ -3,6 +3,8 @@ import { createMemo } from 'solid-js';
 import { findSectionAddresses } from './utils/save.jsx';
 
 import GamePicture from './GamePicture';
+import PokemonCard from './PokemonCard.jsx';
+
 import { convertPokemonStrToASCII } from './utils/hex.jsx';
 import { BoxPokemon } from './utils/pokemonDataStructure.jsx';
 
@@ -142,21 +144,15 @@ function GameInfo({ bits }) {
       <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
       <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
-      <h3 class="text-3xl">Pokemon</h3>
+      <h3 class="text-3xl font-bold">Pokemon</h3>
       <div class="flex gap-1 flex-wrap">
         {boxPokemon().map((p) => {
           if (p.hasSpecies()) {
-            const id = String(p.getSpeciesId()).padStart(3, '0');
-            return (
-              <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
-                <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/${id}.png`} />
-                <p class="text-center">{p.getName()}</p>
-              </div>
-            );
+            return <PokemonCard pokemon={p} />;
           }
           return (
             <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
-              <img class="sharp-pixels hover:cursor-pointer w-[90px] p-[5px] hover:px-0 hover:w-[100px] transition" src={`/pokemon_images/201.png`} />
+              <img class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition" src={`/pokemon_images/201.png`} />
               <p class="text-center">[Empty Space]</p>
             </div>
           )

@@ -332,11 +332,10 @@ class BoxPokemon {
 
     const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2);
     const species = e1 << 8 | e0;
-    console.log(species);
 
-    // if (species > 251) {
-    //   return species - 31;
-    // }
+    if (species > 251) {
+      return species - 25;
+    }
 
     return species;
   }
@@ -354,6 +353,31 @@ class BoxPokemon {
       "Speed": spdEv,
       "Special Attack": spAtkEv,
       "Special Defense": spDefEv,
+    };
+  }
+
+  getIndividualValues() {
+    // bit mask that extracts first thirty bits
+    const firstFiveBits = 31n;
+    const ivOffset = this._offsetMap['data_section_misc'] + 0x4;
+    const [b0, b1, b2, b3] = this._buffer
+      .slice(ivOffset, ivOffset + 0x4).map((b) => BigInt(b));
+
+    const word = b0 | b1 << 8n | b2 << 16n | b3 << 24n;
+    const hpIv = word & firstFiveBits;
+    const attackIv = (word >> 5n) & firstFiveBits;
+    const defenseIv = (word >> 10n) & firstFiveBits;
+    const speedIv = (word >> 15n) & firstFiveBits;
+    const sAttackIv = (word >> 20n) & firstFiveBits;
+    const sDefenseIv = (word >> 25n) & firstFiveBits;
+
+    return {
+      "hp": Number(hpIv),
+      "attack": Number(attackIv),
+      "defense": Number(defenseIv),
+      "speed": Number(speedIv),
+      "specialAttack": Number(sAttackIv),
+      "specialDefense": Number(sDefenseIv),
     };
   }
 
