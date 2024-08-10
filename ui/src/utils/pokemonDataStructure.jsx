@@ -1,15 +1,4 @@
-import { byteArrayToInt, convertPokemonStrToASCII } from './hex.jsx';
-
-function _padZeros(buffer, desiredLength) {
-  const paddingLength = desiredLength - buffer.length;
-  const padding = new Array(paddingLength).map((_) => 0);
-
-  return buffer.concat(padding);
-}
-
-// length in bytes of the data section
-// of the pokemon data structure
-const DATA_SECTION_LENGTH = 48;
+import { convertPokemonStrToASCII } from './hex.jsx';
 
 function _getDataSectionOffsets(
   personalityValue
