@@ -2,10 +2,30 @@
 import httpx
 import pandas as pd
 
-URL = 'https://bulbapedia.bulbagarden.net/wiki/List_of_moves'
+MOVE_TYPES = [
+    'bug',
+    'dark',
+    'dragon',
+    'electric',
+    'fighting',
+    'fire',
+    'flying',
+    'ghost',
+    'grass',
+    'ground',
+    'ice',
+    'normal',
+    'poison',
+    'psychic',
+    'rock',
+    'steel',
+    'water',
+]
+
+BASE_URL = 'https://www.serebii.net/attackdex/'
 
 def main():
-    response = httpx.get(URL)
+    response = httpx.get(BASE_URL)
     html = response.text
     df = pd.read_html(io=html)[0].dropna()
     df = df[df.iloc[:, 7].str.match('^(I|II|III)$')].set_axis(
