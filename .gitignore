@@ -5,4 +5,4 @@ static/images/
 .DS_Store
 db.sqlite3
 
-ui/public/pokemon_images/*
+ui/public/pokemon-images/*
