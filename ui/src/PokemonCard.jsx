@@ -13,9 +13,9 @@ function PokemonCard({ pokemon }) {
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
-        <img class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition" src={`/pokemon_images/${id}.png`} />
+        <img class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition" src={`/pokemon-images/${id}.png`} />
         <p class="text-center">{pokemon.getName()}</p>
-      </div >
+      </div>
 
       <div
         class="shadow-sm"
@@ -32,7 +32,7 @@ function PokemonCard({ pokemon }) {
           <div class="flex items-start">
             <img
               class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
-              src={`/pokemon_images/${id}.png`}
+              src={`/pokemon-images/${id}.png`}
             />
           </div>
           <div class="text-left">

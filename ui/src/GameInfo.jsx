@@ -34,8 +34,13 @@ function convertPokemonCharToASCII(pokemonChar) {
 
 function getGameCode(saveOffset, bits) {
   const gameCodePosition = saveOffset + 0xAC;
-  const bytes = bits.slice(gameCodePosition, gameCodePosition + 4);
-  return new Uint32Array(bytes)[0];
+  const bytes = bits
+    .slice(gameCodePosition, gameCodePosition + 4)
+    .map((b) => BigInt(b));
+  const [b0, b1, b2, b3] = bytes;
+  const code = b0 | b1 >> 8n | b2 >> 16n | b3 >> 24n;
+
+  return code;
 }
 
 function getInGameTime(saveOffset, bits) {
@@ -91,18 +96,59 @@ function GameInfo({ bits }) {
     const firstPokemonOffset = firstBoxOffset + 0x4;
     const boxPokemonSize = 0x50;
 
+    const boxOffsets = [
+      firstPokemonOffset,
+      sectionOffsets()['pc_buffer_B'],
+      sectionOffsets()['pc_buffer_C'],
+      sectionOffsets()['pc_buffer_D'],
+      sectionOffsets()['pc_buffer_E'],
+      sectionOffsets()['pc_buffer_F'],
+      sectionOffsets()['pc_buffer_G'],
+      sectionOffsets()['pc_buffer_H'],
+      sectionOffsets()['pc_buffer_I'],
+    ];
+
+    console.log('boxOffsets =', boxOffsets);
+
     const pokemonBuffer = bits();
     const pokemon = [];
 
-    for (let i = 0; i < 200; i += 1) {
-      const offset = firstPokemonOffset + i * boxPokemonSize;
-      const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
-      const newPokemon = new BoxPokemon(newPokemonBits);
+    for (let i = 0; i < boxOffsets.length; i += 1) {
+      pokemon.push([]);
+      for (let j = 0; j < 30; j += 1) {
+        const offset = boxOffsets[i] + j * boxPokemonSize;
+        const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
+        const newPokemon = new BoxPokemon(newPokemonBits);
 
-      pokemon.push(newPokemon);
+        pokemon[i].push(newPokemon);
+      }
     }
 
     return pokemon;
+  };
+
+  const partyPokemon = () => {
+    const teamSectionOffset = sectionOffsets()['team_and_items'];
+    const code = getGameCode(trainerInfoOffset(), bits());
+
+    let firstPokemonOffset;
+    if (code === 0x1) {
+      firstPokemonOffset = teamSectionOffset + 0x038;
+    } else {
+      firstPokemonOffset = teamSectionOffset + 0x238;
+    }
+    const partyPokemon = [];
+
+    for (let i = 0; i < 6; i += 1) {
+      const start = firstPokemonOffset + i * 100;
+      const end = firstPokemonOffset + (i + 1) * 100;
+
+      const pokemon = new BoxPokemon(bits().slice(start, end));
+
+      partyPokemon.push(pokemon)
+    }
+
+    return partyPokemon;
   };
 
   const textSpeed = () => {
@@ -144,19 +190,26 @@ function GameInfo({ bits }) {
       <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
       <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
       <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
-      <h3 class="text-3xl font-bold">Pokemon</h3>
+      <section>
+        <h3 class="text-3xl font-bold">Party</h3>
+        {partyPokemon().map((p) => <PokemonCard pokemon={p} />)}
+      </section>
+      <h3 class="text-3xl font-bold">PC Box 1</h3>
       <div class="flex gap-1 flex-wrap">
-        {boxPokemon().map((p) => {
+        {boxPokemon().map((box) => box.map((p) => {
           if (p.hasSpecies()) {
             return <PokemonCard pokemon={p} />;
           }
           return (
             <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
-              <img class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition" src={`/pokemon_images/201.png`} />
+              <img
+                class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
+                src={`/pokemon_images/201.png`}
+              />
               <p class="text-center">[Empty Space]</p>
             </div>
           )
-        })}
+        }))}
       </div>
     </div>
   );
