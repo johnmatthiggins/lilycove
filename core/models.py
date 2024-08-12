@@ -9,6 +9,9 @@ class Move(models.Model):
     accuracy = models.IntegerField()
     move_type = models.CharField(max_length=127)
 
+    def __str__(self):
+        return f'{{ "name": "{self.name}", "effect": "{self.effect}", "pp": {self.pp}, "power": "{self.power}", "accuracy": "{self.accuracy}", "move_type": "{self.move_type}" }}'
+
 
 # TODO: add abilities...
 class Species(models.Model):
@@ -28,6 +31,7 @@ class Species(models.Model):
     special_attack = models.IntegerField()
     special_defense = models.IntegerField()
 
-class Items(models.Model):
-    id = models.IntegerField()
+
+class Item(models.Model):
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=127)
