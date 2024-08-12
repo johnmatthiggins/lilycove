@@ -71,6 +71,11 @@ class Command(BaseCommand):
 
     def _load_moves(self):
         base_url = "https://www.serebii.net/attackdex/%s.shtml"
+        
+        # fetch bulbapedia list of moves to get indexes...
+        # combine name and convert it to lower case to compare
+        # and avoid issues with names like dynamicpunch
+
         for move_type in MOVE_TYPES:
             response = httpx.get(base_url % move_type)
 
