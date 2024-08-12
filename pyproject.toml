@@ -12,6 +12,7 @@ beautifulsoup4 = "^4.12.3"
 django = "^5.0.7"
 pandas = "^2.2.2"
 lxml = "^5.2.2"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
