@@ -27,3 +27,7 @@ class Species(models.Model):
     speed = models.IntegerField()
     special_attack = models.IntegerField()
     special_defense = models.IntegerField()
+
+class Items(models.Model):
+    id = models.IntegerField()
+    name = models.CharField(max_length=127)
