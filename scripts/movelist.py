@@ -35,10 +35,6 @@ def main():
         move_table = tables[1].drop([0], axis=0)
         move_table.columns = ['name', 'type', 'PP', 'power', 'accuracy', 'effect', 'contest_type']
         print(move_table)
-        # df = df[df.iloc[:, 7].str.match('^(I|II|III)$')].set_axis(
-        #     ['move_id', 'name', 'type', 'category', 'pp', 'power', 'accuracy', 'gen'],
-        #     axis=1,
-        # )
 
 if __name__ == '__main__':
     main()
