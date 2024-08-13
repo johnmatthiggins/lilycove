@@ -136,12 +136,20 @@ class Command(BaseCommand):
             moves = move_table.apply(lambda r: build_move(r, move_pairings), axis=1)
             new_moves += list(moves)
 
-        print(new_moves)
+        print('inserting new moves => ', new_moves)
 
         # insert them into the database
-        # Move.objects.bulk_create(new_moves)
+        Move.objects.bulk_create(new_moves)
 
     def handle(self, *args, **options):
-        # self._load_items()
+        print('LOADING ITEMS...')
+        self._load_items()
+        print('FINISHED LOADING ITEMS...')
+
+        print('LOADING MOVES...')
         self._load_moves()
+        print('FINISHED LOADING MOVES...')
+
+        print('LOADING SPECIES DATA...')
         self._load_species()
+        print('FINISHED LOADING SPECIES DATA...')
