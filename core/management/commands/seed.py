@@ -64,7 +64,7 @@ class Command(BaseCommand):
         )
 
         new_items = item_table.apply(
-            lambda r: (Item(id=int(r["id"]), name=r["desc"])),
+            lambda r: (Item(item_id=int(r["id"]), name=r["desc"])),
             axis=1,
         )
         Item.objects.bulk_create(list(new_items))
@@ -124,7 +124,7 @@ class Command(BaseCommand):
                         break
 
                 return Move(
-                    id=id,
+                    move_id=id,
                     name=row["name"],
                     effect=row["effect"],
                     move_type=move_type.upper(),
