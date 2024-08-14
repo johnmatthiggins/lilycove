@@ -45,13 +45,22 @@ class Command(BaseCommand):
         html = response.text
         pokemon_table = pd.read_html(io=StringIO(html), skiprows=1)[0]
         pokemon_table.columns = ['hex', 'dec', 'ms', 'name', 'type1', 'type2']
+        pokemon_table['name'] = pokemon_table['name'].apply(
+            lambda r: (str(r)
+                .replace(b'\xe2\x99\x80'.decode('utf8'), ' (F)')
+                .replace(b'\xe2\x99\x82'.decode('utf8'), ' (M)')
+                .strip()
+                .lower())
+        )
+
+        print('pokemon_table = ', pokemon_table['name'][:33])
 
         base_url = 'https://www.serebii.net/pokedex-rs/%s.shtml'
 
         new_pokemon = []
 
         # Bulbasaur to Deoxys
-        for i in range(1, 358 + 1):
+        for i in range(1, 386 + 1):
             pokedex_id = str(i).zfill(3)
             page_url = base_url % pokedex_id
 
@@ -59,26 +68,39 @@ class Command(BaseCommand):
             html = response.text
             soup = BeautifulSoup(html, 'html.parser')
             entry_name = soup.find(attrs={"size":"4"}).find('b').text
-            pokemon_name = entry_name.split(' ')[1]
-            matching_row = pokemon_table[pokemon_table['name'] == pokemon_name]
-            species_id = int(matching_row['dec'][0], 10)
+            pokemon_name = (entry_name
+                .strip()
+                .replace(f'#{pokedex_id} ', '')
+                .strip())
+            print('PROCESSING ', pokemon_name)
+            matching_row = pokemon_table[pokemon_table['name'] == pokemon_name.lower()]
+            species_id = int(matching_row['dec'].iloc[0], 10)
 
-            type1 = matching_row['type1'][0]
-            type2 = matching_row['type2'][0]
+            type1 = matching_row['type1'].iloc[0]
+            type2 = matching_row['type2'].iloc[0]
 
             table_html = soup.find('td', string="Base Stats").parent.parent
 
-            base_stats = pd.read_html(io=StringIO(str(table_html)))
-            print(base_stats)
-            input()
+            base_stats = pd.read_html(io=StringIO(str(table_html)), skiprows=2)[0]
+            base_stats.columns = ["description", "hp", "atk", "def", "satk", "sdef", "speed"]
 
             pokemon_species = Species(
                 name=pokemon_name,
                 species_id=species_id,
+                pokedex_id=i,
                 type1=type1,
                 type2=type2,
+                hp=int(base_stats['hp'].iloc[0]),
+                attack=int(base_stats['atk'].iloc[0]),
+                defense=int(base_stats['def'].iloc[0]),
+                speed=int(base_stats['speed'].iloc[0]),
+                special_attack=int(base_stats['satk'].iloc[0]),
+                special_defense=int(base_stats['sdef'].iloc[0]),
             )
+            print(pokemon_species)
             new_pokemon.append(pokemon_species)
+
+        return new_pokemon
 
     def _load_items(self):
         url = "https://bulbapedia.bulbagarden.net/wiki/List_of_items_by_index_number_in_Generation_III"
@@ -208,8 +230,6 @@ class Command(BaseCommand):
             entry_name = soup.find(attrs={"size":"4"}).find('b').text
             pokemon_name = entry_name.split(' ')[1]
             game_id = int(pokemon_table[pokemon_table['name'] == pokemon_name]['dec'][0], 10)
-            print(game_id)
-            input()
 
 
     def handle(self, *args, **options):
@@ -224,7 +244,8 @@ class Command(BaseCommand):
         # print('FINISHED LOADING MOVES...')
 
         print('LOADING SPECIES DATA...')
-        self._load_species()
+        pokemon = self._load_species()
+        Species.objects.bulk_create(pokemon)
         print('FINISHED LOADING SPECIES DATA...')
 
-        self._load_movesets([])
+        # self._load_movesets([])
