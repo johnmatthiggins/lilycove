@@ -1,12 +1,12 @@
 # from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.response import Http404
-from core.models import Move
+# from core.models import Move
 
 async def all_moves(_):
     movelist = []
-    async for move in Move.objects.all():
-        movelist.append(move)
+    # async for move in Move.objects.all():
+        # movelist.append(move)
 
     json_result = "[" + ",".join([str(move) for move in movelist]) + "]"
 

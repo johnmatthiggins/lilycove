@@ -10,6 +10,10 @@ class Move(models.Model):
     accuracy = models.IntegerField()
     move_type = models.CharField(max_length=127)
 
+    @property
+    def pk(self):
+        return self.move_id
+
     def to_json(self):
         return f'{{ "id": {self.move_id}, "name": "{self.name}", "effect": "{self.effect}", "pp": {self.pp}, "power": "{self.power}", "accuracy": "{self.accuracy}", "move_type": "{self.move_type}" }}'
 

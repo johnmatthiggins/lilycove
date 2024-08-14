@@ -1,7 +1,8 @@
-from django.core.management.base import BaseCommand
-from core.models import Move, Item, Species
-
+import time
 from io import StringIO
+
+from django.core.management.base import BaseCommand
+from core.models import Item, Species, Move
 
 from thefuzz import fuzz
 import httpx
@@ -185,9 +186,12 @@ class Command(BaseCommand):
                 key = row['name'].lower().replace(' ', '')
                 id = None
                 for pair in pairs:
-                    if fuzz.ratio(pair[0], key) > 90:
+                    if fuzz.ratio(pair[0], key) > 80:
                         id = pair[1]
                         break
+
+                if not id:
+                    print('no id for ', row['name'])
 
                 return Move(
                     move_id=id,
@@ -233,19 +237,25 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        # print('LOADING ITEMS...')
-        # items = self._load_items()
-        # Item.objects.bulk_create(items)
-        # print('FINISHED LOADING ITEMS...')
-        #
-        # print('LOADING MOVES...')
-        # moves = self._load_moves()
-        # Move.objects.bulk_create(moves)
-        # print('FINISHED LOADING MOVES...')
+        start = time.time()
+
+        print('LOADING ITEMS...')
+        items = self._load_items()
+        Item.objects.bulk_create(items)
+        print('FINISHED LOADING ITEMS...')
+
+        print('LOADING MOVES...')
+        moves = self._load_moves()
+        Move.objects.bulk_create(moves)
+        print('FINISHED LOADING MOVES...')
 
         print('LOADING SPECIES DATA...')
         pokemon = self._load_species()
         Species.objects.bulk_create(pokemon)
         print('FINISHED LOADING SPECIES DATA...')
+
+        end = time.time()
+
+        print('SEEDED DATABASE IN %s SECONDS...' %(str(end - start)))
 
         # self._load_movesets([])
