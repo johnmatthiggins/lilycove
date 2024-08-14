@@ -20,10 +20,9 @@ class Move(models.Model):
 # TODO: add abilities...
 class Species(models.Model):
     name = models.CharField(max_length=127)
-    speciesId = models.IntegerField(primary_key=True)
 
     # The ordinal position in the pokedex (Pikachu is #25)
-    pokedexId = models.IntegerField()
+    species_id = models.IntegerField(primary_key=True)
     type1 = models.CharField(max_length=127)
     type2 = models.CharField(max_length=127)
 
@@ -34,6 +33,8 @@ class Species(models.Model):
     speed = models.IntegerField()
     special_attack = models.IntegerField()
     special_defense = models.IntegerField()
+
+    move_pool = models.ManyToManyField(Move)
 
 
 class Item(models.Model):
