@@ -59,7 +59,7 @@ function PokemonType({ typeName }) {
   }
 
   return (
-    <div class="font-mono rounded-md shadow-sm w-32 py-1 text-center" style={{ "background-color": color }}>
+    <div class="font-mono font-bold rounded-full text-white shadow-sm w-32 py-1 text-center" style={{ "background-color": color }}>
       {typeName}
     </div>
   );

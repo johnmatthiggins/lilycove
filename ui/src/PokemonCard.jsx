@@ -50,8 +50,11 @@ function PokemonCard({ pokemon }) {
           src={imageURL()}
         />
       </div>
-      <p class="text-center">
+      <p class="text-center flex gap-1 flex-between">
         {pokemon.getName()}
+        <Show when={pokemon.isShiny()}>
+          <img width={10} src="/star.svg" class="shiny-star" />
+        </Show>
       </p>
 
       <div
@@ -81,7 +84,6 @@ function PokemonCard({ pokemon }) {
                 )
               })}
             </div>
-            <hr />
             <h3 class="text-3xl font-bold">Nature: {pokemon.getNature()}</h3>
             <div class="flex flex-row gap-1">
               <div>
