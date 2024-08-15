@@ -153,7 +153,9 @@ class Command(BaseCommand):
             "accuracy",
             "generation",
         ]
-        move_pairings = list(move_table.apply(lambda r: [r["name"].lower().replace(' ', ''), int(r["id"])], axis=1))
+        move_pairings = list(move_table.apply(
+            lambda r: [r["name"].lower().replace(' ', ''), int(r["id"])], axis=1)
+        )
 
         base_url = "https://www.serebii.net/attackdex/%s.shtml"
 
@@ -241,13 +243,13 @@ class Command(BaseCommand):
 
         print('LOADING ITEMS...')
         items = self._load_items()
-        Item.objects.bulk_create(items)
+        Item.objects.bulk_create(items, ignore_conflicts=True)
         print('FINISHED LOADING ITEMS...')
 
-        print('LOADING MOVES...')
-        moves = self._load_moves()
-        Move.objects.bulk_create(moves)
-        print('FINISHED LOADING MOVES...')
+        # print('LOADING MOVES...')
+        # moves = self._load_moves()
+        # Move.objects.bulk_create(moves)
+        # print('FINISHED LOADING MOVES...')
 
         print('LOADING SPECIES DATA...')
         pokemon = self._load_species()

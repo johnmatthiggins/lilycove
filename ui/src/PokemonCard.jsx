@@ -1,21 +1,58 @@
-import { createSignal } from 'solid-js';
+import { createMemo, createSignal, Show } from 'solid-js';
+
+import { itemList } from './ItemList';
+import { speciesList } from './PokemonList';
+
+import PokemonType from './PokemonType';
 
 function PokemonCard({ pokemon }) {
   let ref;
-  const id = String(pokemon.getSpeciesId()).padStart(3, '0');
+  const id = () => String(pokemon.getSpeciesId()).padStart(3, '0');
   const [open, setOpen] = createSignal(false);
 
+  const itemName = () => {
+    const item = itemList().find(({ id: itemId }) => pokemon.getItemCode() === Number(itemId));
+    if (item) {
+      return item.name;
+    }
+    return 'N/A';
+  };
+
+  const pokemonTypes = createMemo(() => {
+    const targetId = pokemon.getSpeciesId();
+    const species = speciesList().find(({ species_id }) => species_id === targetId);
+    if (!species) {
+      return ['???'];
+    }
+    if (species?.type1 === species?.type2) {
+      return [species?.type1];
+    }
+    return [species?.type1, species?.type2];
+  });
+
+  const imageURL = () => {
+    if (pokemon.isShiny()) {
+      return `/api/pokemon-images/${id()}s.png`;
+    }
+    return `/api/pokemon-images/${id()}.png`;
+  };
+
   return (
-    <div>
+    <div class="w-32">
       <div
         ref={ref}
-        class="min-w-1/8 rounded-md border border-solid border-slate-200"
+        class="min-w-1/8 rounded-md border border-solid border-slate-200 flex justify-center"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
-        <img class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition" src={`/pokemon-images/${id}.png`} />
-        <p class="text-center">{pokemon.getName()}</p>
+        <img
+          class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
+          src={imageURL()}
+        />
       </div>
+      <p class="text-center">
+        {pokemon.getName()}
+      </p>
 
       <div
         class="shadow-sm"
@@ -32,13 +69,20 @@ function PokemonCard({ pokemon }) {
           <div class="flex items-start">
             <img
               class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
-              src={`/pokemon-images/${id}.png`}
+              src={imageURL()}
             />
           </div>
           <div class="text-left">
             <h3 class="text-3xl font-bold">{pokemon.getName()}</h3>
-            <h3 class="text-3xl font-bold">Nature: {pokemon.getNature()}</h3>
+            <div class="flex gap-1">
+              {pokemonTypes().map((typeText) => {
+                return (
+                  <PokemonType typeName={typeText} />
+                )
+              })}
+            </div>
             <hr />
+            <h3 class="text-3xl font-bold">Nature: {pokemon.getNature()}</h3>
             <div class="flex flex-row gap-1">
               <div>
                 <h3 class="text-2xl font-bold">EVs</h3>
@@ -59,6 +103,8 @@ function PokemonCard({ pokemon }) {
                 <h3 class="text-xl">SpDef.: {pokemon.getIndividualValues().specialDefense}</h3>
               </div>
             </div>
+            <br />
+            <h3 class="text-xl">Item: {itemName()}</h3>
           </div>
         </div>
       </div>

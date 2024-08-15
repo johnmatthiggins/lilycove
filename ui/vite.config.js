@@ -13,8 +13,14 @@ export default defineConfig({
     solidPlugin(),
   ],
   server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
     port: 3000,
-    origin: 'http://127.0.0.1:3001',
   },
   build: {
     target: 'esnext',

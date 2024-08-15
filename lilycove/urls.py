@@ -18,10 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.views import all_moves, pokemon_moves
+from core.views import all_moves, all_pokemon, all_items, pokemon_moves, pokemon_sprite
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/moves/", all_moves),
-    path("api/moves/:species_id", pokemon_moves),
+    path("api/moves/<int:species_id>", pokemon_moves),
+    path("api/species/", all_pokemon),
+    path("api/items/", all_items),
+    path("api/pokemon-images/<str:species_id>", pokemon_sprite),
 ]

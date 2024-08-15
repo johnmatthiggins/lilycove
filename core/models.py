@@ -1,3 +1,4 @@
+import json
 from django.db import models
 
 
@@ -9,10 +10,6 @@ class Move(models.Model):
     power = models.IntegerField()
     accuracy = models.IntegerField()
     move_type = models.CharField(max_length=127)
-
-    @property
-    def pk(self):
-        return self.move_id
 
     def to_json(self):
         return f'{{ "id": {self.move_id}, "name": "{self.name}", "effect": "{self.effect}", "pp": {self.pp}, "power": "{self.power}", "accuracy": "{self.accuracy}", "move_type": "{self.move_type}" }}'
@@ -43,6 +40,25 @@ class Species(models.Model):
 
     def __str__(self):
         return f'{{ "name": "{self.name}", "species_id": {self.species_id}, "pokedex_id": {self.pokedex_id} }}'
+
+    def to_json(self):
+        fields = {
+            "name": self.name,
+            "species_id": self.species_id,
+            "pokedex_id": self.pokedex_id,
+            "type1": self.type1,
+            "type2": self.type2,
+            "stats": {
+                "hp": self.hp,
+                "attack": self.attack,
+                "defense": self.defense,
+                "speed": self.speed,
+                "special_attack": self.special_attack,
+                "special_defense": self.special_defense,
+            },
+        }
+
+        return json.dumps(fields)
 
 
 class Item(models.Model):

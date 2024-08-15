@@ -1,5 +1,6 @@
-import { createMemo } from 'solid-js';
+import { createMemo, createEffect } from 'solid-js';
 
+import { itemList } from './ItemList.jsx';
 import { findSectionAddresses } from './utils/save.jsx';
 
 import GamePicture from './GamePicture';
@@ -107,8 +108,6 @@ function GameInfo({ bits }) {
       sectionOffsets()['pc_buffer_H'],
       sectionOffsets()['pc_buffer_I'],
     ];
-
-    console.log('boxOffsets =', boxOffsets);
 
     const pokemonBuffer = bits();
     const pokemon = [];

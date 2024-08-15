@@ -1,39 +1,25 @@
 import { createEffect, createSignal, Show } from 'solid-js';
 
+import { setItemList } from './ItemList';
+import { setSpeciesList } from './PokemonList';
 import GameInfo from './GameInfo';
-
-const ASCII_UPPER_A = 0x41;
-const ASCII_UPPER_Z = ASCII_UPPER_A + 25;
-
-const ASCII_LOWER_A = 0x61;
-const ASCII_LOWER_Z = ASCII_LOWER_A + 25;
-
-const ASCII_ZERO = 0x30;
-const ASCII_NINE = ASCII_ZERO + 10;
-
-const PKMN_UPPER_A = 0xbb;
-const PKMN_LOWER_A = 0xd5;
-const PKMN_ZERO = 0xa1;
-
-function convertASCIICodeToPokemonCharCode(asciiChar) {
-  if (asciiChar >= ASCII_UPPER_A && asciiChar < ASCII_LOWER_A) {
-    const charCode = PKMN_UPPER_A + (Number(asciiChar) - ASCII_UPPER_A);
-    return Number(charCode);
-  } else if (
-    asciiChar >= ASCII_LOWER_A
-    && Number(asciiChar) <= ASCII_LOWER_Z
-  ) {
-    const charCode = PKMN_LOWER_A + (Number(asciiChar) - ASCII_LOWER_A);
-    return Number(charCode);
-  } else if (asciiChar >= ASCII_ZERO && asciiChar < ASCII_ZERO + 10) {
-    const charCode = PKMN_ZERO + (Number(asciiChar) - ASCII_ZERO);
-    return Number(charCode);
-  }
-  return 0xff;
-}
 
 function App() {
   const [bits, setBits] = createSignal([]);
+
+  createEffect(() => {
+    fetch('/api/items').then((response) => {
+      return response.json();
+    }).then((data) => {
+      setItemList(data)
+    });
+
+    fetch('/api/species').then((response) => {
+      return response.json();
+    }).then((data) => {
+      setSpeciesList(data);
+    });
+  });
 
   return (
     <div class="flex h-full w-full justify-center">

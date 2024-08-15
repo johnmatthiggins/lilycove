@@ -263,6 +263,17 @@ class BoxPokemon {
     }
   }
 
+  isShiny() {
+    const otId = this.getOTId()
+    const secretId = this.getSecretOtId();
+    const personalityValue = this._getPersonalityValue();
+    const personalityValueA = Number((personalityValue & 0xFFFF0000n) >> 16n);
+    const personalityValueB = Number(personalityValue & 0xFFFFn);
+    const code = otId ^ secretId ^ personalityValueA ^ personalityValueB;
+
+    return code < 8;
+  }
+
   getLanguage() {
     const bits = this._buffer[0x12];
     let language;
@@ -309,7 +320,15 @@ class BoxPokemon {
 
   getOTId() {
     const otIdOffset = 0x4;
-    const [b0, b1] = buffer.slice(otIdOffset, otIdOffset + 2);
+    const [b0, b1] = this._buffer.slice(otIdOffset, otIdOffset + 2);
+    const otId = b0 | b1 << 8;
+
+    return otId;
+  }
+
+  getSecretOtId() {
+    const secretIdOffset = 0x6;
+    const [b0, b1] = this._buffer.slice(secretIdOffset, secretIdOffset + 2);
     const otId = b0 | b1 << 8;
 
     return otId;
@@ -361,11 +380,14 @@ class BoxPokemon {
     const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2);
     const species = e1 << 8 | e0;
 
-    if (species > 251) {
-      return species - 25;
-    }
-
     return species;
+  }
+
+  getItemCode() {
+    const itemOffset = this._offsetMap['data_section_growth'];
+    const [b0, b1] = this._buffer.slice(itemOffset, itemOffset + 2);
+    const code = b0 | b1 << 8;
+    return code;
   }
 
   getNature() {
