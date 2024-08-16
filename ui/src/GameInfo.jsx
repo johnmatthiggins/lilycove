@@ -97,30 +97,39 @@ function GameInfo({ bits }) {
     const firstPokemonOffset = firstBoxOffset + 0x4;
     const boxPokemonSize = 0x50;
 
+    const boxLength = 3968;
+
     const boxOffsets = [
       firstPokemonOffset,
-      sectionOffsets()['pc_buffer_B'],
-      sectionOffsets()['pc_buffer_C'],
-      sectionOffsets()['pc_buffer_D'],
-      sectionOffsets()['pc_buffer_E'],
-      sectionOffsets()['pc_buffer_F'],
-      sectionOffsets()['pc_buffer_G'],
-      sectionOffsets()['pc_buffer_H'],
-      sectionOffsets()['pc_buffer_I'],
+      sectionOffsets()['pc_buffer_B'] + 4,
+      sectionOffsets()['pc_buffer_C'] + 4,
+      sectionOffsets()['pc_buffer_D'] + 4,
+      sectionOffsets()['pc_buffer_E'] + 4,
+      sectionOffsets()['pc_buffer_F'] + 4,
+      sectionOffsets()['pc_buffer_G'] + 4,
+      sectionOffsets()['pc_buffer_H'] + 4,
+      sectionOffsets()['pc_buffer_I'] + 4,
     ];
+    console.log('boxOffsets = ', boxOffsets);
 
-    const pokemonBuffer = bits();
-    const pokemon = [];
-
+    let contiguousBoxBuffer = [];
     for (let i = 0; i < boxOffsets.length; i += 1) {
-      pokemon.push([]);
-      for (let j = 0; j < 30; j += 1) {
-        const offset = boxOffsets[i] + j * boxPokemonSize;
-        const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
-        const newPokemon = new BoxPokemon(newPokemonBits);
+      const boxStart = boxOffsets[i];
+      const boxBuffer = bits().slice(boxStart, boxStart + boxLength);
+      contiguousBoxBuffer = contiguousBoxBuffer.concat(boxBuffer);
+    }
 
-        pokemon[i].push(newPokemon);
-      }
+    const pokemonBuffer = contiguousBoxBuffer;
+    const pokemon = [[], [], [], [], [], [], [], [], [], [], [], [], [], []];
+
+    // Just get all the pokemon hehe...
+    for (let i = 0; i < 420; i += 1) {
+      const offset = i * boxPokemonSize;
+
+      const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
+      const newPokemon = new BoxPokemon(newPokemonBits);
+
+      pokemon[Math.floor(i / 30)].push(newPokemon);
     }
 
     return pokemon;
@@ -181,35 +190,52 @@ function GameInfo({ bits }) {
       <div class="flex justify-center">
         <GamePicture gameCode={gameCode} />
       </div>
-      <h3 class="text-3xl font-bold">Trainer Data</h3>
-      <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
-      <pre class="text-left whitespace-pre">ID NO: {trainerId()}</pre>
-      <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
-      <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
-      <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
-      <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
-      <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
-      <section>
-        <h3 class="text-3xl font-bold">Party</h3>
-        {partyPokemon().map((p) => <PokemonCard pokemon={p} />)}
-      </section>
-      <h3 class="text-3xl font-bold">PC Box 1</h3>
-      <div class="flex gap-1 flex-wrap">
-        {boxPokemon().map((box) => box.map((p) => {
-          if (p.hasSpecies()) {
-            return <PokemonCard pokemon={p} />;
-          }
-          return (
-            <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
-              <img
-                class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
-                src={`/pokemon_images/201.png`}
-              />
-              <p class="text-center">[Empty Space]</p>
-            </div>
-          )
-        }))}
+      <div class="flex justify-start gap-2">
+        <section id="party-pokemon">
+          <h3 class="text-3xl font-bold">Party</h3>
+          <div class="flex">
+            {partyPokemon().slice(0, 3).map((p) => <PokemonCard pokemon={p} />)}
+          </div>
+          <div class="flex">
+            {partyPokemon().slice(3).map((p) => <PokemonCard pokemon={p} />)}
+          </div>
+        </section>
+        <section id="trainer-data">
+          <h3 class="text-3xl font-bold">Trainer Data</h3>
+          <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
+          <pre class="text-left whitespace-pre">ID NO: {trainerId()}</pre>
+          <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
+          <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
+          <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
+          <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
+          <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
+        </section>
+
       </div>
+
+      {boxPokemon().map((box, i) => {
+        return (
+          <div>
+            <h3 class="text-3xl font-bold">PC Box {i + 1}</h3>
+            <div class="flex gap-1 flex-wrap">
+              {box.map((p) => {
+                if (p.hasSpecies()) {
+                  return <PokemonCard pokemon={p} />;
+                }
+                return (
+                  <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
+                    <img
+                      class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
+                      src={`/pokemon_images/201.png`}
+                    />
+                    <p class="text-center">[Empty Space]</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

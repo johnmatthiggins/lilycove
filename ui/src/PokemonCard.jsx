@@ -38,19 +38,21 @@ function PokemonCard({ pokemon }) {
   };
 
   return (
-    <div class="w-32">
+    <div
+      class="w-32 hover:bg-green-200 transition rounded-lg border border-solid border-green-200 p-1 m-1 hover:cursor-pointer"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
       <div
         ref={ref}
-        class="min-w-1/8 rounded-md border border-solid border-slate-200 flex justify-center"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        class="min-w-1/8 border-green-200 flex justify-center"
       >
         <img
-          class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
+          class="sharp-pixels w-[100px] pt-[5px] hover:pt-[2px] px-[5px] hover:pb-[3px] transition"
           src={imageURL()}
         />
       </div>
-      <p class="text-center flex gap-1 flex-between">
+      <p class="font-mono text-sm text-center flex gap-1 flex-between px-2">
         {pokemon.getName()}
         <Show when={pokemon.isShiny()}>
           <img width={10} src="/star.svg" class="shiny-star" />
@@ -76,7 +78,7 @@ function PokemonCard({ pokemon }) {
             />
           </div>
           <div class="text-left">
-            <h3 class="text-3xl font-bold">{pokemon.getName()}</h3>
+            <h3 class="text-3xl font-bold font-mono">{pokemon.getName()}</h3>
             <div class="flex gap-1">
               {pokemonTypes().map((typeText) => {
                 return (

@@ -42,15 +42,25 @@ function convertPokemonCharToASCII(pokemonChar) {
   } else if (pokemonChar >= PKMN_ZERO && pokemonChar < PKMN_ZERO + 10) {
     const charCode = ASCII_ZERO + (pokemonChar - PKMN_ZERO);
     return String.fromCharCode(charCode);
+  } else if (pokemonChar === 0xB1 || pokemonChar === 0xB2) {
+    return '"';
+  } else if (pokemonChar === 0xB3 || pokemonChar === 0xB4) {
+    return "'";
   } else {
     return ' ';
   }
 }
 
 function convertPokemonStrToASCII(pokemonByteStr) {
-  return pokemonByteStr
-    .map((byte) => convertPokemonCharToASCII(byte))
-    .join("");
+  let output = '';
+  for (let i = 0; i < pokemonByteStr.length; i += 1) {
+    const byte = pokemonByteStr[i];
+    if (byte === 0xFF) {
+      break;
+    }
+    output += convertPokemonCharToASCII(byte);
+  }
+  return output;
 }
 
 function parseTrainerName(bytes) {

@@ -386,7 +386,7 @@ class BoxPokemon {
   getItemCode() {
     const itemOffset = this._offsetMap['data_section_growth'];
     const [b0, b1] = this._buffer.slice(itemOffset, itemOffset + 2);
-    const code = b0 | b1 << 8;
+    const code = b0 << 8 | b1;
     return code;
   }
 
