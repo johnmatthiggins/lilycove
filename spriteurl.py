@@ -18,6 +18,7 @@ def main():
     image_url = result.attrs["src"]
 
     response = httpx.get(image_url)
+    print('writing image from %s...' %(image_url))
     with open(path, "wb") as f:
         f.write(response.content)
 

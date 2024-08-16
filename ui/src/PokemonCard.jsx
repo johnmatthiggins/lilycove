@@ -39,7 +39,7 @@ function PokemonCard({ pokemon }) {
 
   return (
     <div
-      class="w-32 hover:bg-green-200 transition rounded-lg border border-solid border-green-200 p-1 m-1 hover:cursor-pointer"
+      class="w-32 h-32 hover:bg-green-200 transition rounded-lg border border-solid border-green-200 p-1 m-1 hover:cursor-pointer"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
@@ -47,14 +47,16 @@ function PokemonCard({ pokemon }) {
         ref={ref}
         class="min-w-1/8 border-green-200 flex justify-center"
       >
-        <img
-          class="sharp-pixels w-[100px] pt-[5px] hover:pt-[2px] px-[5px] hover:pb-[3px] transition"
-          src={imageURL()}
-        />
+        <Show when={pokemon.hasSpecies()}>
+          <img
+            class="sharp-pixels pt-[5px] hover:pt-[2px] px-[5px] hover:pb-[3px] transition"
+            src={imageURL()}
+          />
+        </Show>
       </div>
       <p class="font-mono text-sm text-center flex gap-1 flex-between px-2">
         {pokemon.getName()}
-        <Show when={pokemon.isShiny()}>
+        <Show when={pokemon.hasSpecies() && pokemon.isShiny()}>
           <img width={10} src="/star.svg" class="shiny-star" />
         </Show>
       </p>
@@ -63,7 +65,7 @@ function PokemonCard({ pokemon }) {
         class="shadow-sm"
         style={{
           background: 'white',
-          display: open() ? 'block' : 'none',
+          display: open() && pokemon.hasSpecies() ? 'block' : 'none',
           position: 'fixed',
           top: '0vh',
           left: '0vw',
@@ -73,7 +75,7 @@ function PokemonCard({ pokemon }) {
         <div class="flex flex-row">
           <div class="flex items-start">
             <img
-              class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
+              class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px]"
               src={imageURL()}
             />
           </div>

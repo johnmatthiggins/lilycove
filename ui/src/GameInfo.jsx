@@ -1,4 +1,4 @@
-import { createMemo, createEffect } from 'solid-js';
+import { createMemo, createSignal } from 'solid-js';
 
 import { itemList } from './ItemList.jsx';
 import { findSectionAddresses } from './utils/save.jsx';
@@ -18,20 +18,6 @@ const PKMN_LOWER_CASE_A = 0xd5;
 const PKMN_LEFT_ARROW = 0xd5;
 const PKMN_ZERO = 0xa1;
 const PKMN_BANG = 0xab;
-
-function convertPokemonCharToASCII(pokemonChar) {
-  if (pokemonChar >= PKMN_UPPER_CASE_A && pokemonChar < PKMN_LOWER_CASE_A) {
-    const charCode = ASCII_UPPER_CASE_A + (Number(pokemonChar) - PKMN_UPPER_CASE_A);
-    return String.fromCharCode(Number(charCode));
-  } else if (pokemonChar >= PKMN_LOWER_CASE_A && Number(pokemonChar) < PKMN_LEFT_ARROW) {
-    const charCode = ASCII_LOWER_CASE_A + (Number(pokemonChar) - PKMN_LOWER_CASE_A);
-    return String.fromCharCode(Number(charCode));
-  } else if (pokemonChar >= PKMN_ZERO && pokemonChar < PKMN_BANG) {
-    const charCode = ASCII_ZERO + (Number(pokemonChar) - PKMN_ZERO);
-    return String.fromCharCode(Number(charCode));
-  }
-  return ' ';
-}
 
 function getGameCode(saveOffset, bits) {
   const gameCodePosition = saveOffset + 0xAC;
@@ -54,6 +40,8 @@ function getInGameTime(saveOffset, bits) {
 const OPTIONS_OFFSET = 0x13;
 
 function GameInfo({ bits }) {
+  const [selectedBox, setSelectedBox] = createSignal(0);
+
   const sectionOffsets = createMemo(() => findSectionAddresses(bits()));
   const trainerInfoOffset = () => sectionOffsets()['trainer_info'];
   const trainerName = () => {
@@ -92,6 +80,13 @@ function GameInfo({ bits }) {
     return soundType;
   };
 
+  const boxNames = () => {
+    let array = new Array(14).fill(0).map((_, i) => {
+      return ({ name: `Box ${i + 1}`, index: i });
+    });
+    return array;
+  };
+
   const boxPokemon = () => {
     const firstBoxOffset = sectionOffsets()['pc_buffer_A'];
     const firstPokemonOffset = firstBoxOffset + 0x4;
@@ -110,7 +105,6 @@ function GameInfo({ bits }) {
       sectionOffsets()['pc_buffer_H'] + 4,
       sectionOffsets()['pc_buffer_I'] + 4,
     ];
-    console.log('boxOffsets = ', boxOffsets);
 
     let contiguousBoxBuffer = [];
     for (let i = 0; i < boxOffsets.length; i += 1) {
@@ -213,29 +207,35 @@ function GameInfo({ bits }) {
 
       </div>
 
-      {boxPokemon().map((box, i) => {
-        return (
+      <div class="flex flex-col justify-center">
+        <div>
+          <label for="box-selector" class="block font-bold">
+            Box
+          </label>
+          <select
+            class="w-32 rounded-md p-1"
+            id="box-selector"
+            onChange={(event) => {
+              console.log(event.target.value);
+              setSelectedBox(event.target.value)
+            }}
+          >
+            {boxNames().map(({ name, index }) => {
+              return <option value={index}>{name}</option>;
+            })}
+          </select>
+        </div>
+        <div>
           <div>
-            <h3 class="text-3xl font-bold">PC Box {i + 1}</h3>
-            <div class="flex gap-1 flex-wrap">
-              {box.map((p) => {
-                if (p.hasSpecies()) {
-                  return <PokemonCard pokemon={p} />;
-                }
-                return (
-                  <div class="min-w-1/8 rounded-md border border-solid border-slate-200">
-                    <img
-                      class="sharp-pixels hover:cursor-pointer w-[100px] p-[5px] transition"
-                      src={`/pokemon_images/201.png`}
-                    />
-                    <p class="text-center">[Empty Space]</p>
-                  </div>
-                );
+            <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
+            <div class="flex flex-wrap">
+              {boxPokemon()[selectedBox()].map((p) => {
+                return <PokemonCard pokemon={p} />;
               })}
             </div>
           </div>
-        );
-      })}
+        </div>
+      </div>
     </div>
   );
 }
