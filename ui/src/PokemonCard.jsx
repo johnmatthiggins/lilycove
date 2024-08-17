@@ -1,22 +1,13 @@
 import { createMemo, createSignal, Show } from 'solid-js';
 
-import { itemList } from './ItemList';
 import { speciesList } from './PokemonList';
-
 import PokemonType from './PokemonType';
+import RangeInput from './RangeInput';
 
 function PokemonCard({ pokemon }) {
   let ref;
   const id = () => String(pokemon.getSpeciesId()).padStart(3, '0');
   const [open, setOpen] = createSignal(false);
-
-  const itemName = () => {
-    const item = itemList().find(({ id: itemId }) => pokemon.getItemCode() === Number(itemId));
-    if (item) {
-      return item.name;
-    }
-    return 'N/A';
-  };
 
   const pokemonTypes = createMemo(() => {
     const targetId = pokemon.getSpeciesId();
@@ -37,39 +28,51 @@ function PokemonCard({ pokemon }) {
     return `/api/pokemon-images/${id()}.png`;
   };
 
+  const handleClick = () => {
+    setOpen(true);
+  };
+
   return (
     <div
-      class="w-32 h-32 hover:bg-green-200 transition rounded-lg border border-solid border-green-200 p-1 m-1 hover:cursor-pointer"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      class="flex flex-col w-32 h-32 hover:bg-green-200 transition rounded-lg border border-solid border-green-200 p-1 m-1 hover:cursor-pointer"
+      onClick={handleClick}
     >
       <div
         ref={ref}
-        class="min-w-1/8 border-green-200 flex justify-center"
+        class="min-w-1/8 border-green-200 flex justify-center grow"
       >
         <Show when={pokemon.hasSpecies()}>
           <img
             class="sharp-pixels pt-[5px] hover:pt-[2px] px-[5px] hover:pb-[3px] transition"
             src={imageURL()}
+            loading="lazy"
           />
         </Show>
       </div>
-      <p class="font-mono text-sm text-center flex gap-1 flex-between px-2">
-        {pokemon.getName()}
-        <Show when={pokemon.hasSpecies() && pokemon.isShiny()}>
-          <img width={10} src="/star.svg" class="shiny-star" />
-        </Show>
-      </p>
+      <div>
+        <p class="font-mono text-sm text-center flex gap-1 flex-between px-2">
+          {pokemon.getName()}
+          <Show when={pokemon.hasSpecies() && pokemon.isShiny()}>
+            <img
+              width={10}
+              src="/star.svg"
+              class="shiny-star"
+              loading="lazy"
+            />
+          </Show>
+        </p>
+      </div>
 
       <div
-        class="shadow-sm"
+        class="shadow-sm border border-slate-200 border-solid"
         style={{
+          "backdrop-filter": "blur(10px)",
           background: 'white',
           display: open() && pokemon.hasSpecies() ? 'block' : 'none',
           position: 'fixed',
-          top: '0vh',
-          left: '0vw',
-          width: '25vw',
+          "z-index": 1000,
+          top: '20vh',
+          width: '50vw',
         }}
       >
         <div class="flex flex-row">
@@ -92,12 +95,23 @@ function PokemonCard({ pokemon }) {
             <div class="flex flex-row gap-1">
               <div>
                 <h3 class="text-2xl font-bold">EVs</h3>
-                <h3 class="text-xl">HP: {pokemon.getEffortValues().HP}</h3>
-                <h3 class="text-xl">Attack: {pokemon.getEffortValues().Attack}</h3>
-                <h3 class="text-xl">Defense: {pokemon.getEffortValues().Defense}</h3>
-                <h3 class="text-xl">Speed: {pokemon.getEffortValues().Speed}</h3>
-                <h3 class="text-xl">SpAtk.: {pokemon.getEffortValues()["Special Attack"]}</h3>
-                <h3 class="text-xl">SpDef.: {pokemon.getEffortValues()["Special Defense"]}</h3>
+                <label for="hp-ev-slider" class="block font-bold">HP</label>
+                <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues().HP} />
+
+                <label for="attack-ev-slider" class="block font-bold">Attack</label>
+                <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues().Attack} />
+
+                <label for="defense-ev-slider" class="block font-bold">Defense</label>
+                <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues().Defense} />
+
+                <label for="spdef-ev-slider" class="block font-bold">Sp. Defense</label>
+                <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues()["Special Attack"]} />
+
+                <label for="spatk-ev-slider" class="block font-bold">Sp. Attack</label>
+                <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues()["Special Defense"]} />
+
+                <label for="speed-ev-slider" class="block font-bold">Speed</label>
+                <RangeInput type="range" step="4" min="0" max="252" value={pokemon.getEffortValues().Speed} />
               </div>
               <div>
                 <h3 class="text-2xl font-bold">IVs</h3>
@@ -109,9 +123,17 @@ function PokemonCard({ pokemon }) {
                 <h3 class="text-xl">SpDef.: {pokemon.getIndividualValues().specialDefense}</h3>
               </div>
             </div>
-            <br />
-            <h3 class="text-xl">Item: {itemName()}</h3>
           </div>
+        </div>
+        <div class="flex flex-row justify-center w-full grow my-1">
+          <button
+            class="hover:bg-green-400 border border-solid border-green-400 text-green-400 hover:text-white px-4 py-1 rounded-md transition"
+            onClick={(event) => {
+              event.stopPropagation();
+              setOpen(false);
+            }}>
+            OK
+          </button>
         </div>
       </div>
     </div>

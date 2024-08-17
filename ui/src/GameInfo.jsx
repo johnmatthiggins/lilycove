@@ -213,7 +213,7 @@ function GameInfo({ bits }) {
             Box
           </label>
           <select
-            class="w-32 rounded-md p-1"
+            class="w-32 rounded-sm p-1"
             id="box-selector"
             onChange={(event) => {
               console.log(event.target.value);
