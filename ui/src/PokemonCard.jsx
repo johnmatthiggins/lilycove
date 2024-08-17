@@ -86,7 +86,7 @@ function PokemonCard({ pokemon }) {
         position: 'fixed',
       }}>
         <div
-          class="shadow-sm border border-slate-200 border-solid mt-2 mx-[20vw] rounded-xl bg-white"
+          class="shadow-sm border border-slate-200 border-solid mt-2 mx-[20vw] rounded-xl"
           style={{
             "backdrop-filter": "blur(10px)",
             "background-color": "rgba(255,255,255,0.7)",
