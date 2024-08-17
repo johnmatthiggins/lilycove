@@ -6,3 +6,4 @@ static/images/
 db.sqlite3
 
 ui/public/pokemon-images/*
+ui/public/items/*
