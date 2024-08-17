@@ -478,8 +478,41 @@ function getPokemonInParty(saveOffset, bits) {
   return pokemon;
 }
 
+const TYPE_LIST = [
+  'FIGHTING',
+  'FLYING',
+  'POISON',
+  'GROUND',
+  'ROCK',
+  'BUG',
+  'GHOST',
+  'STEEL',
+  'FIRE',
+  'WATER',
+  'GRASS',
+  'ELECTRIC',
+  'PSYCHIC',
+  'ICE',
+  'DRAGON',
+  'DARK',
+];
+function hiddenPowerType(hp, attack, defense, speed, spAttack, spDefense) {
+  const a = hp % 2;
+  const b = attack % 2;
+  const c = defense % 2;
+  const d = speed % 2;
+  const e = spAttack % 2;
+  const f = spDefense % 2;
+
+  const binary = parseInt(`${f}${e}${d}${c}${b}${a}`, 2);
+  const typeIndex = Math.floor((binary * 15) / 63);
+
+  return TYPE_LIST[typeIndex];
+}
+
 
 export {
   BoxPokemon,
   getPokemonInParty,
+  hiddenPowerType,
 }

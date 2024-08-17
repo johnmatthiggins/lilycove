@@ -582,6 +582,14 @@ video {
   margin: auto;
 }
 
+.m-2 {
+  margin: 0.5rem;
+}
+
+.m-\[20vw\] {
+  margin: 20vw;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -622,6 +630,11 @@ video {
   margin-right: 1.5rem;
 }
 
+.mx-\[20vw\] {
+  margin-left: 20vw;
+  margin-right: 20vw;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -632,6 +645,10 @@ video {
 
 .mr-1 {
   margin-right: 0.25rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
 }
 
 .block {
