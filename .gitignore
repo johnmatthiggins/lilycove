@@ -7,3 +7,7 @@ db.sqlite3
 
 ui/public/pokemon-images/*
 ui/public/items/*
+
+core/__pycache__/
+**/__pycache__/
+./__pycache__/
