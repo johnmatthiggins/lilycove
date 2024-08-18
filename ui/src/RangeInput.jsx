@@ -18,9 +18,16 @@ function RangeInput({ onChange, step, min, max, value }) {
         value={state()}
         onInput={handleChange}
       />
-      <p class="w-8">
-        {state}
-      </p>
+      <input
+        class="w-12 border border-solid border-slate-200 px-1"
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={state()}
+        onInput={handleChange}
+      >
+      </input>
     </div>
   );
 }

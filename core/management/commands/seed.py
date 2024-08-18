@@ -54,8 +54,6 @@ class Command(BaseCommand):
                 .lower())
         )
 
-        print('pokemon_table = ', pokemon_table['name'][:33])
-
         base_url = 'https://www.serebii.net/pokedex-rs/%s.shtml'
 
         new_pokemon = []

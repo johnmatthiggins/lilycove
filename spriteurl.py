@@ -5,7 +5,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 def main():
-    BASE_URL = "https://archives.bulbagarden.net/wiki/File:Spr_3r_%s_s.png"
+    BASE_URL = "https://archives.bulbagarden.net/wiki/File:Spr_3r_%s.png"
 
     num = int(sys.argv[1])
     path = sys.argv[2]
@@ -14,7 +14,7 @@ def main():
 
     html = get_webpage_html(webpage_url)
     soup = BeautifulSoup(html, features="html.parser")
-    result = soup.find(alt=f"File:Spr 3r {padded_num} s.png")
+    result = soup.find(alt=f"File:Spr 3r {padded_num}.png")
     image_url = result.attrs["src"]
 
     response = httpx.get(image_url)

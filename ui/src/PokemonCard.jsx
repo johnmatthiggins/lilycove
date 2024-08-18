@@ -29,9 +29,7 @@ function PokemonCard({ pokemon }) {
     return `/api/pokemon-images/${id()}.png`;
   };
 
-  const handleClick = () => {
-    setOpen(true);
-  };
+  const handleClick = () => setOpen(true);
 
   const hiddenPower = () => {
     const iv = pokemon.getIndividualValues();
