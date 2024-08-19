@@ -24,14 +24,14 @@ function App() {
   return (
     <div class="flex h-full w-full justify-center">
       <div class="grow justify-center items-center">
-        <div class="rounded-lg bg-white p-2 shadow-md border border-solid border-slate-200 w-1/2 mx-auto">
+        <div class="rounded-lg bg-white p-2 w-1/2 mx-auto">
           <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
           <h2 class="text-md text-center">A Generation III Hex Editor</h2>
           <Show when={bits().length === 0}>
             <div class="my-2">
               <label class="flex justify-center w-full">
                 <span
-                  class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-full hover:cursor-pointer transition"
+                  class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-md hover:cursor-pointer transition"
                   role="button"
                 >
                   Upload Save

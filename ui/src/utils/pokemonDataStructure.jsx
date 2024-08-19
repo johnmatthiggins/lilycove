@@ -263,6 +263,16 @@ class BoxPokemon {
     }
   }
 
+  getPokeballItemId() {
+    const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
+    const buffer = BigInt(this._buffer[originsOffset]);
+    console.log('buffer = ', buffer.toString(16));
+    const ballId = (buffer >> 3n) & 0x0Fn;
+
+    const threeDigitBallId = String(ballId + 1n).padStart(3, '0');
+    return threeDigitBallId;
+  }
+
   isShiny() {
     const otId = this.getOTId()
     const secretId = this.getSecretOtId();

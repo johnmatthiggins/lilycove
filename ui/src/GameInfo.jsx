@@ -1,6 +1,5 @@
 import { createMemo, createSignal } from 'solid-js';
 
-import { itemList } from './ItemList.jsx';
 import { findSectionAddresses } from './utils/save.jsx';
 
 import GamePicture from './GamePicture';
@@ -8,16 +7,6 @@ import PokemonCard from './PokemonCard.jsx';
 
 import { convertPokemonStrToASCII } from './utils/hex.jsx';
 import { BoxPokemon } from './utils/pokemonDataStructure.jsx';
-
-const ASCII_UPPER_CASE_A = 0x41;
-const ASCII_LOWER_CASE_A = 0x61;
-const ASCII_ZERO = 0x30;
-
-const PKMN_UPPER_CASE_A = 0xbb;
-const PKMN_LOWER_CASE_A = 0xd5;
-const PKMN_LEFT_ARROW = 0xd5;
-const PKMN_ZERO = 0xa1;
-const PKMN_BANG = 0xab;
 
 function getGameCode(saveOffset, bits) {
   const gameCodePosition = saveOffset + 0xAC;
@@ -209,25 +198,19 @@ function GameInfo({ bits }) {
 
       <div class="flex flex-col justify-center">
         <div>
-          <label for="box-selector" class="block font-bold">
-            Box
-          </label>
-          <select
-            class="w-32 rounded-sm p-1"
-            id="box-selector"
-            onChange={(event) => {
-              console.log(event.target.value);
-              setSelectedBox(event.target.value)
-            }}
-          >
-            {boxNames().map(({ name, index }) => {
-              return <option value={index}>{name}</option>;
-            })}
-          </select>
-        </div>
-        <div>
           <div>
-            <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
+            <div class="flex justify-between">
+              <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
+              <select
+                class="w-32 rounded-sm p-1"
+                id="box-selector"
+                onChange={(event) => setSelectedBox(event.target.value)}
+              >
+                {boxNames().map(({ name, index }) => {
+                  return <option value={index}>{name}</option>;
+                })}
+              </select>
+            </div>
             <div class="flex flex-wrap">
               {boxPokemon()[selectedBox()].map((p) => {
                 return <PokemonCard pokemon={p} />;
