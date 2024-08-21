@@ -2,6 +2,7 @@ import { createEffect, createSignal, Show } from 'solid-js';
 
 import { setItemList } from './ItemList';
 import { setSpeciesList } from './PokemonList';
+import { setMoveList } from './MoveList';
 import GameInfo from './GameInfo';
 
 function App() {
@@ -18,6 +19,12 @@ function App() {
       return response.json();
     }).then((data) => {
       setSpeciesList(data);
+    });
+
+    fetch('/api/moves').then((response) => {
+      return response.json();
+    }).then((data) => {
+      setMoveList(data);
     });
   });
 

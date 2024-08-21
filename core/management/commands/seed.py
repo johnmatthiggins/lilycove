@@ -185,23 +185,26 @@ class Command(BaseCommand):
             def build_move(row, pairs):
                 key = row['name'].lower().replace(' ', '')
                 id = None
+                similarity = 0
                 for pair in pairs:
-                    if fuzz.ratio(pair[0], key) > 80:
+                    if fuzz.ratio(pair[0], key) > similarity:
+                        similarity = fuzz.ratio(pair[0], key)
                         id = pair[1]
-                        break
+
 
                 if not id:
                     print('no id for ', row['name'])
+                    return None
 
                 return Move(
-                    move_id=id,
+                    id=int(id),
                     name=row["name"],
                     effect=row["effect"],
                     move_type=move_type.upper(),
                     power=(int(row["power"]) if row["power"] != "--" else 0),
                     accuracy=(int(row["accuracy"]) if row["accuracy"] != "--" else 0),
                     pp=row["PP"],
-                ),
+                )
 
             moves = move_table.apply(lambda r: build_move(r, move_pairings), axis=1)
             new_moves += list(moves)
@@ -239,20 +242,25 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
 
-        print('LOADING ITEMS...')
-        items = self._load_items()
-        Item.objects.bulk_create(items, ignore_conflicts=True)
-        print('FINISHED LOADING ITEMS...')
+        # print('LOADING ITEMS...')
+        # items = self._load_items()
+        # Item.objects.bulk_create(items, ignore_conflicts=True)
+        # print('FINISHED LOADING ITEMS...')
 
-        # print('LOADING MOVES...')
-        # moves = self._load_moves()
-        # Move.objects.bulk_create(moves)
-        # print('FINISHED LOADING MOVES...')
+        print('LOADING MOVES...')
+        moves = self._load_moves()
 
-        print('LOADING SPECIES DATA...')
-        pokemon = self._load_species()
-        Species.objects.bulk_create(pokemon)
-        print('FINISHED LOADING SPECIES DATA...')
+        for move in moves:
+            print(move)
+
+        Move.objects.bulk_create(moves)
+
+        print('FINISHED LOADING MOVES...')
+
+        # print('LOADING SPECIES DATA...')
+        # pokemon = self._load_species()
+        # Species.objects.bulk_create(pokemon)
+        # print('FINISHED LOADING SPECIES DATA...')
 
         end = time.time()
 

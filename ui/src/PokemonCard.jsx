@@ -1,9 +1,11 @@
 import { createMemo, createSignal, Show } from 'solid-js';
 
 import { speciesList } from './PokemonList';
+import { moveList } from './MoveList';
 import PokemonType from './PokemonType';
 import RangeInput from './RangeInput';
 import { hiddenPowerType } from './utils/pokemonDataStructure';
+import PokemonMove from './PokemonMove';
 
 function PokemonCard({ pokemon }) {
   let ref;
@@ -30,7 +32,6 @@ function PokemonCard({ pokemon }) {
   };
 
   const handleClick = () => setOpen(true);
-
   const hiddenPower = () => {
     const iv = pokemon.getIndividualValues();
     return hiddenPowerType(
@@ -42,10 +43,14 @@ function PokemonCard({ pokemon }) {
       iv.specialDefense
     );
   };
-
   const handleClose = () => setOpen(false);
-
   const blockClickCascade = (event) => event.stopPropagation();
+
+  const pokemonMoves = () => pokemon
+    .getMoveIds()
+    .map((id) => moveList()
+      .find((m) => Number(m.id) === Number(id)))
+    .filter((m) => m);
 
   return (
     <div
@@ -97,7 +102,7 @@ function PokemonCard({ pokemon }) {
               "background-color": "rgba(255,255,255,0.7)",
             }}
           >
-            <div onClick={blockClickCascade} class="w-fit">
+            <div onClick={blockClickCascade} class="w-fit px-1">
               <div class="flex flex-row">
                 <div class="flex flex-col items-start">
                   <img
@@ -106,7 +111,7 @@ function PokemonCard({ pokemon }) {
                   />
                 </div>
                 <div class="text-left">
-                  <h3 class="text-3xl font-bold font-mono">{pokemon.getName()}</h3>
+                  <h3 class="text-3xl font-bold font-mono">{pokemon.getName()} #{pokemon.getSpeciesId()}</h3>
                   <div class="flex gap-1">
                     {pokemonTypes().map((typeText) => {
                       return (
@@ -115,8 +120,8 @@ function PokemonCard({ pokemon }) {
                     })}
                   </div>
                   <h3 class="text-2xl font-bold">Nature: {pokemon.getNature()}</h3>
-                  <h3 class="text-2xl font-bold">Hidden Power:</h3>
-                  <div class="font-mono">
+                  <div class="flex flex-row gap-1">
+                    <h3 class="text-2xl font-bold">Hidden Power:</h3>
                     <PokemonType typeName={hiddenPower()} />
                   </div>
                   <div class="flex flex-row gap-1 pt-1">
@@ -159,6 +164,13 @@ function PokemonCard({ pokemon }) {
 
                       <label for="speed-iv-slider" class="block font-bold">Speed</label>
                       <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().speed} />
+                    </div>
+                    <div class="rounded-lg flex flex-col gap-1">
+                      {pokemonMoves().map((move) => {
+                        return (
+                          <PokemonMove name={move.name} description={move.effect} pp={move.pp} moveType={move.move_type} />
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

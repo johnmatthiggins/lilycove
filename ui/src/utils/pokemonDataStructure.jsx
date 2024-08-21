@@ -393,6 +393,19 @@ class BoxPokemon {
     return species;
   }
 
+  getMoveIds() {
+    const movesOffset = this._offsetMap['data_section_attacks'];
+    const ids = Array(4).fill(0).map((_, i) => {
+      const start = movesOffset + i * 2;
+      const end = movesOffset + (i + 1) * 2;
+      const [b0, b1] = this._buffer.slice(start, end);
+      const index = b0 | b1 << 8;
+      return index;
+    });
+
+    return ids;
+  }
+
   getItemCode() {
     const itemOffset = this._offsetMap['data_section_growth'];
     const [b0, b1] = this._buffer.slice(itemOffset, itemOffset + 2);

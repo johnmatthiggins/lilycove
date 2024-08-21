@@ -78,12 +78,12 @@ function PokemonType({ typeName }) {
   }
 
   return (
-    <div
-      class="shadow-sm font-mono font-bold rounded-md text-white shadow-sm w-32 py-1 text-center border border-solid mr-1"
+    <span
+      class="text-md shadow-sm font-mono font-bold rounded-md text-white shadow-sm min-w-24 py-1 text-center border border-solid mr-1"
       style={{ "background-color": color, "border-color": borderColor }}
     >
       {typeName.toUpperCase()}
-    </div>
+    </span>
   );
 }
 
