@@ -535,6 +535,7 @@ function hiddenPowerType(hp, attack, defense, speed, spAttack, spDefense) {
 
 
 export {
+  NATURES,
   BoxPokemon,
   getPokemonInParty,
   hiddenPowerType,

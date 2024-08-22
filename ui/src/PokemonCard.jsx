@@ -4,7 +4,7 @@ import { speciesList } from './PokemonList';
 import { moveList } from './MoveList';
 import PokemonType from './PokemonType';
 import RangeInput from './RangeInput';
-import { hiddenPowerType } from './utils/pokemonDataStructure';
+import { hiddenPowerType, NATURES } from './utils/pokemonDataStructure';
 import PokemonMove from './PokemonMove';
 
 function PokemonCard({ pokemon }) {
@@ -109,14 +109,21 @@ function PokemonCard({ pokemon }) {
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
               <div class="flex flex-row justify-between">
-                <div class="flex flex-col items-start">
+                <div class="flex flex-col items-start gap-1">
                   <div class="w-full flex justify-center">
                     <img
                       class="sharp-pixels hover:cursor-pointer w-32 mt-8 p-1"
                       src={imageURL()}
                     />
                   </div>
-                  <h3 class="text-3xl font-bold font-mono">{pokemon.getName()} #{pokemon.getSpeciesId()}</h3>
+                  <div>
+                    <label class="font-bold block" for="nickname-input">Nickname</label>
+                    <input
+                      id="nickname-input"
+                      class="px-1 py-1 font-bold font-mono rounded-md border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-green-400"
+                      value={pokemon.getName()}
+                    />
+                  </div>
                   <div class="flex gap-1">
                     {pokemonTypes().map((typeText) => {
                       return (
@@ -124,7 +131,19 @@ function PokemonCard({ pokemon }) {
                       );
                     })}
                   </div>
-                  <h3 class="text-2xl font-bold">Nature: {pokemon.getNature()}</h3>
+                  <div>
+                    <label class="font-bold block" for="nature-input">Nature</label>
+                    <select id="nature-input" class="border border-solid border-slate-200 bg-white p-1 rounded-sm focus:outline focus:outline-solid focus:outline-green-400">
+                      <For each={NATURES}>
+                        {(nature) => {
+                          if (nature === pokemon.getNature()) {
+                            return <option value="nature" selected>{nature}</option>;
+                          }
+                          return <option value="nature">{nature}</option>;
+                        }}
+                      </For>
+                    </select>
+                  </div>
                   <div class="flex flex-row gap-1">
                     <h3 class="text-2xl font-bold">Hidden Power:</h3>
                     <PokemonType typeName={() => hiddenPowerType(...ivArray())} />
@@ -202,7 +221,7 @@ function PokemonCard({ pokemon }) {
                   event.stopPropagation();
                   setOpen(false);
                 }}>
-                OK
+                Save
               </button>
             </div>
           </div>

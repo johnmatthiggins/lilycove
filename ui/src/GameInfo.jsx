@@ -202,7 +202,7 @@ function GameInfo({ bits }) {
             <div class="flex justify-between">
               <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
               <select
-                class="w-32 rounded-sm p-1"
+                class="w-32 rounded-sm p-1 bg-slate-200 border border-solid border-slate-400"
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >
