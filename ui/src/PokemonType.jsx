@@ -1,8 +1,9 @@
 function PokemonType({ typeName }) {
   let color;
   let borderColor;
+  console.log('rendered type...');
 
-  switch (typeName.toUpperCase()) {
+  switch (typeName().toUpperCase()) {
     case 'BUG':
       color = '#a8b920';
       borderColor = '#d1d72f';
@@ -79,10 +80,10 @@ function PokemonType({ typeName }) {
 
   return (
     <span
-      class="text-md shadow-sm font-mono font-bold rounded-md text-white shadow-sm min-w-24 py-1 text-center border border-solid mr-1"
+      class="text-sm shadow-sm font-mono font-bold rounded-md text-white shadow-sm min-w-20 py-1 text-center border border-solid mr-1"
       style={{ "background-color": color, "border-color": borderColor }}
     >
-      {typeName.toUpperCase()}
+      {typeName().toUpperCase()}
     </span>
   );
 }

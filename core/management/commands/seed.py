@@ -242,25 +242,25 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
 
-        # print('LOADING ITEMS...')
-        # items = self._load_items()
-        # Item.objects.bulk_create(items, ignore_conflicts=True)
-        # print('FINISHED LOADING ITEMS...')
+        print('LOADING ITEMS...')
+        items = self._load_items()
+        Item.objects.bulk_create(items, ignore_conflicts=True)
+        print('FINISHED LOADING ITEMS...')
 
-        print('LOADING MOVES...')
-        moves = self._load_moves()
+        # print('LOADING MOVES...')
+        # moves = self._load_moves()
+        #
+        # for move in moves:
+        #     print(move)
+        #
+        # Move.objects.bulk_create(moves)
+        #
+        # print('FINISHED LOADING MOVES...')
 
-        for move in moves:
-            print(move)
-
-        Move.objects.bulk_create(moves)
-
-        print('FINISHED LOADING MOVES...')
-
-        # print('LOADING SPECIES DATA...')
-        # pokemon = self._load_species()
-        # Species.objects.bulk_create(pokemon)
-        # print('FINISHED LOADING SPECIES DATA...')
+        print('LOADING SPECIES DATA...')
+        pokemon = self._load_species()
+        Species.objects.bulk_create(pokemon)
+        print('FINISHED LOADING SPECIES DATA...')
 
         end = time.time()
 
