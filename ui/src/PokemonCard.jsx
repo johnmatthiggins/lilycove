@@ -45,17 +45,15 @@ function PokemonCard({ pokemon }) {
   const handleClose = () => setOpen(false);
   const blockClickCascade = (event) => event.stopPropagation();
 
-  const setIv = (index, newValue) => {
-    const currentIvArray = ivArray();
-    currentIvArray[index] = newValue;
-    setIvArray(currentIvArray);
-  };
+  const setIv = (index, newValue) => setIvArray(ivArray().with(index, newValue));
 
   const pokemonMoves = () => pokemon
     .getMoveIds()
     .map((id) => moveList()
       .find((m) => Number(m.id) === Number(id)))
     .filter((m) => m);
+
+  const hiddenPowerTypeFromIvs = () => hiddenPowerType(...ivArray())
 
   return (
     <div
@@ -92,8 +90,11 @@ function PokemonCard({ pokemon }) {
       <Show when={open()}>
         <div
           onClick={handleClose}
+          class="flex justify-center"
           style={{
+            "overflow-y": "hidden",
             "z-index": 1000,
+            background: 'rgba(0, 0, 0, 0.3)',
             top: 0,
             left: 0,
             height: '100vh',
@@ -101,11 +102,7 @@ function PokemonCard({ pokemon }) {
             position: 'fixed',
           }}>
           <div
-            class="shadow-sm border border-slate-200 border-solid mt-2 mx-[20vw] rounded-xl"
-            style={{
-              "backdrop-filter": "blur(10px)",
-              "background-color": "rgba(255,255,255,0.7)",
-            }}
+            class="shadow-sm border border-slate-200 border-solid mt-2 max-w-128 rounded-lg bg-white"
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
               <div class="flex flex-row justify-between">
@@ -120,36 +117,50 @@ function PokemonCard({ pokemon }) {
                     <label class="font-bold block" for="nickname-input">Nickname</label>
                     <input
                       id="nickname-input"
+                      type="text"
                       class="px-1 py-1 font-bold font-mono rounded-md border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-green-400"
                       value={pokemon.getName()}
                     />
                   </div>
                   <div class="flex gap-1">
-                    {pokemonTypes().map((typeText) => {
-                      return (
-                        <PokemonType typeName={() => typeText} />
-                      );
-                    })}
+                    <For each={pokemonTypes()}>
+                      {(typeText) => {
+                        return (
+                          <PokemonType typeName={() => typeText} />
+                        );
+                      }}
+                    </For>
                   </div>
                   <div>
                     <label class="font-bold block" for="nature-input">Nature</label>
-                    <select id="nature-input" class="border border-solid border-slate-200 bg-white p-1 rounded-sm focus:outline focus:outline-solid focus:outline-green-400">
+                    <select
+                      id="nature-input"
+                      class="border border-solid border-slate-200 bg-white p-1 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-green-400"
+                    >
                       <For each={NATURES}>
                         {(nature) => {
-                          if (nature === pokemon.getNature()) {
-                            return <option value="nature" selected>{nature}</option>;
-                          }
-                          return <option value="nature">{nature}</option>;
+                          return (
+                            <option
+                              value={nature.name}
+                              class="font-bold"
+                              selected={() => nature.name === pokemon.getNature() ? "selected" : undefined}
+                            >
+                              {nature.name}&nbsp;
+                              <Show when={nature.increase != nature.decrease}>
+                                (+{nature.increase},-{nature.decrease})
+                              </Show>
+                            </option>
+                          );
                         }}
                       </For>
                     </select>
                   </div>
-                  <div class="flex flex-row gap-1">
-                    <h3 class="text-2xl font-bold">Hidden Power:</h3>
+                  <div class="w-full">
+                    <h3 class="font-bold block">Hidden Power:</h3>
                     <PokemonType typeName={() => hiddenPowerType(...ivArray())} />
                   </div>
                 </div>
-                <div class="flex flex-row gap-1 pt-1">
+                <div class="grid grid-cols-2 gap-1 pt-1">
                   <div class="border border-solid border-slate-200 p-2 rounded-lg bg-white">
                     <h3 class="text-2xl font-bold">EVs</h3>
                     <label for="hp-ev-slider" class="block font-bold">HP</label>
@@ -208,7 +219,7 @@ function PokemonCard({ pokemon }) {
                 <For each={pokemonMoves()}>
                   {(move) => {
                     return (
-                      <PokemonMove name={move.name} description={move.effect} power={move.power} accuracy={move.accuracy} pp={move.pp} moveType={move.move_type} />
+                      <PokemonMove moveId={move.id} pp={move.pp} />
                     );
                   }}
                 </For>
