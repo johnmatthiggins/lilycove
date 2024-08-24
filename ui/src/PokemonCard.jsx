@@ -118,7 +118,7 @@ function PokemonCard({ pokemon }) {
                     <input
                       id="nickname-input"
                       type="text"
-                      class="px-1 py-1 font-bold font-mono rounded-md border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-green-400"
+                      class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-green-400 w-40"
                       value={pokemon.getName()}
                     />
                   </div>
@@ -135,7 +135,7 @@ function PokemonCard({ pokemon }) {
                     <label class="font-bold block" for="nature-input">Nature</label>
                     <select
                       id="nature-input"
-                      class="border border-solid border-slate-200 bg-white p-1 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-green-400"
+                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-green-400"
                     >
                       <For each={NATURES}>
                         {(nature) => {

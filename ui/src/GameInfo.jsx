@@ -1,4 +1,4 @@
-import { createMemo, createSignal } from 'solid-js';
+import { createMemo, createSignal, For } from 'solid-js';
 
 import { findSectionAddresses } from './utils/save.jsx';
 
@@ -177,10 +177,14 @@ function GameInfo({ bits }) {
         <section id="party-pokemon">
           <h3 class="text-3xl font-bold">Party</h3>
           <div class="flex">
-            {partyPokemon().slice(0, 3).map((p) => <PokemonCard pokemon={p} />)}
+            <For each={partyPokemon().slice(0, 3)}>
+              {(p) => <PokemonCard pokemon={p} />}
+            </For>
           </div>
           <div class="flex">
-            {partyPokemon().slice(3).map((p) => <PokemonCard pokemon={p} />)}
+            <For each={partyPokemon().slice(3)}>
+              {(p) => <PokemonCard pokemon={p} />}
+            </For>
           </div>
         </section>
         <section id="trainer-data">
@@ -206,15 +210,15 @@ function GameInfo({ bits }) {
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >
-                {boxNames().map(({ name, index }) => {
-                  return <option value={index}>{name}</option>;
-                })}
+                <For each={boxNames()}>
+                  {({ name, index }) => <option value={index}>{name}</option>}
+                </For>
               </select>
             </div>
             <div class="flex flex-wrap">
-              {boxPokemon()[selectedBox()].map((p) => {
-                return <PokemonCard pokemon={p} />;
-              })}
+              <For each={boxPokemon()[selectedBox()]}>
+                {(p) => <PokemonCard pokemon={p} />}
+              </For>
             </div>
           </div>
         </div>

@@ -26,16 +26,16 @@ function GamePicture({ gameCode }) {
     <div>
       <h3 class="text-2xl font-bold">{title}</h3>
       <div class="flex flex-row gap-1 justify-center">
-        {images.map((imageUrl) => {
-          return (
+        <For each={images}>
+          {(imageUrl) => (
             <img
               src={imageUrl}
               alt="game image"
               width={IMAGE_SIZE}
               height={IMAGE_SIZE}
             />
-          );
-        })}
+          )}
+        </For>
       </div>
     </div>
   );
