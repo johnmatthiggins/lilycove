@@ -26,21 +26,23 @@ function PokemonMove({
   return (
     <div class="border border-solid border-slate-200 p-1 w-full rounded-md bg-white">
       <div class="flex flex-row items-center justify-between text-sm">
-        <PokemonType typeName={moveType} />
-        <select
-          value={currentMoveId()}
-          onChange={handleMoveChange}
-          class="bg-white focus:border-white border border-solid border-slate-200 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
-        >
-          <option value="-1">----------</option>
-          <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
-            {(move, _) => {
-              return (
-                <option value={move.id}>{move.name}</option>
-              );
-            }}
-          </For>
-        </select>
+        <div class="flex flex-row items-center justify-start">
+          <PokemonType typeName={moveType} />
+          <select
+            value={currentMoveId()}
+            onChange={handleMoveChange}
+            class="bg-white focus:border-white border border-solid border-slate-200 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
+          >
+            <option value="-1">----------</option>
+            <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
+              {(move, _) => {
+                return (
+                  <option value={move.id}>{move.name}</option>
+                );
+              }}
+            </For>
+          </select>
+        </div>
         <div class="w-fit flex flex-row justify-end bg-slate-200 border border-solid border-slate-400 rounded-sm">
           <span class="border border-solid border-slate-400 px-1">
             <Show when={Number(power())} fallback={"-"}>
