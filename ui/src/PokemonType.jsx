@@ -1,15 +1,8 @@
-import { createSignal, createEffect } from "solid-js";
-
-function PokemonType({ typeName }) {
-  const [type, setType] = createSignal(typeName());
-
-  createEffect(() => {
-    setType(typeName());
-  });
+function PokemonType({ typeName, fullWidth = false }) {
   const colors = () => {
     let color;
     let borderColor;
-    switch (type().toUpperCase()) {
+    switch (typeName().toUpperCase()) {
       case 'BUG':
         color = '#a8b920';
         borderColor = '#d1d72f';
@@ -89,13 +82,14 @@ function PokemonType({ typeName }) {
 
   return (
     <span
-      class="text-sm shadow-sm font-mono font-bold rounded-md text-white shadow-sm min-w-20 py-1 text-center border border-solid mr-1"
+      class="text-sm shadow-sm font-mono font-bold rounded-sm text-white shadow-sm min-w-20 py-1 text-center border border-solid mr-1"
       style={{
+        "width": fullWidth ? "100%" : "auto",
         "background-color": colors().background,
         "border-color": colors().border,
       }}
     >
-      {type().toUpperCase()}
+      {typeName().toUpperCase()}
     </span>
   );
 }

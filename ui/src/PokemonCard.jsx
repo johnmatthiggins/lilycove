@@ -17,9 +17,10 @@ function PokemonCard({ pokemon }) {
     ivs.specialAttack,
     ivs.specialDefense,
   ]);
+  const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
 
   let ref;
-  const id = () => String(pokemon.getSpeciesId()).padStart(3, '0');
+  const id = () => String(speciesId()).padStart(3, '0');
   const [open, setOpen] = createSignal(false);
 
   const pokemonTypes = createMemo(() => {
@@ -50,12 +51,11 @@ function PokemonCard({ pokemon }) {
   const pokemonMoves = () => pokemon
     .getMoveIds()
     .map((id) => moveList()
-      .find((m) => Number(m.id) === Number(id)))
-    .filter((m) => m);
+      .find((m) => Number(m.id) === Number(id)));
 
   return (
     <div
-      class="flex flex-col w-32 h-32 hover:bg-teal-200 transition rounded-lg border border-solid border-teal-200 p-1 m-1"
+      class="flex flex-col w-32 h-32 hover:bg-teal-200 rounded-lg border border-solid border-teal-200 p-1 m-1"
       onClick={handleClick}
     >
       <div
@@ -101,16 +101,11 @@ function PokemonCard({ pokemon }) {
           }}>
           <div
             class="shadow-sm border border-slate-200 border-solid mt-2 max-w-128 rounded-lg bg-white"
+            style={{ height: 'fit-content' }}
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
               <div class="flex flex-row justify-between">
                 <div class="flex flex-col items-start gap-1">
-                  <div class="w-full flex justify-center">
-                    <img
-                      class="sharp-pixels hover:cursor-pointer w-32 mt-8 p-1"
-                      src={imageURL()}
-                    />
-                  </div>
                   <div>
                     <label class="font-bold block" for="nickname-input">Nickname</label>
                     <input
@@ -118,6 +113,12 @@ function PokemonCard({ pokemon }) {
                       type="text"
                       class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-teal-400 w-40"
                       value={pokemon.getName()}
+                    />
+                  </div>
+                  <div class="w-full flex justify-center">
+                    <img
+                      class="sharp-pixels hover:cursor-pointer w-32 mt-2 p-1"
+                      src={imageURL()}
                     />
                   </div>
                   <div class="flex gap-1">
@@ -128,6 +129,25 @@ function PokemonCard({ pokemon }) {
                         );
                       }}
                     </For>
+                  </div>
+                  <div>
+                    <label class="font-bold block" for="species-input">Species</label>
+                    <select
+                      id="species-input"
+                      value={speciesId()}
+                      onChange={(event) => setSpeciesId(event.target.value)}
+                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-teal-400"
+                    >
+                      <For each={speciesList().toSorted((a, b) => a.pokedex_id - b.pokedex_id)}>
+                        {(species) => {
+                          return (
+                            <option value={species.species_id}>
+                              {species.name} #{species.pokedex_id}
+                            </option>
+                          );
+                        }}
+                      </For>
+                    </select>
                   </div>
                   <div>
                     <label class="font-bold block" for="nature-input">Nature</label>
@@ -154,8 +174,10 @@ function PokemonCard({ pokemon }) {
                     </select>
                   </div>
                   <div class="w-full">
-                    <h3 class="font-bold block">Hidden Power:</h3>
-                    <PokemonType typeName={() => hiddenPowerType(...ivArray())} />
+                    <h3 class="font-bold block">Hidden Power</h3>
+                    <div class="w-full flex">
+                      <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
+                    </div>
                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-1 pt-1">
@@ -217,15 +239,23 @@ function PokemonCard({ pokemon }) {
                 <For each={pokemonMoves()}>
                   {(move) => {
                     return (
-                      <PokemonMove moveId={move.id} pp={move.pp} />
+                      <PokemonMove moveId={move?.id || -1} />
                     );
                   }}
                 </For>
               </div>
             </div>
-            <div class="flex flex-row justify-center w-full grow my-1">
+            <div class="flex flex-row justify-center w-full grow my-1 gap-3">
               <button
-                class="hover:bg-teal-400 border border-solid border-teal-400 text-teal-400 hover:text-white px-4 py-1 rounded-md transition w-32"
+                class="font-bold hover:bg-red-400 border border-solid border-red-400 text-red-400 hover:text-white px-4 py-1 rounded-sm w-32"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOpen(false);
+                }}>
+                Cancel
+              </button>
+              <button
+                class="font-bold hover:bg-teal-400 border border-solid border-teal-400 text-teal-400 hover:text-white px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   event.stopPropagation();
                   setOpen(false);

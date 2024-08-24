@@ -5,20 +5,18 @@ import { moveList } from "./MoveList";
 
 function PokemonMove({
   moveId,
-  pp,
 }) {
-  const [ppValue, setPPValue] = createSignal(pp);
-
   const [currentMoveId, setCurrentMoveId] = createSignal(moveId);
   const moveData = createMemo(() => {
     const selected = moveList().find((m) => m.id === currentMoveId());
     return selected;
   });
 
-  const description = () => moveData().effect;
-  const power = () => moveData().power;
-  const accuracy = () => moveData().accuracy;
-  const moveType = () => moveData().move_type;
+  const description = () => moveData()?.effect || '(Empty move slots have no effects in battle.)';
+  const power = () => moveData()?.power || '--';
+  const accuracy = () => moveData()?.accuracy || '--';
+  const powerPoints = () => moveData()?.pp || '--';
+  const moveType = () => moveData()?.move_type || '???';
 
   const handleMoveChange = (event) => {
     const newId = event.target.value;
@@ -27,13 +25,14 @@ function PokemonMove({
 
   return (
     <div class="border border-solid border-slate-200 p-1 w-full rounded-md bg-white">
-      <div class="flex flex-row items-center justify-between">
+      <div class="flex flex-row items-center justify-between text-sm">
         <PokemonType typeName={moveType} />
         <select
           value={currentMoveId()}
           onChange={handleMoveChange}
           class="bg-white focus:border-white border border-solid border-slate-200 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
         >
+          <option value="-1">----------</option>
           <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
             {(move, _) => {
               return (
@@ -53,7 +52,7 @@ function PokemonMove({
               {accuracy()}%
             </Show>
           </span>
-          <span class="border border-solid border-slate-400 px-1">{ppValue()}/{ppValue()}</span>
+          <span class="border border-solid border-slate-400 px-1">{powerPoints()}/{powerPoints()}</span>
         </div>
       </div>
       <p class="text-sm">{description()}</p>
