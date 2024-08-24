@@ -24,8 +24,7 @@ function PokemonCard({ pokemon }) {
   const [open, setOpen] = createSignal(false);
 
   const pokemonTypes = createMemo(() => {
-    const targetId = pokemon.getSpeciesId();
-    const species = speciesList().find(({ species_id }) => species_id === targetId);
+    const species = speciesList().find(({ species_id }) => Number(species_id) === Number(speciesId()));
     if (!species) {
       return ['???'];
     }
