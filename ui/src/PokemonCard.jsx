@@ -53,16 +53,14 @@ function PokemonCard({ pokemon }) {
       .find((m) => Number(m.id) === Number(id)))
     .filter((m) => m);
 
-  const hiddenPowerTypeFromIvs = () => hiddenPowerType(...ivArray())
-
   return (
     <div
-      class="flex flex-col w-32 h-32 hover:bg-green-200 transition rounded-lg border border-solid border-green-200 p-1 m-1"
+      class="flex flex-col w-32 h-32 hover:bg-teal-200 transition rounded-lg border border-solid border-teal-200 p-1 m-1"
       onClick={handleClick}
     >
       <div
         ref={ref}
-        class="min-w-1/8 border-green-200 flex justify-center grow hover:cursor-pointer"
+        class="min-w-1/8 border-teal-200 flex justify-center grow hover:cursor-pointer"
       >
         <Show when={pokemon.hasSpecies()}>
           <img
@@ -118,7 +116,7 @@ function PokemonCard({ pokemon }) {
                     <input
                       id="nickname-input"
                       type="text"
-                      class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-green-400 w-40"
+                      class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-teal-400 w-40"
                       value={pokemon.getName()}
                     />
                   </div>
@@ -135,7 +133,7 @@ function PokemonCard({ pokemon }) {
                     <label class="font-bold block" for="nature-input">Nature</label>
                     <select
                       id="nature-input"
-                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-green-400"
+                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-teal-400"
                     >
                       <For each={NATURES}>
                         {(nature) => {
@@ -143,7 +141,7 @@ function PokemonCard({ pokemon }) {
                             <option
                               value={nature.name}
                               class="font-bold"
-                              selected={() => nature.name === pokemon.getNature() ? "selected" : undefined}
+                              selected={nature.name === pokemon.getNature().name ? "selected" : undefined}
                             >
                               {nature.name}&nbsp;
                               <Show when={nature.increase != nature.decrease}>
@@ -227,7 +225,7 @@ function PokemonCard({ pokemon }) {
             </div>
             <div class="flex flex-row justify-center w-full grow my-1">
               <button
-                class="hover:bg-green-400 border border-solid border-green-400 text-green-400 hover:text-white px-4 py-1 rounded-md transition w-32"
+                class="hover:bg-teal-400 border border-solid border-teal-400 text-teal-400 hover:text-white px-4 py-1 rounded-md transition w-32"
                 onClick={(event) => {
                   event.stopPropagation();
                   setOpen(false);

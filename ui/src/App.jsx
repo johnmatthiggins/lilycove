@@ -47,8 +47,8 @@ function App() {
                   type="file"
                   accept=".sav"
                   class="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files[0];
+                  onChange={async (event) => {
+                    const file = event.target.files[0];
                     let bytes = [];
                     for await (const chunk of file.stream()) {
                       bytes = bytes.concat([...chunk]);

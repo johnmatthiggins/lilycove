@@ -22,8 +22,8 @@ function getGameCode(saveOffset, bits) {
 function getInGameTime(saveOffset, bits) {
   const offset = saveOffset + 0xE;
   const hours = new Uint16Array([bits[offset], bits[offset + 1]])[0];
-  const minutes = bits[offset + 2];
-  return `${hours}:${minutes}`
+  const minutes = String(bits[offset + 2]);
+  return `${hours}:${minutes.padStart(2, '0')}`
 }
 
 const OPTIONS_OFFSET = 0x13;
@@ -170,10 +170,17 @@ function GameInfo({ bits }) {
 
   return (
     <div>
-      <div class="flex justify-center">
-        <GamePicture gameCode={gameCode} />
-      </div>
       <div class="flex justify-start gap-2">
+        <section id="trainer-data">
+          <GamePicture gameCode={gameCode} />
+          <pre class="text-left">Name: {trainerName()}</pre>
+          <pre class="text-left">ID NO: {trainerId()}</pre>
+          <pre class="text-left">Gender: {trainerGender()}</pre>
+          <pre class="text-left">Time Played: {gameTime()}</pre>
+          <pre class="text-left">Sound: <i>{soundType()}</i></pre>
+          <pre class="text-left">Text Speed: <i>{textSpeed()}</i></pre>
+          <pre class="text-left">Battle Style: <i>{battleStyle()}</i></pre>
+        </section>
         <section id="party-pokemon">
           <h3 class="text-3xl font-bold">Party</h3>
           <div class="flex">
@@ -187,17 +194,6 @@ function GameInfo({ bits }) {
             </For>
           </div>
         </section>
-        <section id="trainer-data">
-          <h3 class="text-3xl font-bold">Trainer Data</h3>
-          <pre class="text-left whitespace-pre">Name: {trainerName()}</pre>
-          <pre class="text-left whitespace-pre">ID NO: {trainerId()}</pre>
-          <pre class="text-left whitespace-pre">Gender: {trainerGender()}</pre>
-          <pre class="text-left whitespace-pre">Time Played: {gameTime()}</pre>
-          <pre class="text-left whitespace-pre">Sound: <i>{soundType()}</i></pre>
-          <pre class="text-left whitespace-pre">Text Speed: <i>{textSpeed()}</i></pre>
-          <pre class="text-left whitespace-pre">Battle Style: <i>{battleStyle()}</i></pre>
-        </section>
-
       </div>
 
       <div class="flex flex-col justify-center">
@@ -215,7 +211,7 @@ function GameInfo({ bits }) {
                 </For>
               </select>
             </div>
-            <div class="flex flex-wrap">
+            <div class="flex flex-wrap justify-between w-full">
               <For each={boxPokemon()[selectedBox()]}>
                 {(p) => <PokemonCard pokemon={p} />}
               </For>
