@@ -18,8 +18,10 @@ function PokemonCard({ pokemon }) {
     ivs.specialDefense,
   ]);
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
+  const [nickname, setNickname] = createSignal(pokemon.getName());
 
   let ref;
+  let imageRef;
   const id = () => String(speciesId()).padStart(3, '0');
   const [open, setOpen] = createSignal(false);
 
@@ -34,8 +36,9 @@ function PokemonCard({ pokemon }) {
     return [species?.type1, species?.type2];
   });
 
+  const [isShiny, setIsShiny] = createSignal(pokemon.isShiny());
   const imageURL = () => {
-    if (pokemon.isShiny()) {
+    if (isShiny()) {
       return `/api/pokemon-images/${id()}s.png`;
     }
     return `/api/pokemon-images/${id()}.png`;
@@ -69,16 +72,13 @@ function PokemonCard({ pokemon }) {
           />
         </Show>
       </div>
-      <div class="font-mono text-sm flex gap-1 flex-between px-2 items-center hover:cursor-pointer">
+      <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
         <Show when={pokemon.hasSpecies()}>
-          <img src={`/items/${pokemon.getPokeballItemId()}.png`} class="sharp-pixels" />
-        </Show>
-        <p class="text-xs text-center">{pokemon.getName()}</p>
-        <Show when={pokemon.hasSpecies() && pokemon.isShiny()}>
+          <img src={`/items/${pokemon.getPokeballItemId()}.png`} class="sharp-pixels w-5" />
+          <p class="text-xs text-center">{nickname()}</p>
           <img
-            width={10}
-            src="/star.svg"
-            class="shiny-star"
+            src={isShiny() ? "/star.svg" : "/empty-star.svg"}
+            class="shiny-star w-3"
             loading="lazy"
           />
         </Show>
@@ -107,15 +107,25 @@ function PokemonCard({ pokemon }) {
                 <div class="flex flex-col items-start gap-1">
                   <div>
                     <label class="font-bold block" for="nickname-input">Nickname</label>
-                    <input
-                      id="nickname-input"
-                      type="text"
-                      class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-teal-400 w-40"
-                      value={pokemon.getName()}
-                    />
+                    <div class="flex flex-row gap-2">
+                      <input
+                        id="nickname-input"
+                        type="text"
+                        class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-teal-400 w-32"
+                        onInput={(event) => setNickname(event.target.value)}
+                        value={nickname()}
+                      />
+                      <img
+                        src={isShiny() ? "/star.svg" : "/empty-star.svg"}
+                        onClick={() => setIsShiny((prev) => !prev)}
+                        class="shiny-star w-5 hover:cursor-pointer"
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                   <div class="w-full flex justify-center">
                     <img
+                      ref={imageRef}
                       class="sharp-pixels hover:cursor-pointer w-32 mt-2 p-1"
                       src={imageURL()}
                     />
@@ -141,7 +151,7 @@ function PokemonCard({ pokemon }) {
                         {(species) => {
                           return (
                             <option value={species.species_id}>
-                              {species.name} #{species.pokedex_id}
+                              {String(species.pokedex_id).padStart(3, '0')} {species.name}
                             </option>
                           );
                         }}

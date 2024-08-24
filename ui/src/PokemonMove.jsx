@@ -24,7 +24,7 @@ function PokemonMove({
   };
 
   return (
-    <div class="border border-solid border-slate-200 p-1 w-full rounded-md bg-white">
+    <div class="border border-solid border-slate-200 p-1 w-full rounded-sm bg-white">
       <div class="flex flex-row items-center justify-between text-sm">
         <div class="flex flex-row items-center justify-start">
           <PokemonType typeName={moveType} />
