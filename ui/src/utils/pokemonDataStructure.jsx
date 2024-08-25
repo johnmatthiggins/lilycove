@@ -425,12 +425,12 @@ class BoxPokemon {
 
     const [hpEv, atkEv, defEv, spdEv, spAtkEv, spDefEv] = effortValueBits;
     return {
-      "HP": hpEv,
-      "Attack": atkEv,
-      "Defense": defEv,
-      "Speed": spdEv,
-      "Special Attack": spAtkEv,
-      "Special Defense": spDefEv,
+      "hp": hpEv,
+      "attack": atkEv,
+      "defense": defEv,
+      "speed": spdEv,
+      "specialAttack": spAtkEv,
+      "specialDefense": spDefEv,
     };
   }
 

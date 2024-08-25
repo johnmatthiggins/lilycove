@@ -714,8 +714,16 @@ video {
   width: 4rem;
 }
 
+.w-3 {
+  width: 0.75rem;
+}
+
 .w-32 {
   width: 8rem;
+}
+
+.w-4 {
+  width: 1rem;
 }
 
 .w-40 {
@@ -724,6 +732,10 @@ video {
 
 .w-48 {
   width: 12rem;
+}
+
+.w-5 {
+  width: 1.25rem;
 }
 
 .w-64 {
@@ -743,18 +755,6 @@ video {
   width: 100%;
 }
 
-.w-4 {
-  width: 1rem;
-}
-
-.w-3 {
-  width: 0.75rem;
-}
-
-.w-5 {
-  width: 1.25rem;
-}
-
 .min-w-16 {
   min-width: 4rem;
 }
@@ -769,6 +769,30 @@ video {
 
 .min-w-32 {
   min-width: 8rem;
+}
+
+.min-w-64 {
+  min-width: 16rem;
+}
+
+.min-w-72 {
+  min-width: 18rem;
+}
+
+.min-w-96 {
+  min-width: 24rem;
+}
+
+.min-w-full {
+  min-width: 100%;
+}
+
+.min-w-\[50vw\] {
+  min-width: 50vw;
+}
+
+.min-w-\[65vw\] {
+  min-width: 65vw;
 }
 
 .max-w-48 {
@@ -1102,6 +1126,10 @@ video {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.font-sans {
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1256,6 +1284,10 @@ video {
 
 .shiny-star {
   filter: invert(51%) sepia(75%) saturate(2979%) hue-rotate(324deg) brightness(101%) contrast(98%);
+}
+
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 
 .hover\:cursor-pointer:hover {

@@ -10,3 +10,7 @@
 .shiny-star {
   filter: invert(51%) sepia(75%) saturate(2979%) hue-rotate(324deg) brightness(101%) contrast(98%);
 }
+
+html:has(dialog[open]) {
+  overflow: hidden;
+}

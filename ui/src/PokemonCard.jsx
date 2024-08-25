@@ -9,6 +9,7 @@ import PokemonMove from './PokemonMove';
 
 function PokemonCard({ pokemon }) {
   const ivs = pokemon.getIndividualValues();
+  const evs = pokemon.getEffortValues();
   const [ivArray, setIvArray] = createSignal([
     ivs.hp,
     ivs.attack,
@@ -17,8 +18,18 @@ function PokemonCard({ pokemon }) {
     ivs.specialAttack,
     ivs.specialDefense,
   ]);
+  const [evArray, setEvArray] = createSignal([
+    evs.hp,
+    evs.attack,
+    evs.defense,
+    evs.speed,
+    evs.specialAttack,
+    evs.specialDefense,
+  ]);
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
   const [nickname, setNickname] = createSignal(pokemon.getName());
+
+  const evSum = () => evArray().reduce((a, b) => a + b);
 
   let ref;
   let imageRef;
@@ -49,6 +60,7 @@ function PokemonCard({ pokemon }) {
   const blockClickCascade = (event) => event.stopPropagation();
 
   const setIv = (index, newValue) => setIvArray(ivArray().with(index, newValue));
+  const setEv = (index, newValue) => setEvArray(evArray().with(index, newValue));
 
   const pokemonMoves = () => pokemon
     .getMoveIds()
@@ -57,7 +69,7 @@ function PokemonCard({ pokemon }) {
 
   return (
     <div
-      class="flex flex-col w-32 h-32 hover:bg-teal-200 rounded-lg border border-solid border-teal-200 p-1 m-1"
+      class="rounded-sm flex flex-col w-32 h-32 hover:bg-teal-200 border border-solid border-teal-200 p-1 m-1"
       onClick={handleClick}
     >
       <div
@@ -85,11 +97,12 @@ function PokemonCard({ pokemon }) {
       </div>
 
       <Show when={open()}>
-        <div
+        <dialog
+          open
           onClick={handleClose}
-          class="flex justify-center"
+          class="flex justify-center font-sans"
           style={{
-            "overflow-y": "hidden",
+            overflow: "hidden",
             "z-index": 1000,
             background: 'rgba(0, 0, 0, 0.3)',
             top: 0,
@@ -97,9 +110,10 @@ function PokemonCard({ pokemon }) {
             height: '100vh',
             width: '100vw',
             position: 'fixed',
-          }}>
+          }}
+        >
           <div
-            class="shadow-sm border border-slate-200 border-solid mt-2 max-w-128 rounded-lg bg-white"
+            class="shadow-sm border border-slate-200 border-solid mt-2 min-w-[65vw] rounded-lg bg-white p-2"
             style={{ height: 'fit-content' }}
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
@@ -182,35 +196,80 @@ function PokemonCard({ pokemon }) {
                       </For>
                     </select>
                   </div>
-                  <div class="w-full">
-                    <h3 class="font-bold block">Hidden Power</h3>
-                    <div class="w-full flex">
-                      <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
-                    </div>
-                  </div>
                 </div>
                 <div class="grid grid-cols-2 gap-1 pt-1">
-                  <div class="border border-solid border-slate-200 p-2 rounded-lg bg-white">
+                  <div class="border border-solid border-slate-200 p-2 rounded-md bg-white">
                     <h3 class="text-2xl font-bold">EVs</h3>
                     <label for="hp-ev-slider" class="block font-bold">HP</label>
-                    <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues().HP} />
+                    <RangeInput
+                      step="4"
+                      min="0"
+                      max="252"
+                      value={evArray()[0]}
+                      onChange={(event) => setEv(0, Number(event.target.value))}
+                    />
 
                     <label for="attack-ev-slider" class="block font-bold">Attack</label>
-                    <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues().Attack} />
+                    <RangeInput
+                      step="4"
+                      min="0"
+                      max="252"
+                      value={evArray()[1]}
+                      onChange={(event) => setEv(1, Number(event.target.value))}
+                    />
+
 
                     <label for="defense-ev-slider" class="block font-bold">Defense</label>
-                    <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues().Defense} />
+                    <RangeInput
+                      step="4"
+                      min="0"
+                      max="252"
+                      value={evArray()[2]}
+                      onChange={(event) => setEv(2, Number(event.target.value))}
+                    />
 
                     <label for="spdef-ev-slider" class="block font-bold">Sp. Defense</label>
-                    <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues()["Special Attack"]} />
+                    <RangeInput
+                      step="4"
+                      min="0"
+                      max="252"
+                      value={evArray()[4]}
+                      onChange={(event) => setEv(4, Number(event.target.value))}
+                    />
 
                     <label for="spatk-ev-slider" class="block font-bold">Sp. Attack</label>
-                    <RangeInput step="4" min="0" max="252" value={pokemon.getEffortValues()["Special Defense"]} />
+                    <RangeInput
+                      step="4"
+                      min="0"
+                      max="252"
+                      value={evArray()[5]}
+                      onChange={(event) => setEv(5, Number(event.target.value))}
+                    />
 
                     <label for="speed-ev-slider" class="block font-bold">Speed</label>
-                    <RangeInput type="range" step="4" min="0" max="252" value={pokemon.getEffortValues().Speed} />
+                    <RangeInput
+                      type="range"
+                      step="4"
+                      min="0"
+                      max="252"
+                      value={evArray()[3]}
+                      onChange={(event) => setEv(3, Number(event.target.value))}
+                    />
+                    <div>
+                      <label for="ev-total" class="font-bold block">Total</label>
+                      <input
+                        id="ev-total"
+                        class="border border-solid border-slate-200 p-1"
+                        style={{
+                          // highlight text red if total evs exceed 510
+                          color: evSum() <= 510 ? "inherit" : "#dc2626",
+                        }}
+                        value={evSum()}
+                        disabled
+                      />
+                    </div>
                   </div>
-                  <div class="border border-solid border-slate-200 p-2 rounded-lg bg-white">
+                  <div class="border border-solid border-slate-200 p-2 rounded-md bg-white">
                     <h3 class="text-2xl font-bold">IVs</h3>
                     <label for="hp-iv-slider" class="block font-bold">HP</label>
                     <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().hp} onChange={(event) => {
@@ -241,6 +300,12 @@ function PokemonCard({ pokemon }) {
                     <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().speed} onChange={(event) => {
                       setIv(3, Number(event.target.value));
                     }} />
+                    <div class="w-full">
+                      <h3 class="font-bold block">Hidden Power</h3>
+                      <div class="w-full flex">
+                        <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -254,7 +319,7 @@ function PokemonCard({ pokemon }) {
                 </For>
               </div>
             </div>
-            <div class="flex flex-row justify-center w-full grow my-1 gap-3">
+            <div class="flex flex-row justify-center w-full grow my-1 pt-2 gap-3">
               <button
                 class="font-bold hover:bg-red-400 border border-solid border-red-400 text-red-400 hover:text-white px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
@@ -273,9 +338,9 @@ function PokemonCard({ pokemon }) {
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       </Show>
-    </div >
+    </div>
   );
 }
 
