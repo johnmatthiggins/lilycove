@@ -15,7 +15,7 @@ async def all_moves(_):
 async def all_pokemon(_):
     species = []
     async for pokemon_species in Species.objects.all():
-        species.append(pokemon_species.to_json())
+        species.append(await pokemon_species.to_json())
 
     json_results = ",".join(species)
 

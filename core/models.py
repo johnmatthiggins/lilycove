@@ -50,13 +50,18 @@ class Species(models.Model):
     def __str__(self):
         return f'{{ "name": "{self.name}", "species_id": {self.species_id}, "pokedex_id": {self.pokedex_id} }}'
 
-    def to_json(self):
+    async def to_json(self):
+        ability_names = []
+        async for ability in self.abilities.all():
+            ability_names.append(ability.name)
+
         fields = {
             "name": self.name,
             "species_id": self.species_id,
             "pokedex_id": self.pokedex_id,
             "type1": self.type1,
             "type2": self.type2,
+            "growth_rate": self.growth_rate,
             "stats": {
                 "hp": self.hp,
                 "attack": self.attack,
@@ -65,7 +70,7 @@ class Species(models.Model):
                 "special_attack": self.special_attack,
                 "special_defense": self.special_defense,
             },
-            "abilities": ["Torrent"],
+            "abilities": ability_names,
         }
 
         return json.dumps(fields)

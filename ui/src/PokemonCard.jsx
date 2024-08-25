@@ -183,10 +183,14 @@ function PokemonCard({ pokemon }) {
                     </select>
                   </div>
                   <div>
-                    <label class="font-bold block" for="ability-input"></label>
-                    <select value={abilityIndex()} id="ability-input">
+                    <label class="font-bold block" for="ability-input">Ability</label>
+                    <select
+                      id="ability-input"
+                      value={abilityIndex() % abilityList().length}
+                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 focus:border-white focus:outline focus:outline-solid focus:outline-teal-400"
+                    >
                       <For each={abilityList()}>
-                        {(ability, index) => (<option value={index}>{ability}</option>)}
+                        {(ability, index) => (<option value={index()}>{ability}</option>)}
                       </For>
                     </select>
                   </div>

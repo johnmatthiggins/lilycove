@@ -83,9 +83,9 @@ class Command(BaseCommand):
 
             ability_text = soup.find('td', attrs={"colspan":4}).b.text
             if '&'  in ability_text:
-                abilities = [ability_text.replace('Ability: ', '')]
-            else:
                 abilities = list(ability_text.replace('Ability: ', '').split(' & '))
+            else:
+                abilities = [ability_text.replace('Ability: ', '')]
 
             matching_row = pokemon_table[pokemon_table['name'] == pokemon_name.lower()]
             species_id = int(matching_row['dec'].iloc[0], 10)
@@ -114,11 +114,11 @@ class Command(BaseCommand):
                 special_defense=int(base_stats['sdef'].iloc[0]),
                 growth_rate=growth_rate
             )
-            Species.abilities = list([Ability(name=ability) for ability in abilities])
+            ability_entities = list([Ability(species_id=species_id, name=ability) for ability in abilities])
             print(pokemon_species)
-            new_pokemon.append(pokemon_species)
-
-        return new_pokemon
+            pokemon_species.save()
+            for ability in ability_entities:
+                ability.save()
 
     def _load_items(self):
         url = "https://bulbapedia.bulbagarden.net/wiki/List_of_items_by_index_number_in_Generation_III"
@@ -268,17 +268,12 @@ class Command(BaseCommand):
 
         print('LOADING MOVES...')
         moves = self._load_moves()
-
-        for move in moves:
-            print(move)
-
-        Move.objects.bulk_create(moves)
+        Move.objects.bulk_create(moves, ignore_conflicts=True)
 
         print('FINISHED LOADING MOVES...')
 
         print('LOADING SPECIES DATA...')
         pokemon = self._load_species()
-        Species.objects.bulk_create(pokemon, update_conflicts=True)
         print('FINISHED LOADING SPECIES DATA...')
 
         end = time.time()
