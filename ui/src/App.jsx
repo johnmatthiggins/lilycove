@@ -29,7 +29,11 @@ function App() {
   });
 
   return (
-    <div class="flex h-full w-full justify-center">
+    <div
+      class="flex h-full w-full justify-center"
+      style={{
+        'background-image': 'url("public/backdrop.png")',
+      }}>
       <div class="grow justify-center items-center">
         <div class="rounded-lg bg-white p-2 w-1/2 mx-auto">
           <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
