@@ -36,6 +36,15 @@ class Species(models.Model):
     special_attack = models.IntegerField()
     special_defense = models.IntegerField()
 
+    # the experience types
+    # - slow
+    # - medium slow
+    # - medium fast
+    # - fast
+    # - fluctuating
+    # - erratic
+    growth_rate = models.CharField(max_length=127)
+
     move_pool = models.ManyToManyField(Move)
 
     def __str__(self):
@@ -56,10 +65,19 @@ class Species(models.Model):
                 "special_attack": self.special_attack,
                 "special_defense": self.special_defense,
             },
+            "abilities": ["Torrent"],
         }
 
         return json.dumps(fields)
 
+class Ability(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=127)
+    species = models.ForeignKey(Species, on_delete=models.CASCADE, related_name='abilities')
+
+    class Meta:
+        verbose_name = 'Ability'
+        verbose_name_plural = 'Abilities'
 
 class Item(models.Model):
     item_id = models.IntegerField(primary_key=True)

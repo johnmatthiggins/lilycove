@@ -2,7 +2,7 @@ import time
 from io import StringIO
 
 from django.core.management.base import BaseCommand
-from core.models import Item, Species, Move
+from core.models import Item, Species, Move, Ability
 
 from thefuzz import fuzz
 import httpx
@@ -40,6 +40,13 @@ class Command(BaseCommand):
         # fetch list of pokemon...
         # bind pokemon to their species id and dex id
         # hit serebii and scrape tables to get list of learnable moves.
+        experience_type_url = 'https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type'
+        response = httpx.get(experience_type_url)
+        html = response.text
+        experience_table = pd.read_html(io=StringIO(html))[0].iloc[:386]
+        experience_table.columns = ['dex_id', 'image', 'name', 'rate']
+        growth_rates = dict(list(experience_table.apply(lambda r: [r['dex_id'], str(r['rate']).lower()], axis=1)))
+
         all_pokemon_url = 'https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_index_number_in_Generation_III'
         response = httpx.get(all_pokemon_url)
 
@@ -71,7 +78,15 @@ class Command(BaseCommand):
                 .strip()
                 .replace(f'#{pokedex_id} ', '')
                 .strip())
+
             print('PROCESSING ', pokemon_name)
+
+            ability_text = soup.find('td', attrs={"colspan":4}).b.text
+            if '&'  in ability_text:
+                abilities = [ability_text.replace('Ability: ', '')]
+            else:
+                abilities = list(ability_text.replace('Ability: ', '').split(' & '))
+
             matching_row = pokemon_table[pokemon_table['name'] == pokemon_name.lower()]
             species_id = int(matching_row['dec'].iloc[0], 10)
 
@@ -82,6 +97,8 @@ class Command(BaseCommand):
 
             base_stats = pd.read_html(io=StringIO(str(table_html)), skiprows=2)[0]
             base_stats.columns = ["description", "hp", "atk", "def", "satk", "sdef", "speed"]
+
+            growth_rate = growth_rates[i]
 
             pokemon_species = Species(
                 name=pokemon_name,
@@ -95,7 +112,9 @@ class Command(BaseCommand):
                 speed=int(base_stats['speed'].iloc[0]),
                 special_attack=int(base_stats['satk'].iloc[0]),
                 special_defense=int(base_stats['sdef'].iloc[0]),
+                growth_rate=growth_rate
             )
+            Species.abilities = list([Ability(name=ability) for ability in abilities])
             print(pokemon_species)
             new_pokemon.append(pokemon_species)
 
@@ -213,30 +232,30 @@ class Command(BaseCommand):
         return new_moves
 
     # takes in list of moves...
-    def _load_movesets(self, movelist):
-        # fetch list of pokemon...
-        # bind pokemon to their species id and dex id
-        # hit serebii and scrape tables to get list of learnable moves.
-        all_pokemon_url = 'https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_index_number_in_Generation_III'
-        response = httpx.get(all_pokemon_url)
-
-        html = response.text
-        pokemon_table = pd.read_html(io=StringIO(html), skiprows=1)[0]
-        pokemon_table.columns = ['hex', 'dec', 'ms', 'name', 'type1', 'type2']
-
-        base_url = 'https://www.serebii.net/pokedex-rs/%s.shtml'
-
-        # Bulbasaur to Deoxys
-        for i in range(1, 358 + 1):
-            pokedex_id = str(i).zfill(3)
-            page_url = base_url % pokedex_id
-
-            response = httpx.get(page_url)
-            html = response.text
-            soup = BeautifulSoup(html, 'html.parser')
-            entry_name = soup.find(attrs={"size":"4"}).find('b').text
-            pokemon_name = entry_name.split(' ')[1]
-            game_id = int(pokemon_table[pokemon_table['name'] == pokemon_name]['dec'][0], 10)
+    # def _load_movesets(self, movelist):
+    #     # fetch list of pokemon...
+    #     # bind pokemon to their species id and dex id
+    #     # hit serebii and scrape tables to get list of learnable moves.
+    #     all_pokemon_url = 'https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_index_number_in_Generation_III'
+    #     response = httpx.get(all_pokemon_url)
+    #
+    #     html = response.text
+    #     pokemon_table = pd.read_html(io=StringIO(html), skiprows=1)[0]
+    #     pokemon_table.columns = ['hex', 'dec', 'ms', 'name', 'type1', 'type2']
+    #
+    #     base_url = 'https://www.serebii.net/pokedex-rs/%s.shtml'
+    #
+    #     # Bulbasaur to Deoxys
+    #     for i in range(1, 358 + 1):
+    #         pokedex_id = str(i).zfill(3)
+    #         page_url = base_url % pokedex_id
+    #
+    #         response = httpx.get(page_url)
+    #         html = response.text
+    #         soup = BeautifulSoup(html, 'html.parser')
+    #         entry_name = soup.find(attrs={"size":"4"}).find('b').text
+    #         pokemon_name = entry_name.split(' ')[1]
+    #         game_id = int(pokemon_table[pokemon_table['name'] == pokemon_name]['dec'][0], 10)
 
 
     def handle(self, *args, **options):
@@ -247,19 +266,19 @@ class Command(BaseCommand):
         Item.objects.bulk_create(items, ignore_conflicts=True)
         print('FINISHED LOADING ITEMS...')
 
-        # print('LOADING MOVES...')
-        # moves = self._load_moves()
-        #
-        # for move in moves:
-        #     print(move)
-        #
-        # Move.objects.bulk_create(moves)
-        #
-        # print('FINISHED LOADING MOVES...')
+        print('LOADING MOVES...')
+        moves = self._load_moves()
+
+        for move in moves:
+            print(move)
+
+        Move.objects.bulk_create(moves)
+
+        print('FINISHED LOADING MOVES...')
 
         print('LOADING SPECIES DATA...')
         pokemon = self._load_species()
-        Species.objects.bulk_create(pokemon)
+        Species.objects.bulk_create(pokemon, update_conflicts=True)
         print('FINISHED LOADING SPECIES DATA...')
 
         end = time.time()

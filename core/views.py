@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from django.http.response import Http404, JsonResponse
+from django.http.response import Http404
 from core.models import Move, Species, Item
 
 async def all_moves(_):

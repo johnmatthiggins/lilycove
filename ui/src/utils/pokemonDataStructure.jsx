@@ -344,6 +344,12 @@ class BoxPokemon {
     return otId;
   }
 
+  getAbilityBit() {
+    const abilityOffset = this._offsetMap['data_section_misc'] + 7;
+    const abilityIndex = (this._buffer[abilityOffset] >> 7) & 0x1;
+    return abilityIndex;
+  }
+
   getOTName() {
     const otNameOffset = 0x14;
     const otPkChars = this._buffer.slice(otNameOffset, otNameOffset + 6);

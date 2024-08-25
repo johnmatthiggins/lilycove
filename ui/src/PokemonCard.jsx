@@ -29,6 +29,16 @@ function PokemonCard({ pokemon }) {
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
   const [nickname, setNickname] = createSignal(pokemon.getName());
 
+  const [abilityIndex, setAbilityIndex] = createSignal(pokemon.getAbilityBit());
+  const pokemonSpecies = createMemo(() =>
+    speciesList()
+      .find(
+        ({ species_id }) => Number(species_id) === Number(speciesId())
+      )
+  );
+
+  const abilityList = () => pokemonSpecies().abilities;
+
   const evSum = () => evArray().reduce((a, b) => a + b);
 
   let ref;
@@ -37,7 +47,7 @@ function PokemonCard({ pokemon }) {
   const [open, setOpen] = createSignal(false);
 
   const pokemonTypes = createMemo(() => {
-    const species = speciesList().find(({ species_id }) => Number(species_id) === Number(speciesId()));
+    const species = pokemonSpecies();
     if (!species) {
       return ['???'];
     }
@@ -169,6 +179,14 @@ function PokemonCard({ pokemon }) {
                             </option>
                           );
                         }}
+                      </For>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="font-bold block" for="ability-input"></label>
+                    <select value={abilityIndex()} id="ability-input">
+                      <For each={abilityList()}>
+                        {(ability, index) => (<option value={index}>{ability}</option>)}
                       </For>
                     </select>
                   </div>
