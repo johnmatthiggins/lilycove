@@ -31,7 +31,7 @@ function PokemonCard({ pokemon }) {
   ]);
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
   const [nickname, setNickname] = createSignal(pokemon.getName());
-  const [nature, getNature] = createSignal(pokemon.getNature());
+  const [nature, setNature] = createSignal(pokemon.getNature());
 
   const [abilityIndex, setAbilityIndex] = createSignal(pokemon.getAbilityBit());
   const pokemonSpecies = createMemo(() =>
@@ -181,6 +181,7 @@ function PokemonCard({ pokemon }) {
                       label="Ability"
                       selectedValue={() => abilityIndex() % abilityList().length}
                       options={() => abilityList().map((ability, index) => ({ value: index, label: ability }))}
+                      onChange={(event) => setAbilityIndex(Number(event.target.value))}
                     />
                   </div>
                   <div>
@@ -190,14 +191,14 @@ function PokemonCard({ pokemon }) {
                         if (increase === decrease) {
                           result = { value: name, label: name };
                         } else {
-                          const natureLabel = `${name} (+${increase},-${decrease})`;
-                          result = { value: name, label: natureLabel };
+                          result = { value: name, label: `${name} (+${increase},-${decrease})` };
                         }
                         return result;
                       })}
                       id="nature-input"
                       label="Nature"
-                      selectedValue={nature}
+                      onChange={(event) => setNature(event.target.value)}
+                      selectedValue={() => nature().name}
                     />
                   </div>
                 </div>
