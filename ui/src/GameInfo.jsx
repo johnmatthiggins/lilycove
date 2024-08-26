@@ -171,7 +171,7 @@ function GameInfo({ bits }) {
   return (
     <div>
       <div class="flex justify-start gap-2">
-        <section id="trainer-data">
+        {/*<section id="trainer-data">
           <GamePicture gameCode={gameCode} />
           <pre class="text-left">Name: {trainerName()}</pre>
           <pre class="text-left">ID NO: {trainerId()}</pre>
@@ -193,7 +193,7 @@ function GameInfo({ bits }) {
               {(p) => <PokemonCard pokemon={p} />}
             </For>
           </div>
-        </section>
+        </section>*/}
       </div>
 
       <div class="flex flex-col justify-center">
@@ -202,7 +202,7 @@ function GameInfo({ bits }) {
             <div class="flex justify-between">
               <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
               <select
-                class="w-32 rounded-sm p-1 bg-slate-200 border border-solid border-slate-400"
+                class="w-32 rounded-sm p-1 bg-white border border-solid border-slate-400"
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >

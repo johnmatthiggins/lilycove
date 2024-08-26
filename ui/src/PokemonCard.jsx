@@ -3,9 +3,12 @@ import { createMemo, createSignal, Show } from 'solid-js';
 import { speciesList } from './PokemonList';
 import { moveList } from './MoveList';
 import PokemonType from './PokemonType';
-import RangeInput from './RangeInput';
-import { hiddenPowerType, NATURES } from './utils/pokemonDataStructure';
+import { NATURES } from './utils/pokemonDataStructure';
 import PokemonMove from './PokemonMove';
+import IvEditor from './IvEditor';
+import EvEditor from './EvEditor';
+import Selector from './Selector';
+
 
 function PokemonCard({ pokemon }) {
   const ivs = pokemon.getIndividualValues();
@@ -28,6 +31,7 @@ function PokemonCard({ pokemon }) {
   ]);
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
   const [nickname, setNickname] = createSignal(pokemon.getName());
+  const [nature, getNature] = createSignal(pokemon.getNature());
 
   const [abilityIndex, setAbilityIndex] = createSignal(pokemon.getAbilityBit());
   const pokemonSpecies = createMemo(() =>
@@ -38,8 +42,6 @@ function PokemonCard({ pokemon }) {
   );
 
   const abilityList = () => pokemonSpecies().abilities;
-
-  const evSum = () => evArray().reduce((a, b) => a + b);
 
   let ref;
   let imageRef;
@@ -68,9 +70,6 @@ function PokemonCard({ pokemon }) {
   const handleClick = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const blockClickCascade = (event) => event.stopPropagation();
-
-  const setIv = (index, newValue) => setIvArray(ivArray().with(index, newValue));
-  const setEv = (index, newValue) => setEvArray(evArray().with(index, newValue));
 
   const pokemonMoves = () => pokemon
     .getMoveIds()
@@ -156,188 +155,64 @@ function PokemonCard({ pokemon }) {
                   </div>
                   <div class="flex gap-1">
                     <For each={pokemonTypes()}>
-                      {(typeText) => {
-                        return (
-                          <PokemonType typeName={() => typeText} />
-                        );
-                      }}
+                      {(typeText) => (<PokemonType typeName={() => typeText} />)}
                     </For>
                   </div>
                   <div>
-                    <label class="font-bold block" for="species-input">Species</label>
-                    <select
+                    <Selector
                       id="species-input"
-                      value={speciesId()}
-                      onChange={(event) => setSpeciesId(event.target.value)}
-                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-teal-400"
-                    >
-                      <For each={speciesList().toSorted((a, b) => a.pokedex_id - b.pokedex_id)}>
-                        {(species) => {
-                          return (
-                            <option value={species.species_id}>
-                              {String(species.pokedex_id).padStart(3, '0')} {species.name}
-                            </option>
-                          );
-                        }}
-                      </For>
-                    </select>
+                      label="Species"
+                      onChange={(event) => setSpeciesId(Number(event.target.value))}
+                      selectedValue={speciesId}
+                      options={() =>
+                        speciesList()
+                          .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
+                          .map((species) => {
+                            const label = `${String(species.pokedex_id).padStart(3, '0')} ${species.name}`;
+                            const value = species.species_id;
+                            return { label, value };
+                          })
+                      }
+                    />
                   </div>
                   <div>
-                    <label class="font-bold block" for="ability-input">Ability</label>
-                    <select
+                    <Selector
                       id="ability-input"
-                      value={abilityIndex() % abilityList().length}
-                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 focus:border-white focus:outline focus:outline-solid focus:outline-teal-400"
-                    >
-                      <For each={abilityList()}>
-                        {(ability, index) => (<option value={index()}>{ability}</option>)}
-                      </For>
-                    </select>
+                      label="Ability"
+                      selectedValue={() => abilityIndex() % abilityList().length}
+                      options={() => abilityList().map((ability, index) => ({ value: index, label: ability }))}
+                    />
                   </div>
                   <div>
-                    <label class="font-bold block" for="nature-input">Nature</label>
-                    <select
+                    <Selector
+                      options={() => NATURES.map(({ name, increase, decrease }) => {
+                        let result;
+                        if (increase === decrease) {
+                          result = { value: name, label: name };
+                        } else {
+                          const natureLabel = `${name} (+${increase},-${decrease})`;
+                          result = { value: name, label: natureLabel };
+                        }
+                        return result;
+                      })}
                       id="nature-input"
-                      class="border border-solid border-slate-200 bg-white px-1 py-1.5 rounded-sm focus:border-white focus:outline focus:outline-solid focus:outline-teal-400"
-                    >
-                      <For each={NATURES}>
-                        {(nature) => {
-                          return (
-                            <option
-                              value={nature.name}
-                              class="font-bold"
-                              selected={nature.name === pokemon.getNature().name ? "selected" : undefined}
-                            >
-                              {nature.name}&nbsp;
-                              <Show when={nature.increase != nature.decrease}>
-                                (+{nature.increase},-{nature.decrease})
-                              </Show>
-                            </option>
-                          );
-                        }}
-                      </For>
-                    </select>
+                      label="Nature"
+                      selectedValue={nature}
+                    />
                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-1 pt-1">
-                  <div class="border border-solid border-slate-200 p-2 rounded-md bg-white">
-                    <h3 class="text-2xl font-bold">EVs</h3>
-                    <label for="hp-ev-slider" class="block font-bold">HP</label>
-                    <RangeInput
-                      step="4"
-                      min="0"
-                      max="252"
-                      value={evArray()[0]}
-                      onChange={(event) => setEv(0, Number(event.target.value))}
-                    />
-
-                    <label for="attack-ev-slider" class="block font-bold">Attack</label>
-                    <RangeInput
-                      step="4"
-                      min="0"
-                      max="252"
-                      value={evArray()[1]}
-                      onChange={(event) => setEv(1, Number(event.target.value))}
-                    />
-
-
-                    <label for="defense-ev-slider" class="block font-bold">Defense</label>
-                    <RangeInput
-                      step="4"
-                      min="0"
-                      max="252"
-                      value={evArray()[2]}
-                      onChange={(event) => setEv(2, Number(event.target.value))}
-                    />
-
-                    <label for="spdef-ev-slider" class="block font-bold">Sp. Defense</label>
-                    <RangeInput
-                      step="4"
-                      min="0"
-                      max="252"
-                      value={evArray()[4]}
-                      onChange={(event) => setEv(4, Number(event.target.value))}
-                    />
-
-                    <label for="spatk-ev-slider" class="block font-bold">Sp. Attack</label>
-                    <RangeInput
-                      step="4"
-                      min="0"
-                      max="252"
-                      value={evArray()[5]}
-                      onChange={(event) => setEv(5, Number(event.target.value))}
-                    />
-
-                    <label for="speed-ev-slider" class="block font-bold">Speed</label>
-                    <RangeInput
-                      type="range"
-                      step="4"
-                      min="0"
-                      max="252"
-                      value={evArray()[3]}
-                      onChange={(event) => setEv(3, Number(event.target.value))}
-                    />
-                    <div>
-                      <label for="ev-total" class="font-bold block">Total</label>
-                      <input
-                        id="ev-total"
-                        class="border border-solid border-slate-200 p-1"
-                        style={{
-                          // highlight text red if total evs exceed 510
-                          color: evSum() <= 510 ? "inherit" : "#dc2626",
-                        }}
-                        value={evSum()}
-                        disabled
-                      />
-                    </div>
+                  <div>
+                    <EvEditor evArray={evArray} setEvArray={setEvArray} />
                   </div>
                   <div class="border border-solid border-slate-200 p-2 rounded-md bg-white">
-                    <h3 class="text-2xl font-bold">IVs</h3>
-                    <label for="hp-iv-slider" class="block font-bold">HP</label>
-                    <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().hp} onChange={(event) => {
-                      setIv(0, Number(event.target.value));
-                    }} />
-
-                    <label for="attack-iv-slider" class="block font-bold">Attack</label>
-                    <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().attack} onChange={(event) => {
-                      setIv(1, Number(event.target.value));
-                    }} />
-
-                    <label for="defense-iv-slider" class="block font-bold">Defense</label>
-                    <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().defense} onChange={(event) => {
-                      setIv(2, Number(event.target.value));
-                    }} />
-
-                    <label for="spdef-iv-slider" class="block font-bold">Sp. Defense</label>
-                    <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().specialAttack} onChange={(event) => {
-                      setIv(4, Number(event.target.value));
-                    }} />
-
-                    <label for="spatk-iv-slider" class="block font-bold">Sp. Attack</label>
-                    <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().specialAttack} onChange={(event) => {
-                      setIv(5, Number(event.target.value));
-                    }} />
-
-                    <label for="speed-iv-slider" class="block font-bold">Speed</label>
-                    <RangeInput step="1" min="0" max="31" value={pokemon.getIndividualValues().speed} onChange={(event) => {
-                      setIv(3, Number(event.target.value));
-                    }} />
-                    <div class="w-full">
-                      <h3 class="font-bold block">Hidden Power</h3>
-                      <div class="w-full flex">
-                        <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
-                      </div>
-                    </div>
+                    <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                   </div>
                 </div>
               </div>
               <div class="rounded-lg grid grid-cols-2 gap-1 pt-1">
                 <For each={pokemonMoves()}>
-                  {(move) => {
-                    return (
-                      <PokemonMove moveId={move?.id || -1} />
-                    );
-                  }}
+                  {(move) => (<PokemonMove moveId={move?.id || -1} />)}
                 </For>
               </div>
             </div>
