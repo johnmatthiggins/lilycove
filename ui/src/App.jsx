@@ -9,33 +9,37 @@ function App() {
   const [bits, setBits] = createSignal([]);
 
   createEffect(() => {
-    fetch('/api/items').then((response) => {
-      return response.json();
-    }).then((data) => {
-      setItemList(data)
-    });
+    fetch('/api/items')
+      .then((response) => response.json())
+      .then((data) => {
+        setItemList(data)
+      });
 
-    fetch('/api/species').then((response) => {
-      return response.json();
-    }).then((data) => {
-      setSpeciesList(data);
-    });
+    fetch('/api/species')
+      .then((response) => response.json())
+      .then((data) => {
+        setSpeciesList(data);
+      });
 
-    fetch('/api/moves').then((response) => {
-      return response.json();
-    }).then((data) => {
-      setMoveList(data);
-    });
+    fetch('/api/moves')
+      .then((response) => response.json())
+      .then((data) => {
+        setMoveList(data);
+      });
   });
 
   return (
     <div
-      class="flex h-full w-full justify-center"
+      class="flex h-full w-full justify-center sharp-pixel min-h-[100vh]"
       style={{
         'background-image': 'url("public/backdrop.png")',
-      }}>
+        'background-size': '2000px',
+        'image-rendering': 'pixelated',
+        'background-attachment': 'fixed',
+      }}
+    >
       <div class="grow justify-center items-center">
-        <div class="rounded-lg bg-white p-2 w-1/2 mx-auto">
+        <div class="rounded-lg bg-white p-2 w-1/2 mx-auto border border-solid border-slate-200 shadow-md">
           <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
           <h2 class="text-md text-center">A Generation III Hex Editor</h2>
           <Show when={bits().length === 0}>

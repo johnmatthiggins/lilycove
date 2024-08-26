@@ -698,6 +698,14 @@ video {
   height: 100%;
 }
 
+.min-h-\[100vw\] {
+  min-height: 100vw;
+}
+
+.min-h-\[100vh\] {
+  min-height: 100vh;
+}
+
 .w-1 {
   width: 0.25rem;
 }
