@@ -10,7 +10,7 @@ function RangeInput({ onChange, step, min, max, value, 'class': className = "" }
     setState(event.target.value);
   };
   return (
-    <div class="flex gap-2">
+    <div class={"flex gap-2 " + className}>
       <input
         type="range"
         step={step}
@@ -18,7 +18,6 @@ function RangeInput({ onChange, step, min, max, value, 'class': className = "" }
         max={max}
         value={state()}
         onInput={handleChange}
-        class={className}
       />
       <input
         class="w-12 border border-solid border-slate-200 px-1"

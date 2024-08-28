@@ -6,60 +6,84 @@ function EvEditor({ evArray, setEvArray }) {
   return (
     <>
       <h3 class="text-2xl font-bold">EVs</h3>
-      <label for="hp-ev-slider" class="block font-bold">HP</label>
-      <RangeInput
-        step="4"
-        min="0"
-        max="252"
-        value={evArray()[0]}
-        onChange={(event) => setEv(0, Number(event.target.value))}
-      />
+      <div class="flex flex-row gap-2">
+        <section id="labels" class="flex flex-col">
+          <div class="h-8 flex items-center">
+            <label for="hp-ev-slider" class="font-bold">HP</label>
+          </div>
+          <div class="h-8 flex items-center">
+            <label for="attack-ev-slider" class="font-bold text-center">Atk</label>
+          </div>
+          <div class="h-8 flex items-center">
+            <label for="defense-ev-slider" class="font-bold">Def</label>
+          </div>
+          <div class="h-8 flex items-center">
+            <label for="spdef-ev-slider" class="font-bold">SpD</label>
+          </div>
+          <div class="h-8 flex items-center">
+            <label for="spatk-ev-slider" class="font-bold">SpA</label>
+          </div>
+          <div class="h-8 flex items-center">
+            <label for="speed-ev-slider" class="font-bold">Spe</label>
+          </div>
+        </section>
+        <section id="ev-inputs">
+          <RangeInput
+            class="h-8"
+            step="4"
+            min="0"
+            max="252"
+            value={evArray()[0]}
+            onChange={(event) => setEv(0, Number(event.target.value))}
+          />
 
-      <label for="attack-ev-slider" class="block font-bold">Attack</label>
-      <RangeInput
-        step="4"
-        min="0"
-        max="252"
-        value={evArray()[1]}
-        onChange={(event) => setEv(1, Number(event.target.value))}
-      />
+          <RangeInput
+            class="h-8"
+            step="4"
+            min="0"
+            max="252"
+            value={evArray()[1]}
+            onChange={(event) => setEv(1, Number(event.target.value))}
+          />
 
-      <label for="defense-ev-slider" class="block font-bold">Defense</label>
-      <RangeInput
-        step="4"
-        min="0"
-        max="252"
-        value={evArray()[2]}
-        onChange={(event) => setEv(2, Number(event.target.value))}
-      />
+          <RangeInput
+            class="h-8"
+            step="4"
+            min="0"
+            max="252"
+            value={evArray()[2]}
+            onChange={(event) => setEv(2, Number(event.target.value))}
+          />
 
-      <label for="spdef-ev-slider" class="block font-bold">Sp. Defense</label>
-      <RangeInput
-        step="4"
-        min="0"
-        max="252"
-        value={evArray()[4]}
-        onChange={(event) => setEv(4, Number(event.target.value))}
-      />
+          <RangeInput
+            class="h-8"
+            step="4"
+            min="0"
+            max="252"
+            value={evArray()[4]}
+            onChange={(event) => setEv(4, Number(event.target.value))}
+          />
 
-      <label for="spatk-ev-slider" class="block font-bold">Sp. Attack</label>
-      <RangeInput
-        step="4"
-        min="0"
-        max="252"
-        value={evArray()[5]}
-        onChange={(event) => setEv(5, Number(event.target.value))}
-      />
+          <RangeInput
+            class="h-8"
+            step="4"
+            min="0"
+            max="252"
+            value={evArray()[5]}
+            onChange={(event) => setEv(5, Number(event.target.value))}
+          />
 
-      <label for="speed-ev-slider" class="block font-bold">Speed</label>
-      <RangeInput
-        type="range"
-        step="4"
-        min="0"
-        max="252"
-        value={evArray()[3]}
-        onChange={(event) => setEv(3, Number(event.target.value))}
-      />
+          <RangeInput
+            class="h-8"
+            type="range"
+            step="4"
+            min="0"
+            max="252"
+            value={evArray()[3]}
+            onChange={(event) => setEv(3, Number(event.target.value))}
+          />
+        </section>
+      </div>
       <div>
         <label for="ev-total" class="font-bold block">Total</label>
         <input

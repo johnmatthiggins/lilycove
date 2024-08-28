@@ -78,12 +78,12 @@ function PokemonCard({ pokemon }) {
 
   return (
     <div
-      class="rounded-sm flex flex-col w-32 h-32 hover:bg-teal-200 border border-solid border-teal-200 p-1 m-1"
+      class="rounded-sm flex flex-col w-32 h-32 hover:bg-gray-200 border border-solid border-gray-200 p-1 m-1"
       onClick={handleClick}
     >
       <div
         ref={ref}
-        class="min-w-1/8 border-teal-200 flex justify-center grow hover:cursor-pointer"
+        class="min-w-1/8 border-gray-200 flex justify-center grow hover:cursor-pointer"
       >
         <Show when={pokemon.hasSpecies()}>
           <img
@@ -122,7 +122,7 @@ function PokemonCard({ pokemon }) {
           }}
         >
           <div
-            class="shadow-sm border border-slate-200 border-solid mt-2 min-w-[65vw] rounded-lg bg-white p-2"
+            class="shadow-sm border border-gray-200 border-solid mt-2 min-w-[65vw] rounded-lg bg-white p-2"
             style={{ height: 'fit-content' }}
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
@@ -134,7 +134,7 @@ function PokemonCard({ pokemon }) {
                       <input
                         id="nickname-input"
                         type="text"
-                        class="px-1 py-1 rounded-sm border border-solid border-slate-200 focus:outline focus:outline-solid focus:outline-teal-400 w-32"
+                        class="px-1 py-1 rounded-sm border border-solid border-gray-200 focus:outline focus:outline-solid focus:outline-teal-400 w-32"
                         onInput={(event) => setNickname(event.target.value)}
                         value={nickname()}
                       />
@@ -206,7 +206,7 @@ function PokemonCard({ pokemon }) {
                   <div>
                     <EvEditor evArray={evArray} setEvArray={setEvArray} />
                   </div>
-                  <div class="border border-solid border-slate-200 p-2 rounded-md bg-white">
+                  <div class="border border-solid border-gray-200 p-2 rounded-md bg-white">
                     <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                   </div>
                 </div>
@@ -227,7 +227,7 @@ function PokemonCard({ pokemon }) {
                 Cancel
               </button>
               <button
-                class="font-bold hover:bg-teal-400 border border-solid border-teal-400 text-teal-400 hover:text-white px-4 py-1 rounded-sm w-32"
+                class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-white px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   event.stopPropagation();
                   setOpen(false);

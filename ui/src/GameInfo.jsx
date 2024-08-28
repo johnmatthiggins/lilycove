@@ -2,7 +2,7 @@ import { createMemo, createSignal, For } from 'solid-js';
 
 import { findSectionAddresses } from './utils/save.jsx';
 
-import GamePicture from './GamePicture';
+// import GamePicture from './GamePicture';
 import PokemonCard from './PokemonCard.jsx';
 
 import { convertPokemonStrToASCII } from './utils/hex.jsx';

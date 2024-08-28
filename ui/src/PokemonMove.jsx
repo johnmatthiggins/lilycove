@@ -6,6 +6,7 @@ import { moveList } from "./MoveList";
 function PokemonMove({
   moveId,
 }) {
+  const [ppUpCount, setPpUpCount] = createSignal(0);
   const [currentMoveId, setCurrentMoveId] = createSignal(moveId);
   const moveData = createMemo(() => {
     const selected = moveList().find((m) => m.id === currentMoveId());
@@ -16,6 +17,11 @@ function PokemonMove({
   const power = () => moveData()?.power || '--';
   const accuracy = () => moveData()?.accuracy || '--';
   const powerPoints = () => moveData()?.pp || '--';
+  const adjustedPowerPoints = () => {
+    const result = powerPoints() + (ppUpCount() * (powerPoints() / 5))
+    console.log(result);
+    return result;
+  };
   const moveType = () => moveData()?.move_type || '???';
 
   const handleMoveChange = (event) => {
@@ -24,14 +30,14 @@ function PokemonMove({
   };
 
   return (
-    <div class="border border-solid border-slate-200 p-1 w-full rounded-sm bg-white">
+    <div class="border border-solid border-gray-200 p-1 w-full rounded-sm bg-white">
       <div class="flex flex-row items-center justify-between text-sm">
         <div class="flex flex-row items-center justify-start">
           <PokemonType typeName={moveType} />
           <select
             value={currentMoveId()}
             onChange={handleMoveChange}
-            class="bg-white focus:border-white border border-solid border-slate-200 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
+            class="bg-white focus:border-white border border-solid border-gray-200 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
           >
             <option value="-1">----------</option>
             <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
@@ -43,21 +49,36 @@ function PokemonMove({
             </For>
           </select>
         </div>
-        <div class="w-fit flex flex-row justify-end bg-slate-200 border border-solid border-slate-400 rounded-sm">
-          <span class="border border-solid border-slate-400 px-1">
-            <Show when={Number(power())} fallback={"-"}>
+        <div class="w-fit flex flex-row justify-end border border-solid border-gray-200 rounded-sm">
+          <span class="border border-solid border-gray-200 px-1">
+            <Show when={Number(power())} fallback={"--"}>
               {power()} &#x26A1;
             </Show>
           </span>
-          <span class="border border-solid border-slate-400 px-1">
-            <Show when={Number(accuracy())} fallback={"-"}>
+          <span class="border border-solid border-gray-200 px-1">
+            <Show when={Number(accuracy())} fallback={"--"}>
               {accuracy()}%
             </Show>
           </span>
-          <span class="border border-solid border-slate-400 px-1">{powerPoints()}/{powerPoints()}</span>
+          <span class="border border-solid border-gray-200 px-1">
+            {adjustedPowerPoints()}/{adjustedPowerPoints()}
+          </span>
         </div>
       </div>
-      <p class="text-sm">{description()}</p>
+      <div class="flex justify-between">
+        <p class="text-sm">{description()}</p>
+        <div
+          class="font-mono border border-solid border-gray-200 flex justify-between pl-2 select-none hover:bg-gray-200 hover:cursor-pointer"
+          onClick={() => setPpUpCount((count) => (count + 1) % 4)}
+        >
+          <span>{ppUpCount()}</span>
+          <span class="h-1.5 rounded-sm">
+            <Show when={ppUpCount() === 3} fallback={<img class="sharp-pixels" src="/items/068.png" />}>
+              <img class="sharp-pixels" src="/items/070.png" />
+            </Show>
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
