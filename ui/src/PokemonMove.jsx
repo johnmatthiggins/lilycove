@@ -5,8 +5,9 @@ import { moveList } from "./MoveList";
 
 function PokemonMove({
   moveId,
+  ppUpCount,
+  setPpUpCount,
 }) {
-  const [ppUpCount, setPpUpCount] = createSignal(0);
   const [currentMoveId, setCurrentMoveId] = createSignal(moveId);
   const moveData = createMemo(() => {
     const selected = moveList().find((m) => m.id === currentMoveId());
@@ -16,10 +17,9 @@ function PokemonMove({
   const description = () => moveData()?.effect || '(Empty move slots have no effects in battle.)';
   const power = () => moveData()?.power || '--';
   const accuracy = () => moveData()?.accuracy || '--';
-  const powerPoints = () => moveData()?.pp || '--';
+  const powerPoints = () => moveData()?.pp || 0;
   const adjustedPowerPoints = () => {
     const result = powerPoints() + (ppUpCount() * (powerPoints() / 5))
-    console.log(result);
     return result;
   };
   const moveType = () => moveData()?.move_type || '???';
@@ -69,7 +69,7 @@ function PokemonMove({
         <p class="text-sm">{description()}</p>
         <div
           class="font-mono border border-solid border-gray-200 flex justify-between pl-2 select-none hover:bg-gray-200 hover:cursor-pointer"
-          onClick={() => setPpUpCount((count) => (count + 1) % 4)}
+          onClick={() => setPpUpCount((ppUpCount() + 1) % 4)}
         >
           <span>{ppUpCount()}</span>
           <span class="h-1.5 rounded-sm">

@@ -424,6 +424,18 @@ class BoxPokemon {
     return NATURES[natureIndex];
   }
 
+  getPowerPointIncreases() {
+    const ppOffset = this._offsetMap['data_section_growth'] + 8;
+    const ppBuffer = this._buffer[ppOffset];
+    const pp0 = ppBuffer & 0x3;
+    const pp1 = (ppBuffer >> 2) & 0x3;
+    const pp2 = (ppBuffer >> 4) & 0x3;
+    const pp3 = (ppBuffer >> 6) & 0x3;
+
+    // unpack these bad boys and send them up
+    return [pp0, pp1, pp2, pp3];
+  }
+
   getEffortValues() {
     const evOffset = this._offsetMap['data_section_condition'];
     const effortValueBits = this._buffer

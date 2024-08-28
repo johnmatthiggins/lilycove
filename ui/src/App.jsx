@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div
-      class="flex h-full w-full justify-center sharp-pixel min-h-[100vh]"
+      class="flex h-full w-full justify-center sharp-pixel min-h-[100vh] items-center"
       style={{
         'background-image': 'url("public/backdrop.png")',
         'background-size': '2000px',

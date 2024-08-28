@@ -29,6 +29,10 @@ function PokemonCard({ pokemon }) {
     evs.specialAttack,
     evs.specialDefense,
   ]);
+  const [ppIncreases, setPpIncreases] = createSignal(
+    pokemon.getPowerPointIncreases()
+  );
+
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
   const [nickname, setNickname] = createSignal(pokemon.getName());
   const [nature, setNature] = createSignal(pokemon.getNature());
@@ -213,7 +217,13 @@ function PokemonCard({ pokemon }) {
               </div>
               <div class="rounded-lg grid grid-cols-2 gap-1 pt-1">
                 <For each={pokemonMoves()}>
-                  {(move) => (<PokemonMove moveId={move?.id || -1} />)}
+                  {(move, index) => (<PokemonMove
+                    moveId={move?.id || -1}
+                    ppUpCount={() => ppIncreases()[index()]}
+                    setPpUpCount={(nextValue) =>
+                      setPpIncreases(ppIncreases().with(index(), nextValue))
+                    }
+                  />)}
                 </For>
               </div>
             </div>
