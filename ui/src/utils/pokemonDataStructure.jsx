@@ -243,8 +243,6 @@ class BoxPokemon {
   constructor(buffer) {
     this._buffer = buffer;
     this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
-
-    this._decryptDataSection();
   }
 
   _getEncryptionKey() {
@@ -255,7 +253,7 @@ class BoxPokemon {
     return encryptionKey;
   }
 
-  _decryptDataSection() {
+  _decrypt() {
     const key = this._getEncryptionKey();
     const dataSectionOffset = this._offsetMap['data'];
     for (let i = 0; i < 48; i += 1) {
@@ -263,13 +261,50 @@ class BoxPokemon {
     }
   }
 
+  _encrypt() {
+    const key = this._getEncryptionKey();
+    const dataSectionOffset = this._offsetMap['data'];
+    for (let i = 0; i < 48; i += 1) {
+      this._buffer[dataSectionOffset + i] ^= key[i % key.length];
+    }
+  }
+
+  isChecksumValid() {
+    this._decrypt();
+    const UINT16_LIMIT = 1 << 16;
+    const checksum = this.getChecksum();
+    const dataOffset = this._offsetMap['data'];
+    const dataSectionLength = 48;
+    let calculatedChecksum = 0;
+
+    for (let i = 0; i < dataSectionLength; i += 2) {
+      const offset = dataOffset + i;
+      const b0 = this._buffer[offset];
+      const b1 = this._buffer[offset + 1];
+      const nextShort = b0 | b1 << 8;
+      calculatedChecksum = (calculatedChecksum + nextShort) % UINT16_LIMIT;
+    }
+
+    this._encrypt();
+    return checksum === calculatedChecksum;
+  }
+
+  getChecksum() {
+    const checksumOffset = 0x1C;
+    const [b0, b1] = this._buffer.slice(checksumOffset, checksumOffset + 2);
+
+    const checksum = b0 | b1 << 8;
+    return checksum;
+  }
+
   getPokeballItemId() {
+    this._decrypt();
     const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
     const buffer = BigInt(this._buffer[originsOffset]);
-    console.log('buffer = ', buffer.toString(16));
     const ballId = (buffer >> 3n) & 0x0Fn;
 
     const threeDigitBallId = String(ballId + 1n).padStart(3, '0');
+    this._encrypt();
     return threeDigitBallId;
   }
 
@@ -345,8 +380,10 @@ class BoxPokemon {
   }
 
   getAbilityBit() {
+    this._decrypt();
     const abilityOffset = this._offsetMap['data_section_misc'] + 7;
     const abilityIndex = (this._buffer[abilityOffset] >> 7) & 0x1;
+    this._encrypt();
     return abilityIndex;
   }
 
@@ -391,15 +428,18 @@ class BoxPokemon {
   }
 
   getSpeciesId() {
+    this._decrypt();
     const speciesOffset = this._offsetMap['data_section_growth'];
 
     const [e0, e1] = this._buffer.slice(speciesOffset, speciesOffset + 2);
     const species = e1 << 8 | e0;
 
+    this._encrypt();
     return species;
   }
 
   getMoveIds() {
+    this._decrypt();
     const movesOffset = this._offsetMap['data_section_attacks'];
     const ids = Array(4).fill(0).map((_, i) => {
       const start = movesOffset + i * 2;
@@ -408,14 +448,17 @@ class BoxPokemon {
       const index = b0 | b1 << 8;
       return index;
     });
+    this._encrypt();
 
     return ids;
   }
 
   getItemCode() {
+    this._decrypt();
     const itemOffset = this._offsetMap['data_section_growth'];
     const [b0, b1] = this._buffer.slice(itemOffset, itemOffset + 2);
     const code = b0 | b1 << 8;
+    this._encrypt();
     return code;
   }
 
@@ -425,6 +468,7 @@ class BoxPokemon {
   }
 
   getPowerPointIncreases() {
+    this._decrypt();
     const ppOffset = this._offsetMap['data_section_growth'] + 8;
     const ppBuffer = this._buffer[ppOffset];
     const pp0 = ppBuffer & 0x3;
@@ -432,16 +476,20 @@ class BoxPokemon {
     const pp2 = (ppBuffer >> 4) & 0x3;
     const pp3 = (ppBuffer >> 6) & 0x3;
 
+    this._encrypt();
+
     // unpack these bad boys and send them up
     return [pp0, pp1, pp2, pp3];
   }
 
   getEffortValues() {
+    this._decrypt();
     const evOffset = this._offsetMap['data_section_condition'];
     const effortValueBits = this._buffer
       .slice(evOffset, evOffset + 0x6);
 
     const [hpEv, atkEv, defEv, spdEv, spAtkEv, spDefEv] = effortValueBits;
+    this._encrypt();
     return {
       "hp": hpEv,
       "attack": atkEv,
@@ -453,6 +501,7 @@ class BoxPokemon {
   }
 
   getIndividualValues() {
+    this._decrypt();
     // bit mask that extracts first thirty bits
     const firstFiveBits = 31n;
     const ivOffset = this._offsetMap['data_section_misc'] + 0x4;
@@ -466,6 +515,8 @@ class BoxPokemon {
     const speedIv = (word >> 15n) & firstFiveBits;
     const sAttackIv = (word >> 20n) & firstFiveBits;
     const sDefenseIv = (word >> 25n) & firstFiveBits;
+
+    this._encrypt();
 
     return {
       "hp": Number(hpIv),

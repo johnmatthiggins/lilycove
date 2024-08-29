@@ -45,7 +45,7 @@ function App() {
               class="text-3xl font-bold text-center text-white min-h-36"
               style={{ "font-family": 'Pacifico', 'font-size': '8rem' }}
             >
-              Lilycove City
+              Lilycove
             </h3>
             <h2 class="font-pacifico text-center text-white text-2xl">A Pokemon Save Editor</h2>
             <div class="my-2">

@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For } from 'solid-js';
 
-import { findSectionAddresses } from './utils/save.jsx';
+import { findSectionAddresses, areChecksumsValid } from './utils/save.jsx';
 
 // import GamePicture from './GamePicture';
 import PokemonCard from './PokemonCard.jsx';
@@ -30,6 +30,7 @@ const OPTIONS_OFFSET = 0x13;
 
 function GameInfo({ bits }) {
   const [selectedBox, setSelectedBox] = createSignal(0);
+  const isSaveValid = createMemo(() => areChecksumsValid(bits()));
 
   const sectionOffsets = createMemo(() => findSectionAddresses(bits()));
   const trainerInfoOffset = () => sectionOffsets()['trainer_info'];
@@ -118,88 +119,39 @@ function GameInfo({ bits }) {
     return pokemon;
   };
 
-  const partyPokemon = () => {
-    const teamSectionOffset = sectionOffsets()['team_and_items'];
-    const code = getGameCode(trainerInfoOffset(), bits());
-
-    let firstPokemonOffset;
-    if (code === 0x1) {
-      firstPokemonOffset = teamSectionOffset + 0x038;
-    } else {
-      firstPokemonOffset = teamSectionOffset + 0x238;
-    }
-    const partyPokemon = [];
-
-    for (let i = 0; i < 6; i += 1) {
-      const start = firstPokemonOffset + i * 100;
-      const end = firstPokemonOffset + (i + 1) * 100;
-
-      const pokemon = new BoxPokemon(bits().slice(start, end));
-
-      partyPokemon.push(pokemon)
-    }
-
-    return partyPokemon;
-  };
-
-  const textSpeed = () => {
-    const textSpeedOffset = 0x14;
-    const offset = trainerInfoOffset() + OPTIONS_OFFSET + textSpeedOffset;
-    const textSpeedByte = bits()[offset] & 0x7;
-
-    let textSpeed;
-    if (textSpeedByte === 0x0) {
-      textSpeed = 'Slow';
-    } else if (textSpeedByte === 0x1) {
-      textSpeed = 'Medium';
-    } else {
-      textSpeed = 'Fast';
-    }
-    return textSpeed;
-  };
-
-  const battleStyle = () => {
-    const battleStyleOffset = 0x15;
-    const offset = trainerInfoOffset() + OPTIONS_OFFSET + battleStyleOffset;
-    const battleStyleByte = (bits()[offset] ^ 0x5) >> 1;
-    if (battleStyleByte) {
-      return 'Set';
-    }
-    return 'Switch';
-  };
+  // const partyPokemon = () => {
+  //   const teamSectionOffset = sectionOffsets()['team_and_items'];
+  //   const code = getGameCode(trainerInfoOffset(), bits());
+  //
+  //   let firstPokemonOffset;
+  //   if (code === 0x1) {
+  //     firstPokemonOffset = teamSectionOffset + 0x038;
+  //   } else {
+  //     firstPokemonOffset = teamSectionOffset + 0x238;
+  //   }
+  //   const partyPokemon = [];
+  //
+  //   for (let i = 0; i < 6; i += 1) {
+  //     const start = firstPokemonOffset + i * 100;
+  //     const end = firstPokemonOffset + (i + 1) * 100;
+  //
+  //     const pokemon = new BoxPokemon(bits().slice(start, end));
+  //
+  //     partyPokemon.push(pokemon)
+  //   }
+  //
+  //   return partyPokemon;
+  // };
 
   return (
-    <div class="bg-white p-2 my-1 w-[50vw] mx-auto shadow-sm">
-      <div class="flex justify-start gap-2">
-        {/*<section id="trainer-data">
-          <GamePicture gameCode={gameCode} />
-          <pre class="text-left">Name: {trainerName()}</pre>
-          <pre class="text-left">ID NO: {trainerId()}</pre>
-          <pre class="text-left">Gender: {trainerGender()}</pre>
-          <pre class="text-left">Time Played: {gameTime()}</pre>
-          <pre class="text-left">Sound: <i>{soundType()}</i></pre>
-          <pre class="text-left">Text Speed: <i>{textSpeed()}</i></pre>
-          <pre class="text-left">Battle Style: <i>{battleStyle()}</i></pre>
-        </section>
-        <section id="party-pokemon">
-          <h3 class="text-3xl font-bold">Party</h3>
-          <div class="flex">
-            <For each={partyPokemon().slice(0, 3)}>
-              {(p) => <PokemonCard pokemon={p} />}
-            </For>
-          </div>
-          <div class="flex">
-            <For each={partyPokemon().slice(3)}>
-              {(p) => <PokemonCard pokemon={p} />}
-            </For>
-          </div>
-        </section>*/}
-      </div>
-
+    <div class="bg-white p-2 my-1 w-[50vw] mx-auto rounded-sm">
       <div class="flex flex-col justify-center">
         <div>
           <div>
             <div class="flex justify-between">
+              <Show when={isSaveValid()}>
+                <h3 class="text-3xl">Save is valid</h3>
+              </Show>
               <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
               <select
                 class="w-32 rounded-sm p-1 bg-white border border-solid border-slate-400"
@@ -218,6 +170,11 @@ function GameInfo({ bits }) {
             </div>
           </div>
         </div>
+      </div>
+      <div class="w-full flex justify-center">
+        <span class="px-6 py-1 w-40 text-lg text-emerald-400 border border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center">
+          Export Save
+        </span>
       </div>
     </div>
   );

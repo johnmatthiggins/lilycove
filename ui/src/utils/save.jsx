@@ -21,6 +21,25 @@ const DEFAULT_SAVE_BLOCK_SECTION_ORDER = [
   "trainer_info",
 ];
 
+// id is the integer index
+const SAVE_BLOCK_SECTION_SIZES_BY_ID = [
+  3884,
+  3968,
+  3968,
+  3968,
+  3848,
+  3968,
+  3968,
+  3968,
+  3968,
+  3968,
+  3968,
+  3968,
+  3968,
+  2000,
+];
+
+const SAVE_BLOCK_SIZE = 57344;
 const SAVE_BLOCK_SECTION_COUNT = DEFAULT_SAVE_BLOCK_SECTION_ORDER.length;
 
 const SAVE_BLOCK_SECTION_SIZE = 0x1000;
@@ -84,6 +103,59 @@ function findSectionAddresses(bits) {
   return offsets;
 }
 
+function isSaveBlockSectionValid(sectionBits) {
+  const [b0, b1] = sectionBits.slice(0x0FF4, 0x0FF6);
+  const sectionId = b0 | (b1 << 8);
+
+  // count of bytes that actually have content in them...
+  const contentfulBytes = SAVE_BLOCK_SECTION_SIZES_BY_ID[sectionId];
+  let checksum = 0n;
+
+  // not inclusive
+  const UINT32_LIMIT = 0x100000000n;
+  const UINT16_LIMIT = 0x10000n;
+
+  for (let i = 0; i < contentfulBytes; i += 4) {
+    const b0 = BigInt(sectionBits[i]);
+    const b1 = BigInt(sectionBits[i + 1]);
+    const b2 = BigInt(sectionBits[i + 2]);
+    const b3 = BigInt(sectionBits[i + 3]);
+    const nextWord = b0 | (b1 << 8n) | (b2 << 16n) | (b3 << 24n);
+
+    checksum = (checksum + nextWord) % UINT32_LIMIT;
+  }
+
+  const storedChecksum = BigInt(sectionBits[0x0FF6]) | (BigInt(sectionBits[0x0FF7]) << 8n);
+  const shortChecksum = ((checksum >> 16n) + (checksum & 0xFFFFn)) % UINT16_LIMIT;
+
+  return shortChecksum === storedChecksum;
+}
+
+function isSaveBlockValid(bits) {
+  for (let i = 0; i < SAVE_BLOCK_SECTION_COUNT; i += 1) {
+    const start = i * SAVE_BLOCK_SECTION_SIZE;
+    const end = (i * SAVE_BLOCK_SECTION_SIZE) + SAVE_BLOCK_SECTION_SIZE;
+    const blockSectionBits = bits.slice(start, end);
+    if (!isSaveBlockSectionValid(blockSectionBits)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// takes in a byte array...
+function areChecksumsValid(bits) {
+  if (!isSaveBlockValid(bits.slice(0, SAVE_BLOCK_SIZE))) {
+    console.log('first block is not valid!');
+    return false;
+  } else if (!isSaveBlockValid(bits.slice(SAVE_BLOCK_SIZE, SAVE_BLOCK_SIZE * 2))) {
+    console.log('first block is not valid!');
+    return false;
+  }
+  return true;
+}
+
 export {
   findSectionAddresses,
+  areChecksumsValid,
 };
