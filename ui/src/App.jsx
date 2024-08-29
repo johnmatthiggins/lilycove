@@ -39,10 +39,15 @@ function App() {
       }}
     >
       <div class="grow justify-center items-center">
-        <div class="rounded-lg bg-white p-2 w-1/2 mx-auto border border-solid border-slate-200 shadow-md">
-          <h3 class="text-3xl font-bold text-center">Lilycove City</h3>
-          <h2 class="text-md text-center">A Generation III Hex Editor</h2>
-          <Show when={bits().length === 0}>
+        <Show when={bits().length === 0}>
+          <div class="rounded-lg p-2 w-1/2 mx-auto">
+            <h3
+              class="text-3xl font-bold text-center text-white min-h-36"
+              style={{ "font-family": 'Pacifico', 'font-size': '8rem' }}
+            >
+              Lilycove City
+            </h3>
+            <h2 class="font-pacifico text-center text-white text-2xl">A Pokemon Save Editor</h2>
             <div class="my-2">
               <label class="flex justify-center w-full">
                 <span
@@ -65,13 +70,13 @@ function App() {
                   }} />
               </label>
             </div>
-          </Show>
-          <Show when={bits().length}>
-            <GameInfo
-              bits={bits}
-            />
-          </Show>
-        </div>
+          </div>
+        </Show>
+        <Show when={bits().length}>
+          <GameInfo
+            bits={bits}
+          />
+        </Show>
       </div>
     </div>
   );

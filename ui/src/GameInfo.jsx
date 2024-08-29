@@ -169,7 +169,7 @@ function GameInfo({ bits }) {
   };
 
   return (
-    <div>
+    <div class="bg-white p-2 my-1 w-[50vw] mx-auto shadow-sm">
       <div class="flex justify-start gap-2">
         {/*<section id="trainer-data">
           <GamePicture gameCode={gameCode} />

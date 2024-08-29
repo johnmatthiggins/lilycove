@@ -14,3 +14,7 @@
 html:has(dialog[open]) {
   overflow: hidden;
 }
+
+.font-pacifico {
+  font-family: Pacifico, cursive;
+}

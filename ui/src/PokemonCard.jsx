@@ -29,9 +29,7 @@ function PokemonCard({ pokemon }) {
     evs.specialAttack,
     evs.specialDefense,
   ]);
-  const [ppIncreases, setPpIncreases] = createSignal(
-    pokemon.getPowerPointIncreases()
-  );
+  const [ppIncreases, setPpIncreases] = createSignal(pokemon.getPowerPointIncreases());
 
   const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
   const [nickname, setNickname] = createSignal(pokemon.getName());
@@ -201,7 +199,7 @@ function PokemonCard({ pokemon }) {
                       })}
                       id="nature-input"
                       label="Nature"
-                      onChange={(event) => setNature(event.target.value)}
+                      onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
                       selectedValue={() => nature().name}
                     />
                   </div>
