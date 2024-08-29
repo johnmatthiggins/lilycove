@@ -20,7 +20,7 @@ function RangeInput({ onChange, step, min, max, value, 'class': className = "" }
         onInput={handleChange}
       />
       <input
-        class="w-12 border border-solid border-slate-200 px-1"
+        class="w-12 border border-solid border-gray-400 px-1"
         type="number"
         min={min}
         max={max}

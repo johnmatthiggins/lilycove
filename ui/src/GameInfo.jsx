@@ -149,7 +149,7 @@ function GameInfo({ bits }) {
         <div>
           <div>
             <div class="flex justify-between">
-              <Show when={isSaveValid()}>
+              <Show when={isSaveValid()} fallback={<h3 class="text-3xl">Save is not valid</h3>}>
                 <h3 class="text-3xl">Save is valid</h3>
               </Show>
               <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>

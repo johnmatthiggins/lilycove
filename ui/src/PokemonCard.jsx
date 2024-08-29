@@ -78,14 +78,16 @@ function PokemonCard({ pokemon }) {
     .map((id) => moveList()
       .find((m) => Number(m.id) === Number(id)));
 
+  const [tab, setTab] = createSignal('moves');
+
   return (
     <div
-      class="rounded-sm flex flex-col w-32 h-32 hover:bg-gray-200 border border-solid border-gray-200 p-1 m-1"
+      class="rounded-sm flex flex-col w-32 h-32 hover:bg-gray-400 border border-solid border-gray-400 p-1 m-1"
       onClick={handleClick}
     >
       <div
         ref={ref}
-        class="min-w-1/8 border-gray-200 flex justify-center grow hover:cursor-pointer"
+        class="min-w-1/8 border-gray-400 flex justify-center grow hover:cursor-pointer"
       >
         <Show when={pokemon.hasSpecies()}>
           <img
@@ -124,11 +126,11 @@ function PokemonCard({ pokemon }) {
           }}
         >
           <div
-            class="shadow-sm border border-gray-200 border-solid mt-2 min-w-[65vw] rounded-lg bg-white p-2"
+            class="shadow-sm border border-gray-400 border-solid mt-2 min-w-[65vw] rounded-lg bg-white p-2"
             style={{ height: 'fit-content' }}
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
-              <div class="flex flex-row justify-between">
+              <div class="flex flex-row justify-start gap-2">
                 <div class="flex flex-col items-start gap-1">
                   <div>
                     <label class="font-bold block" for="nickname-input">Nickname</label>
@@ -136,14 +138,14 @@ function PokemonCard({ pokemon }) {
                       <input
                         id="nickname-input"
                         type="text"
-                        class="px-1 py-1 rounded-sm border border-solid border-gray-200 focus:outline focus:outline-solid focus:outline-teal-400 w-32"
+                        class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline focus:outline-solid focus:outline-teal-400 w-36"
                         onInput={(event) => setNickname(event.target.value)}
                         value={nickname()}
                       />
                       <img
                         src={isShiny() ? "/star.svg" : "/empty-star.svg"}
                         onClick={() => setIsShiny((prev) => !prev)}
-                        class="shiny-star w-5 hover:cursor-pointer"
+                        class="shiny-star w-4 hover:cursor-pointer"
                         loading="lazy"
                       />
                     </div>
@@ -163,6 +165,7 @@ function PokemonCard({ pokemon }) {
                   <div>
                     <Selector
                       id="species-input"
+                      class="w-44"
                       label="Species"
                       onChange={(event) => setSpeciesId(Number(event.target.value))}
                       selectedValue={speciesId}
@@ -180,6 +183,7 @@ function PokemonCard({ pokemon }) {
                   <div>
                     <Selector
                       id="ability-input"
+                      class="w-44"
                       label="Ability"
                       selectedValue={() => abilityIndex() % abilityList().length}
                       options={() => abilityList().map((ability, index) => ({ value: index, label: ability }))}
@@ -198,31 +202,74 @@ function PokemonCard({ pokemon }) {
                         return result;
                       })}
                       id="nature-input"
+                      class="w-44"
                       label="Nature"
                       onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
                       selectedValue={() => nature().name}
                     />
                   </div>
                 </div>
-                <div class="grid grid-cols-2 gap-1 pt-1">
-                  <div>
-                    <EvEditor evArray={evArray} setEvArray={setEvArray} />
-                  </div>
-                  <div class="border border-solid border-gray-200 p-2 rounded-md bg-white">
-                    <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
+                <div class="pt-1 w-full">
+                  <ul id="tabs" class="flex gap-1">
+                    <li
+                      onClick={() => setTab("moves")}
+                      class="px-2 font-bold hover:underline hover:cursor-pointer"
+                      style={{
+                        'border-top-color': '#9ca3af',
+                        'border-right-color': '#9ca3af',
+                        'border-left-color': '#9ca3af',
+                        'bordre-bottom-color': 'white',
+                        'border-top-style': 'solid',
+                        'border-right-style': 'solid',
+                        'border-left-style': 'solid',
+                        'border-width': '0.0625em',
+                      }}
+                    >
+                      Moves
+                    </li>
+                    <li
+                      class="px-2 font-bold hover:underline hover:cursor-pointer"
+                      onClick={() => setTab("stats")}
+                      style={{
+                        'border-top-color': '#9ca3af',
+                        'border-right-color': '#9ca3af',
+                        'border-left-color': '#9ca3af',
+                        'bordre-bottom-color': 'white',
+                        'border-top-style': 'solid',
+                        'border-right-style': 'solid',
+                        'border-left-style': 'solid',
+                        'border-width': '0.0625em',
+                      }}
+                    >
+                      Stats
+                    </li>
+                  </ul>
+                  <div class="border border-gray-400 border-solid flex flex-row justify-start grow">
+                    <Show when={tab() === "moves"}>
+                      <div class="flex flex-col gap-1 p-1 grow" id="moveset">
+                        <For each={pokemonMoves()}>
+                          {(move, index) => (<PokemonMove
+                            moveId={move?.id || -1}
+                            ppUpCount={() => ppIncreases()[index()]}
+                            setPpUpCount={(nextValue) =>
+                              setPpIncreases(ppIncreases().with(index(), nextValue))
+                            }
+                          />)}
+                        </For>
+                      </div>
+                    </Show>
+                    <Show when={tab() === "stats"}>
+                      <div class="grid grid-cols-2 gap-1" id="stats">
+                        <div class="p-2">
+                          <EvEditor evArray={evArray} setEvArray={setEvArray} />
+                        </div>
+                        <div class="p-2">
+                          <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
+                        </div>
+                      </div>
+                    </Show>
                   </div>
                 </div>
-              </div>
-              <div class="rounded-lg grid grid-cols-2 gap-1 pt-1">
-                <For each={pokemonMoves()}>
-                  {(move, index) => (<PokemonMove
-                    moveId={move?.id || -1}
-                    ppUpCount={() => ppIncreases()[index()]}
-                    setPpUpCount={(nextValue) =>
-                      setPpIncreases(ppIncreases().with(index(), nextValue))
-                    }
-                  />)}
-                </For>
               </div>
             </div>
             <div class="flex flex-row justify-center w-full grow my-1 pt-2 gap-3">
@@ -246,7 +293,7 @@ function PokemonCard({ pokemon }) {
           </div>
         </dialog>
       </Show>
-    </div>
+    </div >
   );
 }
 

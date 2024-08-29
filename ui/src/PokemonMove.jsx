@@ -30,14 +30,14 @@ function PokemonMove({
   };
 
   return (
-    <div class="border border-solid border-gray-200 p-1 w-full rounded-sm bg-white">
-      <div class="flex flex-row items-center justify-between text-sm">
+    <div class="p-1 w-full rounded-sm bg-white">
+      <div class="flex flex-row items-center justify-between text-md">
         <div class="flex flex-row items-center justify-start">
           <PokemonType typeName={moveType} />
           <select
             value={currentMoveId()}
             onChange={handleMoveChange}
-            class="bg-white focus:border-white border border-solid border-gray-200 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
+            class="bg-white focus:border-white border border-solid border-gray-400 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
           >
             <option value="-1">----------</option>
             <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
@@ -49,26 +49,26 @@ function PokemonMove({
             </For>
           </select>
         </div>
-        <div class="w-fit flex flex-row justify-end border border-solid border-gray-200 rounded-sm">
-          <span class="border border-solid border-gray-200 px-1">
+        <div class="w-fit flex flex-row justify-end border border-solid border-gray-400 rounded-sm">
+          <span class="border border-solid border-gray-400 px-1">
             <Show when={Number(power())} fallback={"--"}>
               {power()} &#x26A1;
             </Show>
           </span>
-          <span class="border border-solid border-gray-200 px-1">
+          <span class="border border-solid border-gray-400 px-1">
             <Show when={Number(accuracy())} fallback={"--"}>
               {accuracy()}%
             </Show>
           </span>
-          <span class="border border-solid border-gray-200 px-1">
+          <span class="border border-solid border-gray-400 px-1">
             {adjustedPowerPoints()}/{adjustedPowerPoints()}
           </span>
         </div>
       </div>
       <div class="flex justify-between">
-        <p class="text-sm">{description()}</p>
+        <p class="text-md">{description()}</p>
         <div
-          class="font-mono border border-solid border-gray-200 flex justify-between pl-2 select-none hover:bg-gray-200 hover:cursor-pointer"
+          class="font-mono border border-solid border-gray-400 flex justify-between pl-2 select-none hover:bg-gray-400 hover:cursor-pointer"
           onClick={() => setPpUpCount((ppUpCount() + 1) % 4)}
         >
           <span>{ppUpCount()}</span>

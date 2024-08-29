@@ -88,7 +88,7 @@ function EvEditor({ evArray, setEvArray }) {
         <label for="ev-total" class="font-bold block">Total</label>
         <input
           id="ev-total"
-          class="border border-solid border-slate-200 p-1"
+          class="border border-solid border-gray-400 p-1"
           style={{
             // highlight text red if total evs exceed 510
             color: evSum() <= 510 ? "inherit" : "#dc2626",
