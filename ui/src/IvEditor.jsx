@@ -11,7 +11,7 @@ function IvEditor({
     <>
       <h3 class="text-2xl font-bold">IVs</h3>
       <div class="flex flex-row gap-2">
-        <section id="labels" class="flex flex-col">
+        <section id="labels" class="flex flex-col gap-1">
           <label for="hp-iv-slider" class="h-8 font-bold">HP</label>
           <label for="attack-iv-slider" class="h-8 font-bold">Atk</label>
           <label for="defense-iv-slider" class="h-8 font-bold">Def</label>
@@ -19,7 +19,7 @@ function IvEditor({
           <label for="spatk-iv-slider" class="h-8 font-bold">SpA</label>
           <label for="speed-iv-slider" class="h-8 font-bold">Spe</label>
         </section>
-        <section>
+        <section class="flex flex-col gap-1">
           <RangeInput class="h-8" step="1" min="0" max="31" value={ivArray()[0]} onChange={(event) => {
             setIv(0, Number(event.target.value));
           }} />

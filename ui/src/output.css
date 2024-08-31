@@ -799,6 +799,10 @@ video {
   width: 9rem;
 }
 
+.w-14 {
+  width: 3.5rem;
+}
+
 .min-w-16 {
   min-width: 4rem;
 }
@@ -947,6 +951,10 @@ video {
 
 .gap-3 {
   gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
 }
 
 .whitespace-pre {
@@ -1403,6 +1411,36 @@ html:has(dialog[open]) {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.hover\:text-red-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
+.hover\:text-red-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
+.hover\:text-red-200:hover {
+  --tw-text-opacity: 1;
+  color: rgb(254 202 202 / var(--tw-text-opacity));
+}
+
+.hover\:text-red-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(252 165 165 / var(--tw-text-opacity));
+}
+
+.hover\:text-red-100:hover {
+  --tw-text-opacity: 1;
+  color: rgb(254 226 226 / var(--tw-text-opacity));
+}
+
+.hover\:text-emerald-100:hover {
+  --tw-text-opacity: 1;
+  color: rgb(209 250 229 / var(--tw-text-opacity));
+}
+
 .hover\:underline:hover {
   text-decoration-line: underline;
 }
@@ -1416,10 +1454,18 @@ html:has(dialog[open]) {
   outline-style: solid;
 }
 
+.focus\:outline-2:focus {
+  outline-width: 2px;
+}
+
 .focus\:outline-green-400:focus {
   outline-color: #4ade80;
 }
 
 .focus\:outline-teal-400:focus {
   outline-color: #2dd4bf;
+}
+
+.focus\:outline-emerald-400:focus {
+  outline-color: #34d399;
 }

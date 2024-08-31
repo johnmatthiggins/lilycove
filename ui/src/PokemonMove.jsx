@@ -37,7 +37,7 @@ function PokemonMove({
           <select
             value={currentMoveId()}
             onChange={handleMoveChange}
-            class="bg-white focus:border-white border border-solid border-gray-400 rounded-sm focus:outline focus:outline-solid focus:outline-green-400 p-1"
+            class="bg-white focus:border-white border border-solid border-gray-400 rounded-sm focus:outline-2 focus:outline-solid focus:outline-emerald-400 p-1"
           >
             <option value="-1">----------</option>
             <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
@@ -50,17 +50,17 @@ function PokemonMove({
           </select>
         </div>
         <div class="w-fit flex flex-row justify-end border border-solid border-gray-400 rounded-sm">
-          <span class="border border-solid border-gray-400 px-1">
+          <span class="border border-solid border-gray-400 px-1 w-16 text-center">
             <Show when={Number(power())} fallback={"--"}>
               {power()} &#x26A1;
             </Show>
           </span>
-          <span class="border border-solid border-gray-400 px-1">
+          <span class="border border-solid border-gray-400 px-1 w-14 text-center">
             <Show when={Number(accuracy())} fallback={"--"}>
               {accuracy()}%
             </Show>
           </span>
-          <span class="border border-solid border-gray-400 px-1">
+          <span class="border border-solid border-gray-400 px-1 w-14 text-center">
             {adjustedPowerPoints()}/{adjustedPowerPoints()}
           </span>
         </div>

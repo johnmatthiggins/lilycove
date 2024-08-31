@@ -126,7 +126,7 @@ function PokemonCard({ pokemon }) {
           }}
         >
           <div
-            class="shadow-sm border border-gray-400 border-solid mt-2 min-w-[65vw] rounded-lg bg-white p-2"
+            class="border border-gray-400 border-solid mt-2 min-w-[65vw] rounded-sm bg-white p-2"
             style={{ height: 'fit-content' }}
           >
             <div onClick={blockClickCascade} class="w-full px-1 flex flex-col justify-between">
@@ -138,7 +138,7 @@ function PokemonCard({ pokemon }) {
                       <input
                         id="nickname-input"
                         type="text"
-                        class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline focus:outline-solid focus:outline-teal-400 w-36"
+                        class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
                         onInput={(event) => setNickname(event.target.value)}
                         value={nickname()}
                       />
@@ -215,10 +215,11 @@ function PokemonCard({ pokemon }) {
                       onClick={() => setTab("moves")}
                       class="px-2 font-bold hover:underline hover:cursor-pointer"
                       style={{
+                        'border-top-right-radius': '0.25em',
+                        'border-top-left-radius': '0.25em',
                         'border-top-color': '#9ca3af',
                         'border-right-color': '#9ca3af',
                         'border-left-color': '#9ca3af',
-                        'bordre-bottom-color': 'white',
                         'border-top-style': 'solid',
                         'border-right-style': 'solid',
                         'border-left-style': 'solid',
@@ -231,6 +232,8 @@ function PokemonCard({ pokemon }) {
                       class="px-2 font-bold hover:underline hover:cursor-pointer"
                       onClick={() => setTab("stats")}
                       style={{
+                        'border-top-right-radius': '0.25em',
+                        'border-top-left-radius': '0.25em',
                         'border-top-color': '#9ca3af',
                         'border-right-color': '#9ca3af',
                         'border-left-color': '#9ca3af',
@@ -244,7 +247,13 @@ function PokemonCard({ pokemon }) {
                       Stats
                     </li>
                   </ul>
-                  <div class="border border-gray-400 border-solid flex flex-row justify-start grow">
+                  <div
+                    class="border border-gray-400 border-solid flex flex-row justify-start grow"
+                    style={{
+                      "border-bottom-right-radius": '0.125em',
+                      "border-bottom-left-radius": '0.125em',
+                    }}
+                  >
                     <Show when={tab() === "moves"}>
                       <div class="flex flex-col gap-1 p-1 grow" id="moveset">
                         <For each={pokemonMoves()}>
@@ -268,13 +277,17 @@ function PokemonCard({ pokemon }) {
                         </div>
                       </div>
                     </Show>
+                    <Show when={tab() === "extra"}>
+                      <div>
+                      </div>
+                    </Show>
                   </div>
                 </div>
               </div>
             </div>
             <div class="flex flex-row justify-center w-full grow my-1 pt-2 gap-3">
               <button
-                class="font-bold hover:bg-red-400 border border-solid border-red-400 text-red-400 hover:text-white px-4 py-1 rounded-sm w-32"
+                class="font-bold hover:bg-red-400 border border-solid border-red-400 text-red-400 hover:text-red-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   event.stopPropagation();
                   setOpen(false);
@@ -282,7 +295,7 @@ function PokemonCard({ pokemon }) {
                 Cancel
               </button>
               <button
-                class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-white px-4 py-1 rounded-sm w-32"
+                class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-emerald-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   event.stopPropagation();
                   setOpen(false);

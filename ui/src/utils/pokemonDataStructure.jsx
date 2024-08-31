@@ -411,9 +411,16 @@ class BoxPokemon {
     return value;
   }
 
-  getLevel() {
-    const offset = 0x54;
-    return this._readShort(offset);
+  getExperiencePoints() {
+    this._decrypt();
+    const expOffset = this._offsetMap['data_section_growth'] + 0x4;
+    const [b0, b1, b2, b3] = this._buffer
+      .slice(expOffset, expOffset + 4)
+      .map((b) => BigInt(b));
+    const experiencePoints = b0 | b1 << 8n | b2 << 16n | b3 << 24n;
+
+    this._encrypt();
+    return experiencePoints;
   }
 
   _getPersonalityValue() {
@@ -455,11 +462,22 @@ class BoxPokemon {
 
   getItemCode() {
     this._decrypt();
-    const itemOffset = this._offsetMap['data_section_growth'];
+    const itemOffset = this._offsetMap['data_section_growth'] + 2;
     const [b0, b1] = this._buffer.slice(itemOffset, itemOffset + 2);
     const code = b0 | b1 << 8;
     this._encrypt();
     return code;
+  }
+
+  setItemCode(itemCode) {
+    this._decrypt();
+    const b0 = itemCode & 0xFF;
+    const b1 = (itemCode >> 8) & 0xFF;
+    const offset = this._offsetMap['data_section_growth'] + 2;
+
+    this._buffer[offset] = b0;
+    this._buffer[offset + 1] = b1;
+    this._encrypt();
   }
 
   getNature() {

@@ -7,7 +7,7 @@ function EvEditor({ evArray, setEvArray }) {
     <>
       <h3 class="text-2xl font-bold">EVs</h3>
       <div class="flex flex-row gap-2">
-        <section id="labels" class="flex flex-col">
+        <section id="labels" class="flex flex-col gap-1">
           <div class="h-8 flex items-center">
             <label for="hp-ev-slider" class="font-bold">HP</label>
           </div>
@@ -27,7 +27,7 @@ function EvEditor({ evArray, setEvArray }) {
             <label for="speed-ev-slider" class="font-bold">Spe</label>
           </div>
         </section>
-        <section id="ev-inputs">
+        <section id="ev-inputs" class="flex flex-col gap-1">
           <RangeInput
             class="h-8"
             step="4"
