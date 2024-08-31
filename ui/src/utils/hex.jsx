@@ -4,9 +4,7 @@ const ASCII_ZERO = 0x30;
 
 const PKMN_UPPER_CASE_A = 0xbb;
 const PKMN_LOWER_CASE_A = 0xd5;
-const PKMN_LEFT_ARROW = 0xd5;
 const PKMN_ZERO = 0xa1;
-const PKMN_BANG = 0xab;
 
 function barrelShiftRight(array, count) {
   const right = array.slice(0, array.length - count);

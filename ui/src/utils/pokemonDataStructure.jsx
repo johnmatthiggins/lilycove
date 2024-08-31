@@ -249,7 +249,6 @@ class BoxPokemon {
     const encryptionKey = [0, 0, 0, 0].map(
       (_, i) => this._buffer[i] ^ this._buffer[i + 4]
     );
-
     return encryptionKey;
   }
 
@@ -269,10 +268,9 @@ class BoxPokemon {
     }
   }
 
-  isChecksumValid() {
+  calculateChecksum() {
     this._decrypt();
     const UINT16_LIMIT = 1 << 16;
-    const checksum = this.getChecksum();
     const dataOffset = this._offsetMap['data'];
     const dataSectionLength = 48;
     let calculatedChecksum = 0;
@@ -284,17 +282,31 @@ class BoxPokemon {
       const nextShort = b0 | b1 << 8;
       calculatedChecksum = (calculatedChecksum + nextShort) % UINT16_LIMIT;
     }
+    this._decrypt();
 
-    this._encrypt();
+    return calculatedChecksum;
+  }
+
+  isChecksumValid() {
+    const checksum = this.getChecksum();
+    const calculatedChecksum = this.calculateChecksum();
+
     return checksum === calculatedChecksum;
+  }
+
+  recomputeChecksum() {
+    const calculatedChecksum = this.calculateChecksum();
+
+    const storedChecksumOffset = 0x1C;
+    this._buffer[storedChecksumOffset] = calculatedChecksum & 0xFF;
+    this._buffer[storedChecksumOffset + 1] = (calculatedChecksum >> 8) & 0xFF;
   }
 
   getChecksum() {
     const checksumOffset = 0x1C;
-    const [b0, b1] = this._buffer.slice(checksumOffset, checksumOffset + 2);
-
-    const checksum = b0 | b1 << 8;
-    return checksum;
+    const b0 = this._buffer[checksumOffset];
+    const b1 = this._buffer[checksumOffset + 1];
+    return b0 | b1 << 8;
   }
 
   getPokeballItemId() {
@@ -311,7 +323,7 @@ class BoxPokemon {
   isShiny() {
     const otId = this.getOTId()
     const secretId = this.getSecretOtId();
-    const personalityValue = this._getPersonalityValue();
+    const personalityValue = this.getPersonalityValue();
     const personalityValueA = Number((personalityValue & 0xFFFF0000n) >> 16n);
     const personalityValueB = Number(personalityValue & 0xFFFFn);
     const code = otId ^ secretId ^ personalityValueA ^ personalityValueB;
@@ -387,20 +399,28 @@ class BoxPokemon {
     return abilityIndex;
   }
 
+  // 1 or 0... We'll do a mod 2 on it so it doesn't really matter what you pass in.
+  setAbilityBit(abilityBit) {
+    this._decrypt();
+    const byte = ((Number(abilityBit) % 2) << 7) & 0x7F;
+
+    const offset = this._buffer['data_section_misc'] + 3;
+
+    // write only last bit of byte...
+    this._buffer[offset] = this._buffer[offset] & byte;
+
+    this._encrypt();
+  }
+
   getOTName() {
     const otNameOffset = 0x14;
     const otPkChars = this._buffer.slice(otNameOffset, otNameOffset + 6);
-    const name = convertPokemonStrToASCII(otPkChars);
-
-    return name;
+    return convertPokemonStrToASCII(otPkChars);
   }
 
   _readShort(offset) {
-    const shortBits = this._buffer.slice(offset, offset + 2);
-    const [b0, b1] = shortBits;
-    const value = b0 | (b1 << 8);
-
-    return value;
+    const [b0, b1] = this._buffer.slice(offset, offset + 2);
+    return b0 | (b1 << 8);
   }
 
   _readInt32(offset) {
@@ -423,15 +443,96 @@ class BoxPokemon {
     return experiencePoints;
   }
 
-  _getPersonalityValue() {
+  setExperiencePoints(experiencePoints) {
+    experiencePoints = BigInt(experiencePoints);
+    this._decrypt();
+    const expOffset = this._offsetMap['data_section_growth'] + 0x4;
+
+    this._buffer[expOffset] = experiencePoints & 0xFFn;
+    this._buffer[expOffset + 1] = (experiencePoints >> 8n) & 0xFFn;
+    this._buffer[expOffset + 2] = (experiencePoints >> 16n) & 0xFFn;
+    this._buffer[expOffset + 3] = (experiencePoints >> 24n) & 0xFFn;
+
+    this._encrypt();
+  }
+
+  // takes in a personality value and reorganizes state to accommodate
+  setPersonalityValue(personalityValue) {
+    // Each section is twelve bytes long...
+    const DATA_SECTION_LENGTH = 12;
+    const newDataSectionOffsets = _getDataSectionOffsets(personalityValue);
+
+    const growthSectionOffset = this._offsetMap['data_section_growth'];
+    const attacksSectionOffset = this._offsetMap['data_section_attacks'];
+    const conditionSectionOffset = this._offsetMap['data_section_condition'];
+    const miscSectionOffset = this._offsetMap['data_section_misc'];
+
+    const growth = this._buffer.slice(
+      growthSectionOffset,
+      growthSectionOffset + DATA_SECTION_LENGTH
+    );
+    const newGrowthOffset = newDataSectionOffsets['data_section_growth'];
+    for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
+      this._buffer[newGrowthOffset + i] = growth[i];
+    }
+
+    const attacks = this._buffer.slice(
+      attacksSectionOffset,
+      attacksSectionOffset + DATA_SECTION_LENGTH
+    );
+    const newAttackOffset = newDataSectionOffsets['data_section_attack'];
+    for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
+      this._buffer[newAttackOffset + i] = attacks[i];
+    }
+
+    const condition = this._buffer.slice(
+      conditionSectionOffset,
+      conditionSectionOffset + DATA_SECTION_LENGTH
+    );
+    const newConditionOffset = newDataSectionOffsets['data_section_condition'];
+    for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
+      this._buffer[newConditionOffset + i] = condition[i];
+    }
+
+    const misc = this._buffer.slice(
+      miscSectionOffset,
+      miscSectionOffset + DATA_SECTION_LENGTH
+    );
+    const newMiscOffset = newDataSectionOffsets['data_section_misc'];
+    for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
+      this._buffer[newMiscOffset + i] = misc[i];
+    }
+
+    // update offset map with new offsets...
+    this._offsetMap = {
+      ...this._offsetMap,
+      ...newDataSectionOffsets,
+    };
+
+    // decrypt bytes with original value
+    this._decrypt();
+
+    const b0 = personalityValue & 0xFFn;
+    const b1 = (personalityValue >> 8n) & 0xFFn;
+    const b2 = (personalityValue >> 16n) & 0xFFn;
+    const b3 = (personalityValue >> 24n) & 0xFFn;
+
+    this._buffer[this._offsetMap['personality_value']] = b0;
+    this._buffer[this._offsetMap['personality_value'] + 1] = b1;
+    this._buffer[this._offsetMap['personality_value'] + 2] = b2;
+    this._buffer[this._offsetMap['personality_value'] + 3] = b3;
+
+    // encrypt with new personality value
+    this._encrypt();
+  }
+
+  getPersonalityValue() {
     const personalityBits = this
       ._buffer
       .slice(0x0, 0x4)
       .map((b) => BigInt(b));
     const [b0, b1, b2, b3] = personalityBits;
-    const personalityValue = b0 | b1 << 8n | b2 << 16n | b3 << 24n;
-
-    return personalityValue;
+    return b0 | b1 << 8n | b2 << 16n | b3 << 24n;
   }
 
   getSpeciesId() {
@@ -445,19 +546,43 @@ class BoxPokemon {
     return species;
   }
 
+  setSpeciesId(speciesId) {
+    this._decrypt();
+    const speciesOffset = this._offsetMap['data_section_growth'];
+    this._buffer[speciesOffset] = speciesId & 0xFF;
+    this._buffer[speciesOffset + 1] = (speciesId >> 8) & 0xFF;
+
+    this._encrypt();
+  }
+
   getMoveIds() {
     this._decrypt();
     const movesOffset = this._offsetMap['data_section_attacks'];
-    const ids = Array(4).fill(0).map((_, i) => {
+    const moves = [];
+    for (let i = 0; i < 4; i += 1) {
       const start = movesOffset + i * 2;
-      const end = movesOffset + (i + 1) * 2;
-      const [b0, b1] = this._buffer.slice(start, end);
-      const index = b0 | b1 << 8;
-      return index;
-    });
+      const b0 = this._buffer[start];
+      const b1 = this._buffer[start + 1];
+      moves.push(b0 | b1 << 8);
+    }
     this._encrypt();
 
-    return ids;
+    return moves;
+  }
+
+  // slotId: the position of the move...
+  // moveId: the identity index of the move to fill the slot with...
+  setMove(slotId, moveId) {
+    if (slotId > 3 || slotId < 0) {
+      throw new RangeError(`slotId of ${slotId} is out of range...`);
+    }
+    this._decrypt();
+    const movesOffset = this._offsetMap['data_section_attacks'] + (slotId * 2);
+
+    this._buffer[movesOffset] = moveId & 0xFF;
+    this._buffer[movesOffset + 1] = moveId >> 8 & 0xFF;
+
+    this._encrypt();
   }
 
   getItemCode() {
@@ -481,7 +606,7 @@ class BoxPokemon {
   }
 
   getNature() {
-    const natureIndex = this._getPersonalityValue() % BigInt(NATURES.length);
+    const natureIndex = this.getPersonalityValue() % BigInt(NATURES.length);
     return NATURES[natureIndex];
   }
 
@@ -619,7 +744,6 @@ function hiddenPowerType(hp, attack, defense, speed, spAttack, spDefense) {
 
   return TYPE_LIST[typeIndex];
 }
-
 
 export {
   NATURES,
