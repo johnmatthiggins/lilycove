@@ -3,11 +3,10 @@ import { createEffect, createSignal, Show } from 'solid-js';
 import { setItemList } from './ItemList';
 import { setSpeciesList } from './PokemonList';
 import { setMoveList } from './MoveList';
+import { bits, setBits } from './fileBits';
 import GameInfo from './GameInfo';
 
 function App() {
-  const [bits, setBits] = createSignal([]);
-
   createEffect(() => {
     fetch('/api/items')
       .then((response) => response.json())
@@ -42,8 +41,8 @@ function App() {
         <Show when={bits().length === 0}>
           <div class="rounded-lg p-2 w-1/2 mx-auto">
             <h3
-              class="text-3xl font-bold text-center text-white min-h-36"
-              style={{ "font-family": 'Pacifico', 'font-size': '8rem' }}
+              class="text-3xl font-bold text-center text-white min-h-36 font-pacifico"
+              style={{ 'font-size': '8rem' }}
             >
               Lilycove
             </h3>

@@ -47,11 +47,13 @@ class Command(BaseCommand):
         experience_table.columns = ['dex_id', 'image', 'name', 'rate']
         growth_rates = dict(list(experience_table.apply(lambda r: [r['dex_id'], str(r['rate']).lower()], axis=1)))
 
+        del experience_table
+        del html
+
         all_pokemon_url = 'https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_index_number_in_Generation_III'
         response = httpx.get(all_pokemon_url)
 
-        html = response.text
-        pokemon_table = pd.read_html(io=StringIO(html), skiprows=1)[0]
+        pokemon_table = pd.read_html(io=StringIO(response.text), skiprows=1)[0]
         pokemon_table.columns = ['hex', 'dec', 'ms', 'name', 'type1', 'type2']
         pokemon_table['name'] = pokemon_table['name'].apply(
             lambda r: (str(r)
@@ -63,16 +65,13 @@ class Command(BaseCommand):
 
         base_url = 'https://www.serebii.net/pokedex-rs/%s.shtml'
 
-        new_pokemon = []
-
         # Bulbasaur to Deoxys
         for i in range(1, 386 + 1):
             pokedex_id = str(i).zfill(3)
             page_url = base_url % pokedex_id
 
             response = httpx.get(page_url)
-            html = response.text
-            soup = BeautifulSoup(html, 'html.parser')
+            soup = BeautifulSoup(response.text, 'html.parser')
             entry_name = soup.find(attrs={"size":"4"}).find('b').text
             pokemon_name = (entry_name
                 .strip()
@@ -95,7 +94,7 @@ class Command(BaseCommand):
 
             table_html = soup.find('td', string="Base Stats").parent.parent
 
-            base_stats = pd.read_html(io=StringIO(str(table_html)), skiprows=2)[0]
+            base_stats = pd.read_html(io=StringIO(table_html), skiprows=2)[0]
             base_stats.columns = ["description", "hp", "atk", "def", "satk", "sdef", "speed"]
 
             growth_rate = growth_rates[i]
@@ -115,10 +114,13 @@ class Command(BaseCommand):
                 growth_rate=growth_rate
             )
             ability_entities = list([Ability(species_id=species_id, name=ability) for ability in abilities])
-            print(pokemon_species)
             pokemon_species.save()
             for ability in ability_entities:
                 ability.save()
+
+            del soup
+            del base_stats
+            del table_html
 
     def _load_items(self):
         url = "https://bulbapedia.bulbagarden.net/wiki/List_of_items_by_index_number_in_Generation_III"
@@ -156,10 +158,13 @@ class Command(BaseCommand):
         bulbapedia_url = "https://bulbapedia.bulbagarden.net/wiki/List_of_moves"
 
         response = httpx.get(bulbapedia_url)
-        html = response.text
 
         # grab move table
-        move_table = pd.read_html(io=StringIO(html), match="Pound")[0].drop([0,1])
+        move_table = (
+            pd
+              .read_html(io=StringIO(response.text), match="Pound")[0]
+              .drop([0,1])
+        )
         move_table.columns = [
             "id",
             "name",
@@ -170,8 +175,8 @@ class Command(BaseCommand):
             "accuracy",
             "generation",
         ]
-        move_pairings = list(move_table.apply(
-            lambda r: [r["name"].lower().replace(' ', ''), int(r["id"])], axis=1)
+        move_pairings = move_table.apply(
+            lambda r: [r["name"].lower().replace(' ', ''), int(r["id"])], axis=1
         )
 
         base_url = "https://www.serebii.net/attackdex/%s.shtml"
@@ -226,6 +231,7 @@ class Command(BaseCommand):
                 )
 
             moves = move_table.apply(lambda r: build_move(r, move_pairings), axis=1)
+            del move_table
             new_moves += list(moves)
 
         # insert them into the database
@@ -273,7 +279,7 @@ class Command(BaseCommand):
         print('FINISHED LOADING MOVES...')
 
         print('LOADING SPECIES DATA...')
-        pokemon = self._load_species()
+        self._load_species()
         print('FINISHED LOADING SPECIES DATA...')
 
         end = time.time()

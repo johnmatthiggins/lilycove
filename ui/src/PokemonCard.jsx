@@ -3,12 +3,12 @@ import { createMemo, createSignal, Show } from 'solid-js';
 import { speciesList } from './PokemonList';
 import { moveList } from './MoveList';
 import PokemonType from './PokemonType';
-import { NATURES } from './utils/pokemonDataStructure';
+import NATURES from './utils/Natures';
 import PokemonMove from './PokemonMove';
 import IvEditor from './IvEditor';
 import EvEditor from './EvEditor';
 import Selector from './Selector';
-
+import { setBits, bits } from './fileBits';
 
 function PokemonCard({ pokemon }) {
   const ivs = pokemon.getIndividualValues();
@@ -35,7 +35,8 @@ function PokemonCard({ pokemon }) {
   const [nickname, setNickname] = createSignal(pokemon.getName());
   const [nature, setNature] = createSignal(pokemon.getNature());
 
-  const [abilityIndex, setAbilityIndex] = createSignal(pokemon.getAbilityBit());
+  const abilityIndex = () => pokemon.getAbilityBit();
+  const setAbilityIndex = (value) => pokemon.setAbilityBit(value);
   const pokemonSpecies = createMemo(() =>
     speciesList()
       .find(
@@ -306,7 +307,7 @@ function PokemonCard({ pokemon }) {
           </div>
         </dialog>
       </Show>
-    </div >
+    </div>
   );
 }
 

@@ -6,7 +6,7 @@ import { findSectionAddresses, areChecksumsValid } from './utils/save.jsx';
 import PokemonCard from './PokemonCard.jsx';
 
 import { convertPokemonStrToASCII } from './utils/hex.jsx';
-import { BoxPokemon } from './utils/pokemonDataStructure.jsx';
+import BoxPokemon from './BoxPokemon.jsx';
 
 function getGameCode(saveOffset, bits) {
   const gameCodePosition = saveOffset + 0xAC;
@@ -96,52 +96,38 @@ function GameInfo({ bits }) {
       sectionOffsets()['pc_buffer_I'] + 4,
     ];
 
-    let contiguousBoxBuffer = [];
+    let boxBuffers = [];
     for (let i = 0; i < boxOffsets.length; i += 1) {
       const boxStart = boxOffsets[i];
-      const boxBuffer = bits().slice(boxStart, boxStart + boxLength);
-      contiguousBoxBuffer = contiguousBoxBuffer.concat(boxBuffer);
+      const boxBuffer = {
+        buffer: bits().slice(boxStart, boxStart + boxLength),
+        address: boxStart,
+      };
+      boxBuffers.push(boxBuffer);
     }
 
-    const pokemonBuffer = contiguousBoxBuffer;
     const pokemon = [[], [], [], [], [], [], [], [], [], [], [], [], [], []];
+    console.log(boxBuffers);
 
     // Just get all the pokemon hehe...
-    for (let i = 0; i < 420; i += 1) {
-      const offset = i * boxPokemonSize;
+    for (let i = 0; i < 9; i += 1) {
+      const boxBuffer = boxBuffers[i];
+      for (let j = 0; j < 30; j += 1) {
+        const offset = j * boxPokemonSize;
+        const pokemonAddress = boxBuffer.address + offset;
 
-      const newPokemonBits = pokemonBuffer.slice(offset, offset + boxPokemonSize);
-      const newPokemon = new BoxPokemon(newPokemonBits);
+        const newPokemonBits = boxBuffer.buffer.slice(
+          offset,
+          offset + boxPokemonSize
+        );
+        const newPokemon = new BoxPokemon(newPokemonBits, pokemonAddress);
 
-      pokemon[Math.floor(i / 30)].push(newPokemon);
+        pokemon[i].push(newPokemon);
+      }
     }
 
     return pokemon;
   };
-
-  // const partyPokemon = () => {
-  //   const teamSectionOffset = sectionOffsets()['team_and_items'];
-  //   const code = getGameCode(trainerInfoOffset(), bits());
-  //
-  //   let firstPokemonOffset;
-  //   if (code === 0x1) {
-  //     firstPokemonOffset = teamSectionOffset + 0x038;
-  //   } else {
-  //     firstPokemonOffset = teamSectionOffset + 0x238;
-  //   }
-  //   const partyPokemon = [];
-  //
-  //   for (let i = 0; i < 6; i += 1) {
-  //     const start = firstPokemonOffset + i * 100;
-  //     const end = firstPokemonOffset + (i + 1) * 100;
-  //
-  //     const pokemon = new BoxPokemon(bits().slice(start, end));
-  //
-  //     partyPokemon.push(pokemon)
-  //   }
-  //
-  //   return partyPokemon;
-  // };
 
   return (
     <div class="bg-white p-2 my-1 w-[50vw] mx-auto rounded-sm">
