@@ -12,8 +12,8 @@ import { setBits, bits } from './fileBits';
 import { recomputeSaveChecksums } from './utils/save';
 
 function PokemonCard({ pokemon }) {
-  const ivs = pokemon.getIndividualValues();
-  const evs = pokemon.getEffortValues();
+  const ivs = pokemon().getIndividualValues();
+  const evs = pokemon().getEffortValues();
   const [ivArray, setIvArray] = createSignal([
     ivs.hp,
     ivs.attack,
@@ -30,14 +30,14 @@ function PokemonCard({ pokemon }) {
     evs.specialAttack,
     evs.specialDefense,
   ]);
-  const [ppIncreases, setPpIncreases] = createSignal(pokemon.getPowerPointIncreases());
+  const [ppIncreases, setPpIncreases] = createSignal(pokemon().getPowerPointIncreases());
 
-  const [speciesId, setSpeciesId] = createSignal(pokemon.getSpeciesId());
-  const [nickname, setNickname] = createSignal(pokemon.getName());
-  const [nature, setNature] = createSignal(pokemon.getNature());
+  const [speciesId, setSpeciesId] = createSignal(pokemon().getSpeciesId());
+  const [nickname, setNickname] = createSignal(pokemon().getName());
+  const [nature, setNature] = createSignal(pokemon().getNature());
 
-  const abilityIndex = () => pokemon.getAbilityBit();
-  const setAbilityIndex = (value) => pokemon.setAbilityBit(value);
+  const abilityIndex = () => pokemon().getAbilityBit();
+  const setAbilityIndex = (value) => pokemon().setAbilityBit(value);
   const pokemonSpecies = createMemo(() =>
     speciesList()
       .find(
@@ -63,7 +63,7 @@ function PokemonCard({ pokemon }) {
     return [species?.type1, species?.type2];
   });
 
-  const [isShiny, setIsShiny] = createSignal(pokemon.isShiny());
+  const [isShiny, setIsShiny] = createSignal(pokemon().isShiny());
   const imageURL = () => {
     if (isShiny()) {
       return `/api/pokemon-images/${id()}s.png`;
@@ -75,7 +75,7 @@ function PokemonCard({ pokemon }) {
   const handleClose = () => setOpen(false);
   const blockClickCascade = (event) => event.stopPropagation();
 
-  const pokemonMoves = () => pokemon
+  const pokemonMoves = () => pokemon()
     .getMoveIds()
     .map((id) => moveList()
       .find((m) => Number(m.id) === Number(id)));
@@ -91,7 +91,7 @@ function PokemonCard({ pokemon }) {
         ref={ref}
         class="min-w-1/8 border-gray-400 flex justify-center grow hover:cursor-pointer"
       >
-        <Show when={pokemon.hasSpecies()}>
+        <Show when={pokemon().hasSpecies()}>
           <img
             class="sharp-pixels pt-[5px] px-[5px]"
             src={imageURL()}
@@ -100,8 +100,8 @@ function PokemonCard({ pokemon }) {
         </Show>
       </div>
       <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
-        <Show when={pokemon.hasSpecies()}>
-          <img src={`/items/${pokemon.getPokeballItemId()}.png`} class="sharp-pixels w-5" />
+        <Show when={pokemon().hasSpecies()}>
+          <img src={`/items/${pokemon().getPokeballItemId()}.png`} class="sharp-pixels w-5" />
           <p class="text-xs text-center">{nickname()}</p>
           <img
             src={isShiny() ? "/star.svg" : "/empty-star.svg"}
@@ -265,6 +265,7 @@ function PokemonCard({ pokemon }) {
                             setPpUpCount={(nextValue) =>
                               setPpIncreases(ppIncreases().with(index(), nextValue))
                             }
+                            onChange={(moveId) => pokemon().setMove(index(), moveId)}
                           />)}
                         </For>
                       </div>
@@ -300,10 +301,10 @@ function PokemonCard({ pokemon }) {
                 class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-emerald-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   const save = bits();
-                  pokemon.recomputeChecksum();
+                  pokemon().recomputeChecksum();
 
                   // serialize pokemon to binary
-                  pokemon.save(save);
+                  pokemon().save(save);
 
                   recomputeSaveChecksums(save);
                   setBits([...save]);

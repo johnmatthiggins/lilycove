@@ -7,6 +7,7 @@ function PokemonMove({
   moveId,
   ppUpCount,
   setPpUpCount,
+  onChange,
 }) {
   const [currentMoveId, setCurrentMoveId] = createSignal(moveId);
   const moveData = createMemo(() => {
@@ -26,6 +27,9 @@ function PokemonMove({
 
   const handleMoveChange = (event) => {
     const newId = event.target.value;
+    if (onChange) {
+      onChange(newId);
+    }
     setCurrentMoveId(newId);
   };
 

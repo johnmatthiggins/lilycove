@@ -5,7 +5,7 @@ import { findSectionAddresses, areChecksumsValid } from './utils/save.jsx';
 // import GamePicture from './GamePicture';
 import PokemonCard from './PokemonCard.jsx';
 
-import { convertPokemonStrToASCII } from './utils/hex.jsx';
+import { bytesToBase64, convertPokemonStrToASCII } from './utils/hex.jsx';
 import BoxPokemon from './BoxPokemon.jsx';
 
 function getGameCode(saveOffset, bits) {
@@ -134,7 +134,6 @@ function GameInfo({ bits }) {
           buffer.map(([, b]) => b))
       );
       buffer = [];
-      console.count('added pokemon');
     }
 
     return pokemon;
@@ -162,7 +161,7 @@ function GameInfo({ bits }) {
             </div>
             <div class="flex flex-wrap justify-between w-full">
               <For each={boxPokemon()[selectedBox()]}>
-                {(p) => <PokemonCard pokemon={p} />}
+                {(p) => <PokemonCard pokemon={() => p} />}
               </For>
             </div>
           </div>
@@ -173,10 +172,10 @@ function GameInfo({ bits }) {
           class="px-6 py-1 w-40 text-lg text-emerald-400 border border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center"
           onClick={() => {
             const bytes = new Uint8Array(bits());
-            const blob = new Blob(bytes, { type: 'application/octet-stream' });
-            const url = window.URL.createObjectURL(blob)
+            let b64 = bytesToBase64(bytes);
+            const dataUrl = `data:application/octet-stream;base64,${b64}`;
             const anchor = document.createElement('a')
-            anchor.href = url
+            anchor.href = dataUrl;
             anchor.download = 'data.sav';
             anchor.style.display = 'none';
             document.body.appendChild(anchor);
