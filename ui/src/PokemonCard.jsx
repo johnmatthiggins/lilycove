@@ -9,6 +9,7 @@ import IvEditor from './IvEditor';
 import EvEditor from './EvEditor';
 import Selector from './Selector';
 import { setBits, bits } from './fileBits';
+import { recomputeSaveChecksums } from './utils/save';
 
 function PokemonCard({ pokemon }) {
   const ivs = pokemon.getIndividualValues();
@@ -298,6 +299,14 @@ function PokemonCard({ pokemon }) {
               <button
                 class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-emerald-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
+                  const save = bits();
+                  pokemon.recomputeChecksum();
+
+                  // serialize pokemon to binary
+                  pokemon.save(save);
+
+                  recomputeSaveChecksums(save);
+                  setBits([...save]);
                   event.stopPropagation();
                   setOpen(false);
                 }}>

@@ -43,7 +43,7 @@ const SAVE_BLOCK_SIZE = 57344;
 const SAVE_BLOCK_SECTION_COUNT = DEFAULT_SAVE_BLOCK_SECTION_ORDER.length;
 
 const SAVE_BLOCK_SECTION_SIZE = 0x1000;
-const MAGIC_BITS = [0x08, 0x01, 0x20, 0x25];
+const MAGIC_BITS = [0x25, 0x20, 0x01, 0x08];
 
 function _readUint32(bytes) {
   if (bytes.length === 4) {
@@ -81,7 +81,7 @@ function findSectionAddresses(bits) {
     saveBlockOffset + SAVE_BLOCK_SIZE
   );
 
-  const [magicAddress] = findBitVector(blockBits, MAGIC_BITS.reverse());
+  const [magicAddress] = findBitVector(blockBits, MAGIC_BITS);
   const saveCounterAddress = magicAddress + 0x4;
   const saveCounter = _readUint32(
     blockBits.slice(saveCounterAddress, saveCounterAddress + 0x4)
@@ -155,7 +155,51 @@ function areChecksumsValid(bits) {
   return true;
 }
 
+function computeSaveBlockSectionChecksum(sectionBits) {
+  const [b0, b1] = sectionBits.slice(0x0FF4, 0x0FF6);
+  const sectionId = b0 | (b1 << 8);
+
+  // count of bytes that actually have content in them...
+  const contentfulBytes = SAVE_BLOCK_SECTION_SIZES_BY_ID[sectionId];
+  let checksum = 0n;
+
+  // not inclusive
+  const UINT32_LIMIT = 0x100000000n;
+  const UINT16_LIMIT = 0x10000n;
+
+  for (let i = 0; i < contentfulBytes; i += 4) {
+    const b0 = BigInt(sectionBits[i]);
+    const b1 = BigInt(sectionBits[i + 1]);
+    const b2 = BigInt(sectionBits[i + 2]);
+    const b3 = BigInt(sectionBits[i + 3]);
+    const nextWord = b0 | (b1 << 8n) | (b2 << 16n) | (b3 << 24n);
+
+    checksum = (checksum + nextWord) % UINT32_LIMIT;
+  }
+
+  return ((checksum >> 16n) + (checksum & 0xFFFFn)) % UINT16_LIMIT;
+}
+
+function recomputeSaveBlockChecksums(bits, blockOffset) {
+  for (let i = 0; i < SAVE_BLOCK_SECTION_COUNT; i += 1) {
+    const sectionStart = (i * SAVE_BLOCK_SECTION_SIZE) + blockOffset;
+    const sectionEnd = (i * SAVE_BLOCK_SECTION_SIZE) + SAVE_BLOCK_SECTION_SIZE + blockOffset;
+    const blockSectionBits = bits.slice(sectionStart, sectionEnd);
+
+    const checksum = Number(computeSaveBlockSectionChecksum(blockSectionBits));
+
+    bits[sectionStart + 0xFF6] = checksum & 0xFF;
+    bits[sectionStart + 0xFF7] = (checksum >> 8) & 0xFF;
+  }
+}
+
+function recomputeSaveChecksums(bits) {
+  recomputeSaveBlockChecksums(bits, 0);
+  recomputeSaveBlockChecksums(bits, SAVE_BLOCK_SIZE);
+}
+
 export {
+  recomputeSaveChecksums,
   findSectionAddresses,
   areChecksumsValid,
 };

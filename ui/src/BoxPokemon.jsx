@@ -1,7 +1,6 @@
 import { convertPokemonStrToASCII } from './utils/hex.jsx';
 import NATURES from './utils/Natures.jsx';
 
-
 function _getDataSectionOffsets(
   personalityValue
 ) {
@@ -215,10 +214,14 @@ function _buildBoxPokemonOffsetMap(buffer) {
 
 class BoxPokemon {
   // takes in address so we can write to it later...
-  constructor(buffer, address) {
-    this._address = address;
+  constructor(buffer, indexes) {
+    this._indexes = indexes;
     this._buffer = buffer;
     this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
+  }
+
+  getAddress() {
+    return this._address;
   }
 
   _getEncryptionKey() {
@@ -258,7 +261,7 @@ class BoxPokemon {
       const nextShort = b0 | b1 << 8;
       calculatedChecksum = (calculatedChecksum + nextShort) % UINT16_LIMIT;
     }
-    this._decrypt();
+    this._encrypt();
 
     return calculatedChecksum;
   }
@@ -647,9 +650,12 @@ class BoxPokemon {
     };
   }
 
-  serialize() {
-    // convert back to uint8 array
-    return this._buffer;
+  // byte array that contains save bits
+  save(saveBits) {
+    const indexes = this._indexes;
+    for (let i = 0; i < indexes.length; i += 1) {
+      saveBits[indexes[i]] = this._buffer[i];
+    }
   }
 }
 

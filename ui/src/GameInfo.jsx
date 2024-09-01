@@ -71,9 +71,9 @@ function GameInfo({ bits }) {
   };
 
   const boxNames = () => {
-    let array = new Array(14).fill(0).map((_, i) => {
-      return ({ name: `Box ${i + 1}`, index: i });
-    });
+    let array = new Array(14).fill(0).map(
+      (_, i) => ({ name: `Box ${i + 1}`, index: i })
+    );
     return array;
   };
 
@@ -99,31 +99,42 @@ function GameInfo({ bits }) {
     let boxBuffers = [];
     for (let i = 0; i < boxOffsets.length; i += 1) {
       const boxStart = boxOffsets[i];
-      const boxBuffer = {
+      boxBuffers.push({
         buffer: bits().slice(boxStart, boxStart + boxLength),
-        address: boxStart,
-      };
-      boxBuffers.push(boxBuffer);
+        indexes: Array(boxLength).fill(0).map((_, i) => i + boxStart),
+      });
     }
 
     const pokemon = [[], [], [], [], [], [], [], [], [], [], [], [], [], []];
-    console.log(boxBuffers);
 
-    // Just get all the pokemon hehe...
-    for (let i = 0; i < 9; i += 1) {
-      const boxBuffer = boxBuffers[i];
-      for (let j = 0; j < 30; j += 1) {
-        const offset = j * boxPokemonSize;
-        const pokemonAddress = boxBuffer.address + offset;
+    let sectionIndex = 0;
 
-        const newPokemonBits = boxBuffer.buffer.slice(
-          offset,
-          offset + boxPokemonSize
-        );
-        const newPokemon = new BoxPokemon(newPokemonBits, pokemonAddress);
+    // offset within box section...
+    let byteIndex = 0;
 
-        pokemon[i].push(newPokemon);
+    let buffer = [];
+
+    for (let i = 0; i < 420; i += 1) {
+      for (let j = 0; j < boxPokemonSize; j += 1) {
+        const nextByte = boxBuffers[sectionIndex].buffer[byteIndex];
+        const nextByteAddr = boxBuffers[sectionIndex].indexes[byteIndex];
+
+        buffer.push([nextByte, nextByteAddr]);
+
+        if (byteIndex + 1 === boxLength) {
+          sectionIndex += 1;
+          byteIndex = 0;
+        } else {
+          byteIndex += 1;
+        }
       }
+      pokemon[Math.floor(i / 30)].push(
+        new BoxPokemon(
+          buffer.map(([b]) => b),
+          buffer.map(([, b]) => b))
+      );
+      buffer = [];
+      console.count('added pokemon');
     }
 
     return pokemon;
@@ -158,7 +169,21 @@ function GameInfo({ bits }) {
         </div>
       </div>
       <div class="w-full flex justify-center">
-        <span class="px-6 py-1 w-40 text-lg text-emerald-400 border border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center">
+        <span
+          class="px-6 py-1 w-40 text-lg text-emerald-400 border border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center"
+          onClick={() => {
+            const bytes = new Uint8Array(bits());
+            const blob = new Blob(bytes, { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob)
+            const anchor = document.createElement('a')
+            anchor.href = url
+            anchor.download = 'data.sav';
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+          }}
+        >
           Export Save
         </span>
       </div>
