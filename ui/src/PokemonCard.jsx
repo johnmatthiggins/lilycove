@@ -12,8 +12,9 @@ import { setBits, bits } from './fileBits';
 import { recomputeSaveChecksums } from './utils/save';
 
 function PokemonCard({ pokemon }) {
-  const ivs = pokemon().getIndividualValues();
-  const evs = pokemon().getEffortValues();
+  const [pokemonData, setPokemonData] = createSignal(pokemon());
+  const ivs = pokemonData().getIndividualValues();
+  const evs = pokemonData().getEffortValues();
   const [ivArray, setIvArray] = createSignal([
     ivs.hp,
     ivs.attack,
@@ -30,21 +31,33 @@ function PokemonCard({ pokemon }) {
     evs.specialAttack,
     evs.specialDefense,
   ]);
-  const [ppIncreases, setPpIncreases] = createSignal(pokemon().getPowerPointIncreases());
+  const [ppIncreases, setPpIncreases] = createSignal(pokemonData().getPowerPointIncreases());
 
-  const speciesId = () => pokemon().getSpeciesId();
-  const setSpeciesId = (id) => pokemon().setSpeciesId(id);
-  const [nickname, setNickname] = createSignal(pokemon().getName());
-  const [nature, setNature] = createSignal(pokemon().getNature());
+  const experience = () => pokemonData().getExperiencePoints()
+  const setExperience = (value) => pokemonData().setExperiencePoints(value);
 
-  const abilityIndex = () => pokemon().getAbilityBit();
-  const setAbilityIndex = (value) => pokemon().setAbilityBit(value);
-  const pokemonSpecies = createMemo(() =>
+  const speciesId = () => pokemonData().getSpeciesId();
+  const setSpeciesId = (id) => {
+    pokemonData().setSpeciesId(id);
+    setPokemonData((p) => p.copy());
+  };
+  const [nickname, setNickname] = createSignal(pokemonData().getName());
+  const [nature, setNature] = createSignal(pokemonData().getNature());
+
+  const abilityIndex = () => pokemonData().getAbilityBit();
+  const setAbilityIndex = (value) => {
+    pokemonData().setAbilityBit(value);
+    setPokemonData((p) => p.copy());
+  };
+  const pokemonSpecies = () =>
     speciesList()
       .find(
         ({ species_id }) => Number(species_id) === Number(speciesId())
-      )
-  );
+      );
+
+  const level = () => {
+    pokemonSpecies();
+  };
 
   const abilityList = () => pokemonSpecies().abilities;
 
@@ -64,7 +77,7 @@ function PokemonCard({ pokemon }) {
     return [species?.type1, species?.type2];
   });
 
-  const [isShiny, setIsShiny] = createSignal(pokemon().isShiny());
+  const [isShiny, setIsShiny] = createSignal(pokemonData().isShiny());
   const imageURL = () => {
     if (isShiny()) {
       return `/api/pokemon-images/${id()}s.png`;
@@ -76,7 +89,7 @@ function PokemonCard({ pokemon }) {
   const handleClose = () => setOpen(false);
   const blockClickCascade = (event) => event.stopPropagation();
 
-  const pokemonMoves = () => pokemon()
+  const pokemonMoves = () => pokemonData()
     .getMoveIds()
     .map((id) => moveList()
       .find((m) => Number(m.id) === Number(id)));
@@ -92,7 +105,7 @@ function PokemonCard({ pokemon }) {
         ref={ref}
         class="min-w-1/8 border-gray-400 flex justify-center grow hover:cursor-pointer"
       >
-        <Show when={pokemon().hasSpecies()}>
+        <Show when={pokemonData().hasSpecies()}>
           <img
             class="sharp-pixels pt-[5px] px-[5px]"
             src={imageURL()}
@@ -101,8 +114,8 @@ function PokemonCard({ pokemon }) {
         </Show>
       </div>
       <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
-        <Show when={pokemon().hasSpecies()}>
-          <img src={`/items/${pokemon().getPokeballItemId()}.png`} class="sharp-pixels w-5" />
+        <Show when={pokemonData().hasSpecies()}>
+          <img src={`/items/${pokemonData().getPokeballItemId()}.png`} class="sharp-pixels w-5" />
           <p class="text-xs text-center">{nickname()}</p>
           <img
             src={isShiny() ? "/star.svg" : "/empty-star.svg"}
@@ -193,24 +206,6 @@ function PokemonCard({ pokemon }) {
                       onChange={(event) => setAbilityIndex(Number(event.target.value))}
                     />
                   </div>
-                  <div>
-                    <Selector
-                      options={() => NATURES.map(({ name, increase, decrease }) => {
-                        let result;
-                        if (increase === decrease) {
-                          result = { value: name, label: name };
-                        } else {
-                          result = { value: name, label: `${name} (+${increase},-${decrease})` };
-                        }
-                        return result;
-                      })}
-                      id="nature-input"
-                      class="w-44"
-                      label="Nature"
-                      onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
-                      selectedValue={() => nature().name}
-                    />
-                  </div>
                 </div>
                 <div class="pt-1 w-full">
                   <ul id="tabs" class="flex gap-1">
@@ -266,18 +261,52 @@ function PokemonCard({ pokemon }) {
                             setPpUpCount={(nextValue) =>
                               setPpIncreases(ppIncreases().with(index(), nextValue))
                             }
-                            onChange={(moveId) => pokemon().setMove(index(), moveId)}
+                            onChange={(moveId) => pokemonData().setMove(index(), moveId)}
                           />)}
                         </For>
                       </div>
                     </Show>
                     <Show when={tab() === "stats"}>
-                      <div class="grid grid-cols-2 gap-1" id="stats">
-                        <div class="p-2">
-                          <EvEditor evArray={evArray} setEvArray={setEvArray} />
-                        </div>
-                        <div class="p-2">
-                          <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
+                      <div>
+                        <div class="grid grid-cols-2 gap-1" id="stats">
+                          <div class="px-2 pt-2">
+                            <EvEditor evArray={evArray} setEvArray={setEvArray} />
+                          </div>
+                          <div class="px-2 pt-2">
+                            <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
+                          </div>
+                          <div class="px-2 pb-2">
+                            <div class="flex justify-start gap-2">
+                              <div>
+                                <Selector
+                                  options={() => NATURES.map(({ name, increase, decrease }) => {
+                                    let result;
+                                    if (increase === decrease) {
+                                      result = { value: name, label: name };
+                                    } else {
+                                      result = { value: name, label: `${name} (+${increase},-${decrease})` };
+                                    }
+                                    return result;
+                                  })}
+                                  id="nature-input"
+                                  class="w-44"
+                                  label="Nature"
+                                  onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
+                                  selectedValue={() => nature().name}
+                                />
+                              </div>
+                              <div>
+                                <label class="font-bold block" for="experience-input">Experience</label>
+                                <input
+                                  id="experience-input"
+                                  type="text"
+                                  class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
+                                  onInput={(event) => setExperience(event.target.value)}
+                                  value={experience()}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </Show>
@@ -302,7 +331,9 @@ function PokemonCard({ pokemon }) {
                 class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-emerald-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   const save = bits();
-                  const pokemonRef = pokemon();
+                  const pokemonRef = pokemonData();
+                  pokemonRef.setEffortValues(evArray());
+                  pokemonRef.setIndividualValues(ivArray());
                   pokemonRef.recomputeChecksum();
 
                   // serialize pokemon to binary

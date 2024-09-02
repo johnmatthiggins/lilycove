@@ -43,7 +43,6 @@ const SAVE_BLOCK_SIZE = 57344;
 const SAVE_BLOCK_SECTION_COUNT = DEFAULT_SAVE_BLOCK_SECTION_ORDER.length;
 
 const SAVE_BLOCK_SECTION_SIZE = 0x1000;
-const MAGIC_BITS = [0x25, 0x20, 0x01, 0x08];
 
 function _readUint32(bytes) {
   if (bytes.length >= 4) {
@@ -65,8 +64,10 @@ function getSaveBlockOffset(bits) {
   // to be fixed so that you don't need both save indexes to
   // figure out save block offset.
   if (saveIndexA > saveIndexB) {
+    console.log('reading from save block A');
     return 0x0000;
   }
+  console.log('reading from save block B');
   return 0xE000;
 }
 

@@ -111,7 +111,6 @@ function GameInfo({ bits }) {
 
     // offset within box section...
     let byteIndex = 0;
-
     let buffer = [];
 
     for (let i = 0; i < 420; i += 1) {
@@ -128,6 +127,7 @@ function GameInfo({ bits }) {
           byteIndex += 1;
         }
       }
+
       pokemon[Math.floor(i / 30)].push(
         new BoxPokemon(
           buffer.map(([b]) => b),
@@ -171,6 +171,17 @@ function GameInfo({ bits }) {
         <span
           class="px-6 py-1 w-40 text-lg text-emerald-400 border border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center"
           onClick={() => {
+            const saveData = bits();
+            if (trainerInfoOffset() >= 0xE000) {
+              for (let i = 0; i < 0xE000; i += 1) {
+                saveData[i] = saveData[0xE000 + i];
+              }
+            } else {
+              for (let i = 0; i < 0xE000; i += 1) {
+                saveData[0xE000 + i] = saveData[i];
+              }
+            }
+
             const bytes = new Uint8Array(bits());
             let b64 = bytesToBase64(bytes);
             const dataUrl = `data:application/octet-stream;base64,${b64}`;
@@ -186,7 +197,7 @@ function GameInfo({ bits }) {
           Export Save
         </span>
       </div>
-    </div>
+    </div >
   );
 }
 

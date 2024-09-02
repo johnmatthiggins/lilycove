@@ -181,6 +181,52 @@ function _getDataSectionOffsets(
   }
 }
 
+function _erraticLevelFunction(level) {
+  let result;
+  if (level < 50) {
+    result = ((level ** 3) * (100 - level)) / 50;
+  } else if (level < 68) {
+    result = ((level ** 3) * (150 - level)) / 100;
+  } else if (level < 98) {
+    result = ((level ** 3) * ((1911 - (10 * level)) / 3)) / 100;
+  } else {
+    result = ((level ** 3) * (160 - level)) / 100;
+  }
+  return result;
+}
+
+function buildLevelTable(growthRate) {
+  let levelFunction;
+
+  switch (growthRate) {
+    case 'erratic':
+      levelFunction = _erraticLevelFunction;
+      break;
+    case 'fast':
+      levelFunction = (level) => (4 * (level ** 3)) / 5;
+      break;
+    case 'medium fast':
+      levelFunction = (level) => level ** 3;
+      break;
+    case 'medium slow':
+      levelFunction = (level) => {
+        const a = (6 / 5) * (level ** 3);
+        const b = 15 * (level ** 2);
+        const c = 100 * level;
+        const d = 140;
+        return a - b + c - d;
+      };
+      break;
+    case 'slow':
+      levelFunction = (level) => (5 * (level ** 3)) / 5;
+      break;
+    case 'fluctating':
+      // todo write fluctuating function
+      levelFunction = (level) => level + 1;
+      break;
+  }
+}
+
 function _buildBoxPokemonOffsetMap(buffer) {
   const personalityBits = buffer.slice(0x0, 0x4).map((b) => BigInt(b));
   const [b0, b1, b2, b3] = personalityBits;
@@ -218,6 +264,10 @@ class BoxPokemon {
     this._indexes = indexes;
     this._buffer = buffer;
     this._offsetMap = _buildBoxPokemonOffsetMap([...buffer]);
+  }
+
+  copy() {
+    return new BoxPokemon(this._buffer, this._indexes);
   }
 
   getAddress() {
@@ -622,6 +672,17 @@ class BoxPokemon {
     };
   }
 
+  // effort value array contains hp, attack, defense, speed,
+  // special attack, and special defense in that order
+  setEffortValues(evs) {
+    this._decrypt();
+    const evOffset = this._offsetMap['data_section_condition'];
+    for (let i = 0; i < evs.length; i += 1) {
+      this._buffer[evOffset + i] = evs[i];
+    }
+    this._encrypt();
+  }
+
   getIndividualValues() {
     this._decrypt();
     // bit mask that extracts first thirty bits
@@ -648,6 +709,31 @@ class BoxPokemon {
       "specialAttack": Number(sAttackIv),
       "specialDefense": Number(sDefenseIv),
     };
+  }
+
+  setIndividualValues(ivs) {
+    this._decrypt();
+
+    const hp = BigInt(ivs[0]);
+    const atk = BigInt(ivs[1]);
+    const def = BigInt(ivs[2]);
+    const speed = BigInt(ivs[3]);
+    const sdef = BigInt(ivs[4]);
+    const satk = BigInt(ivs[5]);
+
+    let ivWord = hp | atk << 5n | def << 10n | speed << 15n | satk << 20n | sdef << 25n;
+    const b0 = Number(ivWord & 0xFFn);
+    const b1 = Number(ivWord >> 8n & 0xFFn);
+    const b2 = Number(ivWord >> 16n & 0xFFn);
+    const b3 = Number(ivWord >> 24n & 0xFFn);
+
+    const ivOffset = this._offsetMap['data_section_misc'] + 0x4;
+    this._buffer[ivOffset] = b0;
+    this._buffer[ivOffset + 1] = b1;
+    this._buffer[ivOffset + 2] = b2;
+    this._buffer[ivOffset + 3] = b3;
+
+    this._encrypt();
   }
 
   // byte array that contains save bits
