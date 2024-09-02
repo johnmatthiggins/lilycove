@@ -47,7 +47,8 @@ const MAGIC_BITS = [0x25, 0x20, 0x01, 0x08];
 
 function _readUint32(bytes) {
   if (bytes.length === 4) {
-    return new Uint32Array(bytes)[0];
+    const [b0, b1, b2, b3] = bytes.map((b) => BigInt(b));
+    return b0 | b1 << 8n | b2 << 16n | b3 << 24n;
   }
   return null;
 }
@@ -81,13 +82,16 @@ function findSectionAddresses(bits) {
     saveBlockOffset + SAVE_BLOCK_SIZE
   );
 
-  const [magicAddress] = findBitVector(blockBits, MAGIC_BITS);
-  const saveCounterAddress = magicAddress + 0x4;
+  const [magicAddress1, magicAddress2] = findBitVector(blockBits, MAGIC_BITS);
+  let saveCounterAddress = magicAddress1 + 0x4;
+  if (saveBlockOffset > 0) {
+    saveCounterAddress = magicAddress2 + 0x4;
+  }
   const saveCounter = _readUint32(
     blockBits.slice(saveCounterAddress, saveCounterAddress + 0x4)
   );
 
-  const shiftCount = saveCounter % SAVE_BLOCK_SECTION_COUNT;
+  const shiftCount = Number(saveCounter) % SAVE_BLOCK_SECTION_COUNT;
 
   const currentOrdering = barrelShiftRight(DEFAULT_SAVE_BLOCK_SECTION_ORDER, shiftCount);
   const offsets = {};

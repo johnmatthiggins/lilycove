@@ -6,6 +6,7 @@ const PKMN_UPPER_CASE_A = 0xbb;
 const PKMN_LOWER_CASE_A = 0xd5;
 const PKMN_ZERO = 0xa1;
 
+// not my code but dang is this useful...
 function bytesToBase64(byte) {
   const key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   let bytes = new Uint8Array(byte)

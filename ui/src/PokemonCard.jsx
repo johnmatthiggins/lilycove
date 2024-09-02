@@ -32,7 +32,8 @@ function PokemonCard({ pokemon }) {
   ]);
   const [ppIncreases, setPpIncreases] = createSignal(pokemon().getPowerPointIncreases());
 
-  const [speciesId, setSpeciesId] = createSignal(pokemon().getSpeciesId());
+  const speciesId = () => pokemon().getSpeciesId();
+  const setSpeciesId = (id) => pokemon().setSpeciesId(id);
   const [nickname, setNickname] = createSignal(pokemon().getName());
   const [nature, setNature] = createSignal(pokemon().getNature());
 
