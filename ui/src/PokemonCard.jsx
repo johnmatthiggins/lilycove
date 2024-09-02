@@ -302,10 +302,11 @@ function PokemonCard({ pokemon }) {
                 class="font-bold hover:bg-emerald-400 border border-solid border-emerald-400 text-emerald-400 hover:text-emerald-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {
                   const save = bits();
-                  pokemon().recomputeChecksum();
+                  const pokemonRef = pokemon();
+                  pokemonRef.recomputeChecksum();
 
                   // serialize pokemon to binary
-                  pokemon().save(save);
+                  pokemonRef.save(save);
 
                   recomputeSaveChecksums(save);
                   setBits([...save]);
