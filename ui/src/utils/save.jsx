@@ -1,4 +1,4 @@
-import { findBitVector, barrelShiftRight } from './hex';
+import { barrelShiftRight } from './hex';
 
 // This is what it looks like when it starts at zero.
 // The first time the game is saved, the save counter
@@ -46,7 +46,7 @@ const SAVE_BLOCK_SECTION_SIZE = 0x1000;
 const MAGIC_BITS = [0x25, 0x20, 0x01, 0x08];
 
 function _readUint32(bytes) {
-  if (bytes.length === 4) {
+  if (bytes.length >= 4) {
     const [b0, b1, b2, b3] = bytes.map((b) => BigInt(b));
     return b0 | b1 << 8n | b2 << 16n | b3 << 24n;
   }
@@ -54,12 +54,11 @@ function _readUint32(bytes) {
 }
 
 function getSaveBlockOffset(bits) {
-  const positions = findBitVector(bits, MAGIC_BITS);
-  const saveIndexes = positions.map(
-    (index) => _readUint32(bits.slice(index + 4, index + 8))
-  );
-  const uniqueIndexes = [...new Set(saveIndexes)];
-  const [saveIndexA, saveIndexB] = uniqueIndexes;
+  const saveBitsA = bits.slice(0xFFC, 0xFFC + 4)
+  const saveBitsB = bits.slice(0xEFFC, 0xEFFC + 4)
+
+  const saveIndexA = _readUint32(saveBitsA);
+  const saveIndexB = _readUint32(saveBitsB);
 
   // TODO: I assume both save indexes
   // exist. This isn't always true. This code needs
@@ -82,11 +81,7 @@ function findSectionAddresses(bits) {
     saveBlockOffset + SAVE_BLOCK_SIZE
   );
 
-  const [magicAddress1, magicAddress2] = findBitVector(blockBits, MAGIC_BITS);
-  let saveCounterAddress = magicAddress1 + 0x4;
-  if (saveBlockOffset > 0) {
-    saveCounterAddress = magicAddress2 + 0x4;
-  }
+  const saveCounterAddress = 0x0FFC;
   const saveCounter = _readUint32(
     blockBits.slice(saveCounterAddress, saveCounterAddress + 0x4)
   );
@@ -153,7 +148,7 @@ function areChecksumsValid(bits) {
     console.log('first block is not valid!');
     return false;
   } else if (!isSaveBlockValid(bits.slice(SAVE_BLOCK_SIZE, SAVE_BLOCK_SIZE * 2))) {
-    console.log('first block is not valid!');
+    console.log('second block is not valid!');
     return false;
   }
   return true;
