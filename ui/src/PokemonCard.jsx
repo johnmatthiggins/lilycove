@@ -47,7 +47,17 @@ function PokemonCard({ pokemon }) {
     setPokemonData((p) => p.copy());
   };
   const [nickname, setNickname] = createSignal(pokemonData().getName());
-  const [nature, setNature] = createSignal(pokemonData().getNature());
+  const nature = () => pokemonData().getNature();
+  const setNature = (natureIndex) => {
+    const personalityValue = pokemonData().getPersonalityValue();
+    console.log('natureIndex = ', natureIndex);
+    const mod = personalityValue % BigInt(NATURES.length);
+    console.log('mod = ', mod);
+    const distance = mod - BigInt(natureIndex);
+    console.log('distance = ', distance);
+    pokemonData().setPersonalityValue(personalityValue - distance);
+    setPokemonData(pokemonData().copy());
+  };
 
   const abilityIndex = () => pokemonData().getAbilityBit();
   const setAbilityIndex = (value) => {
@@ -61,6 +71,7 @@ function PokemonCard({ pokemon }) {
       );
 
   const level = () => {
+    console.log(pokemonSpecies());
     const levelTable = BoxPokemon.buildLevelTable(pokemonSpecies().growth_rate);
     const levelIndex = levelTable.findLastIndex((e) => (e <= experience()));
 
@@ -306,7 +317,7 @@ function PokemonCard({ pokemon }) {
                                 id="nature-input"
                                 class="w-44"
                                 label="Nature"
-                                onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
+                                onChange={(event) => setNature(NATURES.findIndex((n) => n.name === event.target.value))}
                                 selectedValue={() => nature().name}
                               />
                             </div>

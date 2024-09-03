@@ -467,9 +467,17 @@ class BoxPokemon {
 
   // takes in a personality value and reorganizes state to accommodate
   setPersonalityValue(personalityValue) {
+    personalityValue = BigInt(personalityValue);
+    console.log('map1 = ', this._offsetMap);
+
     // Each section is twelve bytes long...
     const DATA_SECTION_LENGTH = 12;
-    const newDataSectionOffsets = _getDataSectionOffsets(personalityValue);
+
+    const newDataSectionOffsets = Object.fromEntries(
+      Object.entries(
+        _getDataSectionOffsets(personalityValue)
+      ).map(([key, value]) => ([key, value + this._offsetMap['data']]))
+    );
 
     const growthSectionOffset = this._offsetMap['data_section_growth'];
     const attacksSectionOffset = this._offsetMap['data_section_attacks'];
@@ -526,13 +534,14 @@ class BoxPokemon {
     const b2 = (personalityValue >> 16n) & 0xFFn;
     const b3 = (personalityValue >> 24n) & 0xFFn;
 
-    this._buffer[this._offsetMap['personality_value']] = b0;
-    this._buffer[this._offsetMap['personality_value'] + 1] = b1;
-    this._buffer[this._offsetMap['personality_value'] + 2] = b2;
-    this._buffer[this._offsetMap['personality_value'] + 3] = b3;
+    this._buffer[this._offsetMap['personality_value']] = Number(b0);
+    this._buffer[this._offsetMap['personality_value'] + 1] = Number(b1);
+    this._buffer[this._offsetMap['personality_value'] + 2] = Number(b2);
+    this._buffer[this._offsetMap['personality_value'] + 3] = Number(b3);
 
     // encrypt with new personality value
     this._encrypt();
+    console.log('map2 = ', this._offsetMap);
   }
 
   getPersonalityValue() {
@@ -614,6 +623,7 @@ class BoxPokemon {
     this._encrypt();
   }
 
+  // nature is set by personality value...
   getNature() {
     const natureIndex = this.getPersonalityValue() % BigInt(NATURES.length);
     return NATURES[natureIndex];
@@ -747,7 +757,7 @@ class BoxPokemon {
         };
         break;
       case 'slow':
-        levelFunction = (level) => (5 * (level ** 3)) / 5;
+        levelFunction = (level) => (5 * (level ** 3)) / 4;
         break;
       case 'fluctating':
         // todo write fluctuating function
