@@ -1,5 +1,6 @@
 import { createMemo, createSignal, Show } from 'solid-js';
 
+import BoxPokemon from './BoxPokemon';
 import { speciesList } from './PokemonList';
 import { moveList } from './MoveList';
 import PokemonType from './PokemonType';
@@ -33,8 +34,12 @@ function PokemonCard({ pokemon }) {
   ]);
   const [ppIncreases, setPpIncreases] = createSignal(pokemonData().getPowerPointIncreases());
 
-  const experience = () => pokemonData().getExperiencePoints()
-  const setExperience = (value) => pokemonData().setExperiencePoints(value);
+  const experience = () => pokemonData().getExperiencePoints();
+  const setExperience = (value) => {
+    const pokemonRef = pokemonData();
+    pokemonRef.setExperiencePoints(value)
+    setPokemonData(pokemonRef.copy());
+  };
 
   const speciesId = () => pokemonData().getSpeciesId();
   const setSpeciesId = (id) => {
@@ -56,7 +61,16 @@ function PokemonCard({ pokemon }) {
       );
 
   const level = () => {
-    pokemonSpecies();
+    const levelTable = BoxPokemon.buildLevelTable(pokemonSpecies().growth_rate);
+    const levelIndex = levelTable.findLastIndex((e) => (e <= experience()));
+
+    return levelIndex + 1;
+  };
+  const setLevel = (newLevel) => {
+    const levelTable = BoxPokemon.buildLevelTable(pokemonSpecies().growth_rate);
+    const clamped = newLevel % 101;
+    const newExpValue = levelTable[clamped - 1];
+    setExperience(newExpValue);
   };
 
   const abilityList = () => pokemonSpecies().abilities;
@@ -275,36 +289,46 @@ function PokemonCard({ pokemon }) {
                           <div class="px-2 pt-2">
                             <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                           </div>
-                          <div class="px-2 pb-2">
-                            <div class="flex justify-start gap-2">
-                              <div>
-                                <Selector
-                                  options={() => NATURES.map(({ name, increase, decrease }) => {
-                                    let result;
-                                    if (increase === decrease) {
-                                      result = { value: name, label: name };
-                                    } else {
-                                      result = { value: name, label: `${name} (+${increase},-${decrease})` };
-                                    }
-                                    return result;
-                                  })}
-                                  id="nature-input"
-                                  class="w-44"
-                                  label="Nature"
-                                  onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
-                                  selectedValue={() => nature().name}
-                                />
-                              </div>
-                              <div>
-                                <label class="font-bold block" for="experience-input">Experience</label>
-                                <input
-                                  id="experience-input"
-                                  type="text"
-                                  class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
-                                  onInput={(event) => setExperience(event.target.value)}
-                                  value={experience()}
-                                />
-                              </div>
+                        </div>
+                        <div class="px-2 pb-2">
+                          <div class="flex justify-start gap-2">
+                            <div>
+                              <Selector
+                                options={() => NATURES.map(({ name, increase, decrease }) => {
+                                  let result;
+                                  if (increase === decrease) {
+                                    result = { value: name, label: name };
+                                  } else {
+                                    result = { value: name, label: `${name} (+${increase},-${decrease})` };
+                                  }
+                                  return result;
+                                })}
+                                id="nature-input"
+                                class="w-44"
+                                label="Nature"
+                                onChange={(event) => setNature(NATURES.find((n) => n.name === event.target.value))}
+                                selectedValue={() => nature().name}
+                              />
+                            </div>
+                            <div>
+                              <label class="font-bold block" for="experience-input">Experience</label>
+                              <input
+                                id="experience-input"
+                                type="text"
+                                class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
+                                onInput={(event) => setExperience(event.target.value)}
+                                value={experience()}
+                              />
+                            </div>
+                            <div>
+                              <Selector
+                                options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
+                                id="level-input"
+                                class="w-44"
+                                label="Level"
+                                onChange={(event) => setLevel(event.target.value)}
+                                selectedValue={level}
+                              />
                             </div>
                           </div>
                         </div>

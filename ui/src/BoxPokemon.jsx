@@ -181,7 +181,7 @@ function _getDataSectionOffsets(
   }
 }
 
-function _erraticLevelFunction(level) {
+function _erraticLevel(level) {
   let result;
   if (level < 50) {
     result = ((level ** 3) * (100 - level)) / 50;
@@ -195,36 +195,16 @@ function _erraticLevelFunction(level) {
   return result;
 }
 
-function buildLevelTable(growthRate) {
-  let levelFunction;
-
-  switch (growthRate) {
-    case 'erratic':
-      levelFunction = _erraticLevelFunction;
-      break;
-    case 'fast':
-      levelFunction = (level) => (4 * (level ** 3)) / 5;
-      break;
-    case 'medium fast':
-      levelFunction = (level) => level ** 3;
-      break;
-    case 'medium slow':
-      levelFunction = (level) => {
-        const a = (6 / 5) * (level ** 3);
-        const b = 15 * (level ** 2);
-        const c = 100 * level;
-        const d = 140;
-        return a - b + c - d;
-      };
-      break;
-    case 'slow':
-      levelFunction = (level) => (5 * (level ** 3)) / 5;
-      break;
-    case 'fluctating':
-      // todo write fluctuating function
-      levelFunction = (level) => level + 1;
-      break;
+function _fluctuatingLevel(level) {
+  let result = 0;
+  if (level < 15) {
+    result = (level ** 3) * (((level + 1) / 3) + 24);
+  } else if (level < 36) {
+    result = ((level ** 3) * (level + 14)) / 50;
+  } else {
+    result = ((level ** 3) * ((n / 2) + 32)) / 50
   }
+  return result;
 }
 
 function _buildBoxPokemonOffsetMap(buffer) {
@@ -477,10 +457,10 @@ class BoxPokemon {
     this._decrypt();
     const expOffset = this._offsetMap['data_section_growth'] + 0x4;
 
-    this._buffer[expOffset] = experiencePoints & 0xFFn;
-    this._buffer[expOffset + 1] = (experiencePoints >> 8n) & 0xFFn;
-    this._buffer[expOffset + 2] = (experiencePoints >> 16n) & 0xFFn;
-    this._buffer[expOffset + 3] = (experiencePoints >> 24n) & 0xFFn;
+    this._buffer[expOffset] = Number(experiencePoints & 0xFFn);
+    this._buffer[expOffset + 1] = Number((experiencePoints >> 8n) & 0xFFn);
+    this._buffer[expOffset + 2] = Number((experiencePoints >> 16n) & 0xFFn);
+    this._buffer[expOffset + 3] = Number((experiencePoints >> 24n) & 0xFFn);
 
     this._encrypt();
   }
@@ -743,6 +723,50 @@ class BoxPokemon {
       saveBits[indexes[i]] = this._buffer[i];
     }
   }
+
+  static buildLevelTable(growthRate) {
+    let levelFunction;
+
+    switch (growthRate) {
+      case 'erratic':
+        levelFunction = _erraticLevel;
+        break;
+      case 'fast':
+        levelFunction = (level) => (4 * (level ** 3)) / 5;
+        break;
+      case 'medium fast':
+        levelFunction = (level) => level ** 3;
+        break;
+      case 'medium slow':
+        levelFunction = (level) => {
+          const a = (6 / 5) * (level ** 3);
+          const b = 15 * (level ** 2);
+          const c = 100 * level;
+          const d = 140;
+          return a - b + c - d;
+        };
+        break;
+      case 'slow':
+        levelFunction = (level) => (5 * (level ** 3)) / 5;
+        break;
+      case 'fluctating':
+        // todo write fluctuating function
+        levelFunction = _fluctuatingLevel;
+        break;
+      default:
+        levelFunction = (level) => level + 1;
+        break;
+    }
+
+    const levelTable = [0];
+
+    for (let i = 2; i <= 100; i += 1) {
+      levelTable.push(levelFunction(i));
+    }
+
+    return levelTable;
+  }
+
 }
 
 export default BoxPokemon;
