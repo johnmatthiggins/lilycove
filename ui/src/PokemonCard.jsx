@@ -11,6 +11,7 @@ import EvEditor from './EvEditor';
 import Selector from './Selector';
 import { setBits, bits } from './fileBits';
 import { recomputeSaveChecksums } from './utils/save';
+import { itemList } from './ItemList';
 
 function PokemonCard({ pokemon }) {
   const [pokemonData, setPokemonData] = createSignal(pokemon());
@@ -32,7 +33,11 @@ function PokemonCard({ pokemon }) {
     evs.specialAttack,
     evs.specialDefense,
   ]);
-  const [ppIncreases, setPpIncreases] = createSignal(pokemonData().getPowerPointIncreases());
+  const ppIncreases = () => pokemonData().getPowerPointIncreases();
+  const setPpIncreases = (ppUps) => {
+    pokemonData().setPowerPointIncreases(ppUps);
+    setPokemonData(pokemonData().copy());
+  };
 
   const experience = () => pokemonData().getExperiencePoints();
   const setExperience = (value) => {
@@ -50,20 +55,22 @@ function PokemonCard({ pokemon }) {
   const nature = () => pokemonData().getNature();
   const setNature = (natureIndex) => {
     const personalityValue = pokemonData().getPersonalityValue();
-    console.log('natureIndex = ', natureIndex);
     const mod = personalityValue % BigInt(NATURES.length);
-    console.log('mod = ', mod);
     const distance = mod - BigInt(natureIndex);
-    console.log('distance = ', distance);
+
     pokemonData().setPersonalityValue(personalityValue - distance);
     setPokemonData(pokemonData().copy());
   };
 
   const abilityIndex = () => pokemonData().getAbilityBit();
   const setAbilityIndex = (value) => {
-    pokemonData().setAbilityBit(value);
+    pokemonData().setAbilityBit(Number(value));
     setPokemonData((p) => p.copy());
   };
+
+  const pokeballIndex = () => Number(pokemonData().getPokeballItemId());
+  const setPokeballIndex = (itemId) => pokemonData().setPokeballWithItemId(itemId);
+
   const pokemonSpecies = () =>
     speciesList()
       .find(
@@ -140,7 +147,7 @@ function PokemonCard({ pokemon }) {
       </div>
       <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
         <Show when={pokemonData().hasSpecies()}>
-          <img src={`/items/${pokemonData().getPokeballItemId()}.png`} class="sharp-pixels w-5" />
+          <img src={`/items/${String(pokemonData().getPokeballItemId() + 1n).padStart(3, '0')}.png`} class="sharp-pixels w-5" />
           <p class="text-xs text-center">{nickname()}</p>
           <img
             src={isShiny() ? "/star.svg" : "/empty-star.svg"}
@@ -269,9 +276,27 @@ function PokemonCard({ pokemon }) {
                     >
                       Stats
                     </li>
+                    <li
+                      class="px-2 font-bold hover:underline hover:cursor-pointer"
+                      onClick={() => setTab("misc")}
+                      style={{
+                        'border-top-right-radius': '0.25em',
+                        'border-top-left-radius': '0.25em',
+                        'border-top-color': '#9ca3af',
+                        'border-right-color': '#9ca3af',
+                        'border-left-color': '#9ca3af',
+                        'bordre-bottom-color': 'white',
+                        'border-top-style': 'solid',
+                        'border-right-style': 'solid',
+                        'border-left-style': 'solid',
+                        'border-width': '0.0625em',
+                      }}
+                    >
+                      Misc.
+                    </li>
                   </ul>
                   <div
-                    class="border border-gray-400 border-solid flex flex-row justify-start grow"
+                    class="border border-gray-400 border-solid flex flex-row justify-start grow h-full"
                     style={{
                       "border-bottom-right-radius": '0.125em',
                       "border-bottom-left-radius": '0.125em',
@@ -345,15 +370,29 @@ function PokemonCard({ pokemon }) {
                         </div>
                       </div>
                     </Show>
-                    <Show when={tab() === "extra"}>
-                      <div>
+                    <Show when={tab() === "misc"}>
+                      <div class="pt-1 px-2 pb-2">
+                        <Selector
+                          id="pokeball-input"
+                          label="Pokeball"
+                          selectedValue={pokeballIndex}
+                          onChange={(event) => {
+                            setPokeballIndex(Number(event.target.value));
+                          }}
+                          options={() => itemList()
+                            .filter((item) => Number(item.id) < 13)
+                            .map((item) => ({
+                              label: item.name,
+                              value: Number(item.id),
+                            }))}
+                        />
                       </div>
                     </Show>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="flex flex-row justify-center w-full grow my-1 pt-2 gap-3">
+            <div class="flex flex-row justify-center w-full my-1 pt-8 gap-3">
               <button
                 class="font-bold hover:bg-red-400 border border-solid border-red-400 text-red-400 hover:text-red-100 px-4 py-1 rounded-sm w-32"
                 onClick={(event) => {

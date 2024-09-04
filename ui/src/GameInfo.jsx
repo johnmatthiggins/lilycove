@@ -5,7 +5,7 @@ import { findSectionAddresses, areChecksumsValid } from './utils/save.jsx';
 // import GamePicture from './GamePicture';
 import PokemonCard from './PokemonCard.jsx';
 
-import { bytesToBase64, convertPokemonStrToASCII } from './utils/hex.jsx';
+import { bytesToBase64 } from './utils/hex.jsx';
 import BoxPokemon from './BoxPokemon.jsx';
 
 function getGameCode(saveOffset, bits) {
@@ -26,49 +26,12 @@ function getInGameTime(saveOffset, bits) {
   return `${hours}:${minutes.padStart(2, '0')}`
 }
 
-const OPTIONS_OFFSET = 0x13;
-
 function GameInfo({ bits }) {
   const [selectedBox, setSelectedBox] = createSignal(0);
   const isSaveValid = createMemo(() => areChecksumsValid(bits()));
 
   const sectionOffsets = createMemo(() => findSectionAddresses(bits()));
   const trainerInfoOffset = () => sectionOffsets()['trainer_info'];
-  const trainerName = () => {
-    const offset = trainerInfoOffset();
-    const nameBits = bits().slice(offset, offset + 8);
-    return convertPokemonStrToASCII(nameBits);
-  };
-
-  const trainerGender = () => {
-    const offset = trainerInfoOffset() + 0x8;
-    const genderBit = bits()[offset];
-    if (genderBit) {
-      return 'F';
-    }
-    return 'M';
-  };
-
-  // Wow I managed to f up the bit alignment on this one...
-  const trainerId = () => {
-    const offset = trainerInfoOffset() + 0xA;
-    const idBits = bits().slice(offset, offset + 2);
-    const [b0, b1] = idBits;
-    const id = (b1 << 8) | b0;
-    return id;
-  };
-  const gameCode = () => getGameCode(trainerInfoOffset(), bits());
-  const gameTime = () => getInGameTime(trainerInfoOffset(), bits());
-  const soundType = () => {
-    const soundOptionsOffset = 0x15;
-    const offset = trainerInfoOffset() + OPTIONS_OFFSET + soundOptionsOffset;
-
-    let soundType = 'Stereo';
-    if (bits()[offset] & 0x1) {
-      soundType = 'Mono';
-    }
-    return soundType;
-  };
 
   const boxNames = () => {
     let array = new Array(14).fill(0).map(
@@ -187,7 +150,7 @@ function GameInfo({ bits }) {
             const dataUrl = `data:application/octet-stream;base64,${b64}`;
             const anchor = document.createElement('a')
             anchor.href = dataUrl;
-            anchor.download = 'data.sav';
+            anchor.download = '*.sav';
             anchor.style.display = 'none';
             document.body.appendChild(anchor);
             anchor.click();

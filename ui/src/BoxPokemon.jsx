@@ -324,9 +324,27 @@ class BoxPokemon {
     const buffer = BigInt(this._buffer[originsOffset]);
     const ballId = (buffer >> 3n) & 0x0Fn;
 
-    const threeDigitBallId = String(ballId + 1n).padStart(3, '0');
     this._encrypt();
-    return threeDigitBallId;
+    return ballId;
+  }
+
+  // takes in the pokeball item id
+  setPokeballWithItemId(pokeballId) {
+    this._decrypt();
+
+    const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
+    const originsByte = BigInt(this._buffer[originsOffset]);
+
+    // only keep three bytes of the id
+    const pokeballIdByte = (BigInt(pokeballId) & 0xFn) << 0x3n;
+
+    // zero out only the three bits that we
+    // are going to insert back into the byte
+    const newByte = (originsByte & 0xC7n) | pokeballIdByte;
+
+    this._buffer[originsOffset] = Number(newByte);
+
+    this._encrypt();
   }
 
   isShiny() {
@@ -468,7 +486,6 @@ class BoxPokemon {
   // takes in a personality value and reorganizes state to accommodate
   setPersonalityValue(personalityValue) {
     personalityValue = BigInt(personalityValue);
-    console.log('map1 = ', this._offsetMap);
 
     // Each section is twelve bytes long...
     const DATA_SECTION_LENGTH = 12;
@@ -541,7 +558,6 @@ class BoxPokemon {
 
     // encrypt with new personality value
     this._encrypt();
-    console.log('map2 = ', this._offsetMap);
   }
 
   getPersonalityValue() {
@@ -642,6 +658,22 @@ class BoxPokemon {
 
     // unpack these bad boys and send them up
     return [pp0, pp1, pp2, pp3];
+  }
+
+  // pass in array that has the count of pp ups used...
+  setPowerPointIncreases(ppUps) {
+    this._encrypt();
+
+    const ppOffset = this._offsetMap['data_section_growth'] + 8;
+    const pp0 = Number(ppUps[0]) & 0x3;
+    const pp1 = Number(ppUps[1]) & 0x3;
+    const pp2 = Number(ppUps[2]) & 0x3;
+    const pp3 = Number(ppUps[3]) & 0x3;
+
+    const ppBuffer = pp0 | pp1 << 2 | pp2 << 4 | pp3 << 6;
+    this._buffer[ppOffset] = ppBuffer;
+
+    this._decrypt();
   }
 
   getEffortValues() {
