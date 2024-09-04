@@ -78,7 +78,6 @@ function PokemonCard({ pokemon }) {
       );
 
   const level = () => {
-    console.log(pokemonSpecies());
     const levelTable = BoxPokemon.buildLevelTable(pokemonSpecies().growth_rate);
     const levelIndex = levelTable.findLastIndex((e) => (e <= experience()));
 

@@ -485,6 +485,7 @@ class BoxPokemon {
 
   // takes in a personality value and reorganizes state to accommodate
   setPersonalityValue(personalityValue) {
+    this._decrypt();
     personalityValue = BigInt(personalityValue);
 
     // Each section is twelve bytes long...
@@ -501,37 +502,37 @@ class BoxPokemon {
     const conditionSectionOffset = this._offsetMap['data_section_condition'];
     const miscSectionOffset = this._offsetMap['data_section_misc'];
 
-    const growth = this._buffer.slice(
+    const growth = structuredClone(this._buffer.slice(
       growthSectionOffset,
       growthSectionOffset + DATA_SECTION_LENGTH
-    );
+    ));
     const newGrowthOffset = newDataSectionOffsets['data_section_growth'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newGrowthOffset + i] = growth[i];
     }
 
-    const attacks = this._buffer.slice(
+    const attacks = structuredClone(this._buffer.slice(
       attacksSectionOffset,
       attacksSectionOffset + DATA_SECTION_LENGTH
-    );
+    ));
     const newAttackOffset = newDataSectionOffsets['data_section_attack'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newAttackOffset + i] = attacks[i];
     }
 
-    const condition = this._buffer.slice(
+    const condition = structuredClone(this._buffer.slice(
       conditionSectionOffset,
       conditionSectionOffset + DATA_SECTION_LENGTH
-    );
+    ));
     const newConditionOffset = newDataSectionOffsets['data_section_condition'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newConditionOffset + i] = condition[i];
     }
 
-    const misc = this._buffer.slice(
+    const misc = structuredClone(this._buffer.slice(
       miscSectionOffset,
       miscSectionOffset + DATA_SECTION_LENGTH
-    );
+    ));
     const newMiscOffset = newDataSectionOffsets['data_section_misc'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newMiscOffset + i] = misc[i];
@@ -542,9 +543,6 @@ class BoxPokemon {
       ...this._offsetMap,
       ...newDataSectionOffsets,
     };
-
-    // decrypt bytes with original value
-    this._decrypt();
 
     const b0 = personalityValue & 0xFFn;
     const b1 = (personalityValue >> 8n) & 0xFFn;
