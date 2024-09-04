@@ -129,7 +129,7 @@ class Command(BaseCommand):
 
         # find the table on the screen that has "master ball" inside it...
         item_table = pd.read_html(io=StringIO(html), match="Master Ball")[0].drop(
-            index=[0, 1, 3], axis=1
+            index=[0, 1], axis=1
         )
         item_table.columns = ["id", "hex_id", "bag_sprite", "desc"]
         item_table = (
