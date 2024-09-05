@@ -515,7 +515,7 @@ class BoxPokemon {
       attacksSectionOffset,
       attacksSectionOffset + DATA_SECTION_LENGTH
     ));
-    const newAttackOffset = newDataSectionOffsets['data_section_attack'];
+    const newAttackOffset = newDataSectionOffsets['data_section_attacks'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newAttackOffset + i] = attacks[i];
     }
