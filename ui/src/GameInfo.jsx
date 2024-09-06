@@ -109,12 +109,8 @@ function GameInfo({ bits }) {
         <div>
           <div>
             <div class="flex justify-between">
-              <Show when={isSaveValid()} fallback={<h3 class="text-3xl">Save is not valid</h3>}>
-                <h3 class="text-3xl">Save is valid</h3>
-              </Show>
-              <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
               <select
-                class="w-32 rounded-sm p-1 bg-white border border-solid border-slate-400"
+                class="w-32 rounded-sm ml-1 p-1 bg-white border border-solid border-slate-400"
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >
@@ -122,6 +118,10 @@ function GameInfo({ bits }) {
                   {({ name, index }) => <option value={index}>{name}</option>}
                 </For>
               </select>
+              <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
+              <Show when={isSaveValid()} fallback={<h3 class="text-3xl">&#9888;&#x26A0;</h3>}>
+                <h3 class="text-2xl w-32 text-right">&#x2714;</h3>
+              </Show>
             </div>
             <div class="flex flex-wrap justify-between w-full">
               <For each={boxPokemon()[selectedBox()]}>

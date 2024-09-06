@@ -396,6 +396,26 @@ class BoxPokemon {
     );
   }
 
+  getNicknameBytes() {
+    const nicknameOffset = 0x8;
+    return this._buffer.slice(
+      nicknameOffset, nicknameOffset + 10
+    );
+  }
+
+  setNicknameBytes(bytes) {
+    const nicknameOffset = 0x8;
+    const truncated = bytes.slice(0, 10);
+
+    let i;
+    for (i = 0; i < truncated.length; i += 1) {
+      this._buffer[i + nicknameOffset] = truncated[i];
+    }
+    if (i < 10) {
+      this._buffer[i + nicknameOffset] = 0xFF;
+    }
+  }
+
   hasSpecies() {
     const hasSpeciesByteOffset = 0x13;
     const bit = this._buffer[hasSpeciesByteOffset] & 0x2;

@@ -1,5 +1,12 @@
 function PokemonTextChar({ byte }) {
   const component = () => {
+    if (byte >= 0xBB && byte < 0xD5) {
+      const text = (byte - 0xBB) + 'A'.charCodeAt(0);
+      return <p>{String.fromCharCode(text)}</p>;
+    } else if (byte >= 0xD5 && byte < 0xEF) {
+      const text = (byte - 0xD5) + 'a'.charCodeAt(0);
+      return <p>{String.fromCharCode(text)}</p>;
+    }
     switch (byte) {
       case 0xA1:
         return <p>0</p>;

@@ -12,6 +12,8 @@ import Selector from './Selector';
 import { setBits, bits } from './fileBits';
 import { recomputeSaveChecksums } from './utils/save';
 import { itemList } from './ItemList';
+import PokemonTextChar from './PokemonTextChar';
+import PokemonTextInput from './PokemonTextInput';
 
 function PokemonCard({ pokemon }) {
   const [pokemonData, setPokemonData] = createSignal(pokemon());
@@ -51,7 +53,16 @@ function PokemonCard({ pokemon }) {
     pokemonData().setSpeciesId(id);
     setPokemonData((p) => p.copy());
   };
-  const [nickname, setNickname] = createSignal(pokemonData().getName());
+  const nickname = () => pokemonData().getNicknameBytes();
+  const setNickname = (bytes) => {
+    pokemonData().setNicknameBytes(bytes);
+    setPokemonData(pokemonData().copy());
+  };
+  const truncatedNickname = () => {
+    const firstZero = nickname().indexOf(0xff);
+    return nickname().slice(0, firstZero);
+  };
+
   const nature = () => pokemonData().getNature();
   const setNature = (natureIndex) => {
     const personalityValue = pokemonData().getPersonalityValue();
@@ -146,13 +157,14 @@ function PokemonCard({ pokemon }) {
       </div>
       <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
         <Show when={pokemonData().hasSpecies()}>
+          <div class="flex text-sm">
+            <For each={truncatedNickname()}>
+              {(byte) => {
+                return (<PokemonTextChar byte={byte} />);
+              }}
+            </For>
+          </div>
           <img src={`/items/${String(pokemonData().getPokeballItemId() + 1n).padStart(3, '0')}.png`} class="sharp-pixels w-5" />
-          <p class="text-xs text-center">{nickname()}</p>
-          <img
-            src={isShiny() ? "/star.svg" : "/empty-star.svg"}
-            class="shiny-star w-3"
-            loading="lazy"
-          />
         </Show>
       </div>
 
@@ -180,27 +192,25 @@ function PokemonCard({ pokemon }) {
               <div class="flex flex-row justify-start gap-2">
                 <div class="flex flex-col items-start gap-1">
                   <div>
-                    <label class="font-bold block" for="nickname-input">Nickname</label>
-                    <div class="flex flex-row gap-2">
-                      <input
-                        id="nickname-input"
-                        type="text"
-                        class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
-                        onInput={(event) => setNickname(event.target.value)}
-                        value={nickname()}
-                      />
-                      <img
-                        src={isShiny() ? "/star.svg" : "/empty-star.svg"}
-                        onClick={() => setIsShiny((prev) => !prev)}
-                        class="shiny-star w-4 hover:cursor-pointer"
-                        loading="lazy"
-                      />
+                    <div class="flex flex-row gap-2 items-end">
+                      <div class="block">
+                        <PokemonTextInput
+                          id="nickname-input"
+                          label="Nickname"
+                          value={nickname}
+                          onChange={(bytes) => {
+                            console.log(bytes);
+                            setNickname(bytes);
+                          }}
+                          class="w-32"
+                        />
+                      </div>
                     </div>
                   </div>
                   <div class="w-full flex justify-center">
                     <img
                       ref={imageRef}
-                      class="sharp-pixels hover:cursor-pointer w-32 mt-2 p-1"
+                      class="sharp-pixels hover:cursor-pointer w-32 mt-2"
                       src={imageURL()}
                     />
                   </div>
