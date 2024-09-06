@@ -58,6 +58,7 @@ function GameInfo({ bits }) {
       sectionOffsets()['pc_buffer_H'] + 4,
       sectionOffsets()['pc_buffer_I'] + 4,
     ];
+    console.log('boxOffsets = ', boxOffsets);
 
     let boxBuffers = [];
     for (let i = 0; i < boxOffsets.length; i += 1) {

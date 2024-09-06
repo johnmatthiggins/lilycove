@@ -5,6 +5,7 @@ import { barrelShiftRight } from './hex';
 // goes to 1 and it gets shifted from this to having
 // pc_buffer_I at the front.
 const DEFAULT_SAVE_BLOCK_SECTION_ORDER = [
+  "trainer_info",
   "team_and_items",
   "game_state",
   "misc_data",
@@ -18,7 +19,6 @@ const DEFAULT_SAVE_BLOCK_SECTION_ORDER = [
   "pc_buffer_G",
   "pc_buffer_H",
   "pc_buffer_I",
-  "trainer_info",
 ];
 
 // id is the integer index
@@ -72,26 +72,18 @@ function getSaveBlockOffset(bits) {
 }
 
 function findSectionAddresses(bits) {
-  const SAVE_BLOCK_SIZE = 0xE000;
-
   const saveBlockOffset = getSaveBlockOffset(bits);
-
-  // carve out bits for desired save block...
-  const blockBits = bits.slice(
-    saveBlockOffset,
-    saveBlockOffset + SAVE_BLOCK_SIZE
-  );
 
   const saveCounterAddress = 0x0FFC;
   const saveCounter = _readUint32(
-    blockBits.slice(saveCounterAddress, saveCounterAddress + 0x4)
+    bits.slice(saveBlockOffset + saveCounterAddress, saveBlockOffset + saveCounterAddress + 0x4)
   );
 
   const shiftCount = Number(saveCounter) % SAVE_BLOCK_SECTION_COUNT;
 
   const currentOrdering = barrelShiftRight(DEFAULT_SAVE_BLOCK_SECTION_ORDER, shiftCount);
   const offsets = {};
-  let currentAddress = 0x0;
+  let currentAddress = saveBlockOffset;
 
   for (let i = 0; i < currentOrdering.length; i += 1) {
     const sectionName = currentOrdering[i];
