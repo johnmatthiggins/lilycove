@@ -104,7 +104,7 @@ function GameInfo({ bits }) {
   };
 
   return (
-    <div class="bg-white p-2 my-1 w-[50vw] mx-auto rounded-sm">
+    <div class="bg-white p-2 my-1 w-[60vw] mx-auto rounded-sm">
       <div class="flex flex-col justify-center">
         <div>
           <div>
@@ -123,7 +123,7 @@ function GameInfo({ bits }) {
                 <h3 class="text-2xl w-32 text-right">&#x2714;</h3>
               </Show>
             </div>
-            <div class="flex flex-wrap justify-between w-full">
+            <div class="flex flex-wrap justify-between w-128 w-full">
               <For each={boxPokemon()[selectedBox()]}>
                 {(p) => <PokemonCard pokemon={() => p} />}
               </For>
