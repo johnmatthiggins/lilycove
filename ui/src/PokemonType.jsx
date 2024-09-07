@@ -20,7 +20,7 @@ function PokemonType({ typeName, fullWidth = false }) {
         borderColor = '#f8f674';
         break;
       case 'FIGHTING':
-        color = '#c03128';
+        color = '#C2452D';
         borderColor = '#ee7c30';
         break;
       case 'FIRE':

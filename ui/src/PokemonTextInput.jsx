@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import PokemonTextChar from "./PokemonTextChar";
 
 const START_CHAR_RANGE = 0xA0;
@@ -22,16 +22,14 @@ function PokemonTextInput({
   const [focused, setFocused] = createSignal(false);
   let ref;
 
-  const top = () => {
-    const rectTop = ref.clientTop;
-    const height = ref.clientHeight;
-    return height + rectTop + '1';
-  };
+  const [top, setTop] = createSignal();
+  const [left, setLeft] = createSignal();
 
-  const left = () => {
-    const rectLeft = ref.clientLeft;
-    return rectLeft;
-  };
+  onMount(() => {
+    console.log(ref);
+    setLeft(ref.offsetLeft);
+    setTop(ref.offsetTop + ref.offsetHeight);
+  });
 
   const cellSymbols = () => {
     const range = Array(END_CHAR_RANGE - START_CHAR_RANGE)
@@ -58,7 +56,7 @@ function PokemonTextInput({
         onClick={() => {
           setFocused(true)
         }}
-        class={"flex hover:cursor-pointer px-1 py-1 min-h-9 rounded-sm border border-solid border-gray-400 " + className}
+        class={"flex bg-white hover:cursor-pointer px-1 py-1 min-h-9 rounded-sm border border-solid border-gray-400 " + className}
       >
         <For each={truncated()}>
           {(byte) => <PokemonTextChar byte={byte} />}

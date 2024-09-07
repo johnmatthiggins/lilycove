@@ -827,6 +827,14 @@ video {
   width: 100%;
 }
 
+.w-\[65vw\] {
+  width: 65vw;
+}
+
+.w-\[50vw\] {
+  width: 50vw;
+}
+
 .min-w-16 {
   min-width: 4rem;
 }
@@ -1025,6 +1033,10 @@ video {
 
 .border {
   border-width: 1px;
+}
+
+.border-2 {
+  border-width: 2px;
 }
 
 .border-solid {

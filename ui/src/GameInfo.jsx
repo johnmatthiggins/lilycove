@@ -104,7 +104,13 @@ function GameInfo({ bits }) {
   };
 
   return (
-    <div class="bg-white p-2 my-1 w-[60vw] mx-auto rounded-sm">
+    <div
+      class="p-2 my-1 w-[60vw] mx-auto rounded-sm border border-gray-400 border-solid"
+      style={{
+        "background-color": 'rgba(255, 255, 255, 0.6)',
+        "backdrop-filter": 'blur(10px)',
+      }}
+    >
       <div class="flex flex-col justify-center">
         <div>
           <div>
@@ -133,7 +139,7 @@ function GameInfo({ bits }) {
       </div>
       <div class="w-full flex justify-center">
         <span
-          class="px-6 py-1 w-40 text-lg text-emerald-400 border border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center"
+          class="px-6 py-1 w-40 text-lg text-emerald-400 border-2 border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center"
           onClick={() => {
             const saveData = bits();
             if (trainerInfoOffset() >= 0xE000) {

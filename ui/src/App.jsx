@@ -50,7 +50,7 @@ function App() {
             <div class="my-2">
               <label class="flex justify-center w-full">
                 <span
-                  class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border border-solid border-indigo-500 hover:bg-indigo-500 rounded-sm hover:cursor-pointer"
+                  class="text-indigo-500 hover:text-white font-bold text-lg px-6 py-1 border-2 border-solid border-indigo-500 hover:bg-indigo-500 rounded-sm hover:cursor-pointer"
                   role="button"
                 >
                   Upload Save
