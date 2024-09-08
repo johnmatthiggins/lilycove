@@ -1683,6 +1683,10 @@ html:has(dialog[open]) {
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
+.focus\:outline:focus {
+  outline-style: solid;
+}
+
 .focus\:outline-2:focus {
   outline-width: 2px;
 }

@@ -169,7 +169,6 @@ function PokemonEditorDialog({
       class="m-0"
       style={{
         "z-index": 1000,
-        "background-color": 'rgba(0, 0, 0, 0.4)',
         top: 0,
         left: '-20vw',
         "height": '100vh',
