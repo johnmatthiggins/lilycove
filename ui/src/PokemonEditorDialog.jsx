@@ -21,7 +21,6 @@ function PokemonEditorDialog({
   setPokemonData,
 }) {
   const [tab, setTab] = createSignal('moves');
-  const evs = pokemonData().getEffortValues();
   const ivArray = () => {
     const ivs = pokemonData().getIndividualValues();
     return [
@@ -179,7 +178,7 @@ function PokemonEditorDialog({
       <dialog
         open
         onClick={blockClickCascade}
-        class="border border-gray-400 border-solid mt-2 rounded-sm p-2 min-w-[70vw]"
+        class="border border-gray-400 border-solid mt-2 rounded-md p-2 min-w-[70vw]"
         style={{
           height: 'fit-content',
           "backdrop-filter": 'blur(10px)',
@@ -203,11 +202,8 @@ function PokemonEditorDialog({
                         id="nickname-input"
                         label="Nickname"
                         value={nickname}
-                        onChange={(bytes) => {
-                          console.log(bytes);
-                          setNickname(bytes);
-                        }}
-                        class="w-32"
+                        onChange={setNickname}
+                        class="w-44"
                       />
                     </div>
                   </div>
@@ -238,7 +234,7 @@ function PokemonEditorDialog({
                 <div>
                   <Selector
                     id="species-input"
-                    class="w-44"
+                    class="w-44 h-8"
                     label="Species"
                     onChange={(event) => setSpeciesId(Number(event.target.value))}
                     selectedValue={speciesId}
@@ -257,7 +253,7 @@ function PokemonEditorDialog({
                 <div>
                   <Selector
                     id="ability-input"
-                    class="w-44"
+                    class="w-44 h-8"
                     label="Ability"
                     selectedValue={() => abilityIndex() % abilityList().length}
                     options={() => abilityList().map((ability, index) => ({ value: index, label: ability }))}
@@ -267,7 +263,7 @@ function PokemonEditorDialog({
                 <div>
                   <Selector
                     id="item-input"
-                    class="w-44"
+                    class="w-44 h-8"
                     label="Held Item"
                     selectedValue={() => itemCode()}
                     options={() => {
@@ -375,9 +371,9 @@ function PokemonEditorDialog({
                         <div class="pt-2">
                           <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                         </div>
-                        <div class="pt-2">
+                        {/*<div class="pt-2">
                           <StatDisplay pokemonData={pokemonData} />
-                        </div>
+                        </div> */}
                       </div>
                       <div class="px-2 pb-2">
                         <div class="flex justify-start gap-2">
@@ -393,7 +389,7 @@ function PokemonEditorDialog({
                                 return result;
                               })}
                               id="nature-input"
-                              class="w-44"
+                              class="w-44 h-8"
                               label="Nature"
                               onChange={(event) => setNature(NATURES.findIndex((n) => n.name === event.target.value))}
                               selectedValue={() => nature().name}
@@ -413,7 +409,7 @@ function PokemonEditorDialog({
                             <Selector
                               options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
                               id="level-input"
-                              class="w-44"
+                              class="w-44 h-8"
                               label="Level"
                               onChange={(event) => setLevel(event.target.value)}
                               selectedValue={level}
@@ -428,6 +424,7 @@ function PokemonEditorDialog({
                       <Selector
                         id="pokeball-input"
                         label="Pokeball"
+                        class="h-8"
                         selectedValue={pokeballIndex}
                         onChange={(event) => {
                           setPokeballIndex(Number(event.target.value));
@@ -446,7 +443,7 @@ function PokemonEditorDialog({
             </div>
           </div>
           <div class="flex flex-row justify-center w-full my-1 pt-8 gap-3">
-            <div class="hover:outline-1 hover:outline-white hover:outline-dotted hover:cursor-pointer rounded-sm">
+            <div class="hover:outline-1 hover:outline-black hover:outline-dotted hover:cursor-pointer rounded-sm">
               <div class="rounded-sm bg-white h-fit w-fit m-0.25">
                 <button
                   class="font-bold text-white bg-cyan-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"

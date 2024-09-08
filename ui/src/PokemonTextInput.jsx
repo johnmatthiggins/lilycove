@@ -35,9 +35,9 @@ function PokemonTextInput({
       .fill(0)
       .map((_, i) => i + START_CHAR_RANGE);
 
-    const cells = Array(5).fill(0).map((_) => []);
+    const cells = Array(6).fill(0).map((_) => []);
 
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < cells.length; i += 1) {
       for (let j = 0; j < range.length / 5; j += 1) {
         cells[i].push(range[i * 0xF + j]);
       }
@@ -77,7 +77,7 @@ function PokemonTextInput({
           }}>
           <dialog
             open
-            class="bg-white border border-gray-200 border-solid"
+            class="bg-white border border-gray-200 border-solid rounded-sm"
             style={{
               "z-index": 800000,
               position: "fixed",
@@ -87,7 +87,7 @@ function PokemonTextInput({
           >
             <div class="flex w-full justify-end">
               <div
-                class="px-2 hover:cursor-pointer hover:bg-gray-200 text-center"
+                class="px-2 hover:cursor-pointer hover:bg-gray-200 text-center rounded-sm m-0.5"
                 role="button"
                 onClick={(event) => {
                   setFocused(false)
