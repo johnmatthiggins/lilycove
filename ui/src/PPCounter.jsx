@@ -12,7 +12,7 @@ function PPCounter({
   return (
     <div class="font-mono flex justify-between pl-2 select-none gap-2">
       <span
-        class="bg-gray-200 rounded-sm min-w-5 text-center hover:cursor-pointer hover:opacity-80 hover:outline-1 hover:outline-black hover:outline-dashed"
+        class="bg-gray-200 rounded-sm min-w-5 text-center hover:cursor-pointer hover:opacity-80 hover:outline-1 hover:outline-black hover:outline-dotted"
         onClick={decrement}
       >
         {'-'}
@@ -24,7 +24,7 @@ function PPCounter({
         </Show>
       </span>
       <span
-        class="bg-gray-200 rounded-sm min-w-5 text-center hover:cursor-pointer hover:opacity-80 hover:outline-1 hover:outline-black hover:outline-dashed"
+        class="bg-gray-200 rounded-sm min-w-5 text-center hover:cursor-pointer hover:opacity-80 hover:outline-1 hover:outline-black hover:outline-dotted"
         onClick={increment}>
         {'+'}
       </span>

@@ -435,7 +435,7 @@ function PokemonEditorDialog({
             </div>
           </div>
           <div class="flex flex-row justify-center w-full my-1 pt-8 gap-3">
-            <div class="hover:outline-1 hover:outline-white hover:outline-dashed hover:cursor-pointer rounded-sm">
+            <div class="hover:outline-1 hover:outline-white hover:outline-dotted hover:cursor-pointer rounded-sm">
               <div class="rounded-sm bg-white h-fit w-fit m-0.25">
                 <button
                   class="font-bold text-white bg-cyan-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"

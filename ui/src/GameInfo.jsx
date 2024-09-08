@@ -138,7 +138,7 @@ function GameInfo({ bits }) {
         </div>
       </div>
       <div class="w-full flex justify-center">
-        <div class="bg-white hover:outline-1 hover:outline-white hover:outline-dashed rounded-sm">
+        <div class="bg-white hover:outline-1 hover:outline-white hover:outline-dotted rounded-sm">
           <button
             class="py-1 w-40 text-lg text-white hover:cursor-pointer hover:opacity-90 bg-cyan-400 rounded-sm font-bold text-center"
             onClick={() => {

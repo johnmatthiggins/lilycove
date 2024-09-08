@@ -1646,6 +1646,10 @@ html:has(dialog[open]) {
   outline-style: dashed;
 }
 
+.hover\:outline-dotted:hover {
+  outline-style: dotted;
+}
+
 .hover\:outline-1:hover {
   outline-width: 1px;
 }
