@@ -330,6 +330,7 @@ class BoxPokemon {
 
   // takes in the pokeball item id
   setPokeballWithItemId(pokeballId) {
+    console.log('pokeballId = ', pokeballId);
     this._decrypt();
 
     const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
@@ -340,7 +341,7 @@ class BoxPokemon {
 
     // zero out only the three bits that we
     // are going to insert back into the byte
-    const newByte = (originsByte & 0xC7n) | pokeballIdByte;
+    const newByte = (originsByte & 0b10000111n) | pokeballIdByte;
 
     this._buffer[originsOffset] = Number(newByte);
 
