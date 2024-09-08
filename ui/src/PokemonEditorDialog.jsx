@@ -435,33 +435,41 @@ function PokemonEditorDialog({
             </div>
           </div>
           <div class="flex flex-row justify-center w-full my-1 pt-8 gap-3">
-            <button
-              class="font-bold hover:bg-red-400 border-2 border-solid border-red-400 text-red-400 hover:text-red-100 px-4 py-1 rounded-sm w-32"
-              onClick={(event) => {
-                event.stopPropagation();
-                onClose();
-              }}>
-              Cancel
-            </button>
-            <button
-              class="font-bold hover:bg-emerald-400 border-2 border-solid border-emerald-400 text-emerald-400 hover:text-emerald-100 px-4 py-1 rounded-sm w-32"
-              onClick={(event) => {
-                const save = bits();
-                const pokemonRef = pokemonData();
-                pokemonRef.setEffortValues(evArray());
-                pokemonRef.setIndividualValues(ivArray());
-                pokemonRef.recomputeChecksum();
+            <div class="hover:outline-1 hover:outline-white hover:outline-dashed hover:cursor-pointer rounded-sm">
+              <div class="rounded-sm bg-white h-fit w-fit m-0.25">
+                <button
+                  class="font-bold text-white bg-red-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onClose();
+                  }}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div class="hover:outline-1 hover:outline-white hover:outline-dashed hover:cursor-pointer rounded-sm">
+              <div class="rounded-sm bg-white h-fit w-fit m-0.25">
+                <button
+                  class="font-bold text-white bg-blue-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"
+                  onClick={(event) => {
+                    const save = bits();
+                    const pokemonRef = pokemonData();
+                    pokemonRef.setEffortValues(evArray());
+                    pokemonRef.setIndividualValues(ivArray());
+                    pokemonRef.recomputeChecksum();
 
-                // serialize pokemon to binary
-                pokemonRef.save(save);
+                    // serialize pokemon to binary
+                    pokemonRef.save(save);
 
-                recomputeSaveChecksums(save);
-                setBits([...save]);
-                event.stopPropagation();
-                onClose();
-              }}>
-              Save
-            </button>
+                    recomputeSaveChecksums(save);
+                    setBits([...save]);
+                    event.stopPropagation();
+                    onClose();
+                  }}>
+                  Save
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </dialog>
