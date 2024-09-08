@@ -753,13 +753,14 @@ class BoxPokemon {
 
   setIndividualValues(ivs) {
     this._decrypt();
+    console.log('ivs = ', ivs);
 
     const hp = BigInt(ivs[0]);
     const atk = BigInt(ivs[1]);
     const def = BigInt(ivs[2]);
     const speed = BigInt(ivs[3]);
-    const sdef = BigInt(ivs[4]);
     const satk = BigInt(ivs[5]);
+    const sdef = BigInt(ivs[4]);
 
     let ivWord = hp | atk << 5n | def << 10n | speed << 15n | satk << 20n | sdef << 25n;
     const b0 = Number(ivWord & 0xFFn);

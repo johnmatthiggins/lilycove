@@ -3,8 +3,10 @@ import PPCounter from "./PPCounter";
 import PokemonType from "./PokemonType";
 
 import { moveList } from "./MoveList";
+import { hiddenPowerPower, hiddenPowerType } from "./utils/pokemonDataStructure";
 
 function PokemonMove({
+  pokemonData,
   moveId,
   ppUpCount,
   setPPUpCount,
@@ -17,14 +19,43 @@ function PokemonMove({
   });
 
   const description = () => moveData()?.effect || '(Empty move slots have no effects in battle.)';
-  const power = () => moveData()?.power || '--';
+  const power = () => {
+    if (moveData().name === 'Hidden Power') {
+      const ivs = pokemonData().getIndividualValues();
+      const ivArray = [
+        ivs.hp,
+        ivs.attack,
+        ivs.defense,
+        ivs.speed,
+        ivs.specialAttack,
+        ivs.specialDefense,
+      ];
+      return hiddenPowerPower(...ivArray);
+    }
+    return moveData()?.power || '--';
+  };
   const accuracy = () => moveData()?.accuracy || '--';
   const powerPoints = () => moveData()?.pp || 0;
   const adjustedPowerPoints = () => {
     const result = powerPoints() + (ppUpCount() * (powerPoints() / 5))
     return result;
   };
-  const moveType = () => moveData()?.move_type || '???';
+  const moveType = () => {
+    if (moveData().name !== "Hidden Power") {
+      return moveData()?.move_type || '???';
+    }
+
+    const ivs = pokemonData().getIndividualValues();
+    const ivArray = [
+      ivs.hp,
+      ivs.attack,
+      ivs.defense,
+      ivs.speed,
+      ivs.specialAttack,
+      ivs.specialDefense,
+    ];
+    return hiddenPowerType(...ivArray);
+  };
 
   const handleMoveChange = (event) => {
     const newId = event.target.value;

@@ -56,12 +56,12 @@ const TYPE_LIST = [
   'DARK',
 ];
 function hiddenPowerType(hp, attack, defense, speed, spAttack, spDefense) {
-  const a = hp % 2;
-  const b = attack % 2;
-  const c = defense % 2;
-  const d = speed % 2;
-  const e = spAttack % 2;
-  const f = spDefense % 2;
+  const a = hp & 0x1;
+  const b = attack & 0x1;
+  const c = defense & 0x1;
+  const d = speed & 0x1;
+  const e = spAttack & 0x1;
+  const f = spDefense & 0x1;
 
   const binary = parseInt(`${f}${e}${d}${c}${b}${a}`, 2);
   const typeIndex = Math.floor((binary * 15) / 63);
@@ -69,7 +69,22 @@ function hiddenPowerType(hp, attack, defense, speed, spAttack, spDefense) {
   return TYPE_LIST[typeIndex];
 }
 
+function hiddenPowerPower(hp, attack, defense, speed, spAttack, spDefense) {
+  const a = (hp & 0x2) >> 1;
+  const b = (attack & 0x2) >> 1;
+  const c = (defense & 0x2) >> 1;
+  const d = (speed & 0x2) >> 1;
+  const e = (spAttack & 0x2) >> 1;
+  const f = (spDefense & 0x2) >> 1;
+
+  const binary = parseInt(`${f}${e}${d}${c}${b}${a}`, 2);
+  const power = Math.floor((binary * 40) / 63) + 30;
+
+  return power;
+}
+
 export {
   getPokemonInParty,
   hiddenPowerType,
+  hiddenPowerPower,
 }

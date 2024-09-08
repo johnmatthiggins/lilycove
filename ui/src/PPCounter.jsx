@@ -2,12 +2,8 @@ function PPCounter({
   ppUpCount,
   setPPUpCount,
 }) {
-  const increment = () => {
-    setPPUpCount(Math.min(ppUpCount() + 1, 3));
-  };
-  const decrement = () => {
-    setPPUpCount(Math.max(ppUpCount() - 1, 0));
-  };
+  const increment = () => setPPUpCount(Math.min(ppUpCount() + 1, 3));
+  const decrement = () => setPPUpCount(Math.max(ppUpCount() - 1, 0));
 
   return (
     <div class="font-mono flex justify-between pl-2 select-none gap-2">

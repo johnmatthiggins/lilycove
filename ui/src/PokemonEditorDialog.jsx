@@ -21,24 +21,41 @@ function PokemonEditorDialog({
   setPokemonData,
 }) {
   const [tab, setTab] = createSignal('moves');
-  const ivs = pokemonData().getIndividualValues();
   const evs = pokemonData().getEffortValues();
-  const [ivArray, setIvArray] = createSignal([
-    ivs.hp,
-    ivs.attack,
-    ivs.defense,
-    ivs.speed,
-    ivs.specialAttack,
-    ivs.specialDefense,
-  ]);
-  const [evArray, setEvArray] = createSignal([
-    evs.hp,
-    evs.attack,
-    evs.defense,
-    evs.speed,
-    evs.specialAttack,
-    evs.specialDefense,
-  ]);
+  const ivArray = () => {
+    const ivs = pokemonData().getIndividualValues();
+    return [
+      ivs.hp,
+      ivs.attack,
+      ivs.defense,
+      ivs.speed,
+      ivs.specialAttack,
+      ivs.specialDefense,
+    ];
+  };
+
+  const setIvArray = (ivs) => {
+    pokemonData().setIndividualValues(ivs);
+    setPokemonData(pokemonData().copy());
+  };
+
+  const evArray = () => {
+    const evs = pokemonData().getEffortValues();
+    return [
+      evs.hp,
+      evs.attack,
+      evs.defense,
+      evs.speed,
+      evs.specialAttack,
+      evs.specialDefense,
+    ];
+  };
+
+  const setEvArray = (evs) => {
+    pokemonData().setIndividualValues(evs);
+    setPokemonData(pokemonData().copy());
+  };
+
   const ppIncreases = () => pokemonData().getPowerPointIncreases();
   const setPPIncreases = (ppUps) => {
     pokemonData().setPowerPointIncreases(ppUps);
@@ -345,6 +362,7 @@ function PokemonEditorDialog({
                     <div class="flex flex-col gap-1 p-1 grow" id="moveset">
                       <For each={pokemonMoves()}>
                         {(move, index) => (<PokemonMove
+                          pokemonData={pokemonData}
                           moveId={move?.id || -1}
                           ppUpCount={() => ppIncreases()[index()]}
                           setPPUpCount={(nextValue) =>
@@ -442,8 +460,6 @@ function PokemonEditorDialog({
                   onClick={(event) => {
                     const save = bits();
                     const pokemonRef = pokemonData();
-                    pokemonRef.setEffortValues(evArray());
-                    pokemonRef.setIndividualValues(ivArray());
                     pokemonRef.recomputeChecksum();
 
                     // serialize pokemon to binary
