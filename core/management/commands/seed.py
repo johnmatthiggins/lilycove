@@ -94,7 +94,7 @@ class Command(BaseCommand):
 
             table_html = soup.find('td', string="Base Stats").parent.parent
 
-            base_stats = pd.read_html(io=StringIO(table_html), skiprows=2)[0]
+            base_stats = pd.read_html(io=StringIO(str(table_html)), skiprows=2)[0]
             base_stats.columns = ["description", "hp", "atk", "def", "satk", "sdef", "speed"]
 
             growth_rate = growth_rates[i]
