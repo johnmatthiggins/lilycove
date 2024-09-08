@@ -138,34 +138,36 @@ function GameInfo({ bits }) {
         </div>
       </div>
       <div class="w-full flex justify-center">
-        <span
-          class="px-6 py-1 w-40 text-lg text-emerald-400 border-2 border-emerald-400 border-solid hover:cursor-pointer hover:text-white hover:bg-emerald-400 rounded-sm font-bold text-center"
-          onClick={() => {
-            const saveData = bits();
-            if (trainerInfoOffset() >= 0xE000) {
-              for (let i = 0; i < 0xE000; i += 1) {
-                saveData[i] = saveData[0xE000 + i];
+        <div class="bg-white hover:outline-1 hover:outline-white hover:outline-dashed rounded-sm">
+          <button
+            class="py-1 w-40 text-lg text-white hover:cursor-pointer hover:opacity-90 bg-cyan-400 rounded-sm font-bold text-center"
+            onClick={() => {
+              const saveData = bits();
+              if (trainerInfoOffset() >= 0xE000) {
+                for (let i = 0; i < 0xE000; i += 1) {
+                  saveData[i] = saveData[0xE000 + i];
+                }
+              } else {
+                for (let i = 0; i < 0xE000; i += 1) {
+                  saveData[0xE000 + i] = saveData[i];
+                }
               }
-            } else {
-              for (let i = 0; i < 0xE000; i += 1) {
-                saveData[0xE000 + i] = saveData[i];
-              }
-            }
 
-            const bytes = new Uint8Array(bits());
-            let b64 = bytesToBase64(bytes);
-            const dataUrl = `data:application/octet-stream;base64,${b64}`;
-            const anchor = document.createElement('a')
-            anchor.href = dataUrl;
-            anchor.download = '*.sav';
-            anchor.style.display = 'none';
-            document.body.appendChild(anchor);
-            anchor.click();
-            anchor.remove();
-          }}
-        >
-          Export Save
-        </span>
+              const bytes = new Uint8Array(bits());
+              let b64 = bytesToBase64(bytes);
+              const dataUrl = `data:application/octet-stream;base64,${b64}`;
+              const anchor = document.createElement('a')
+              anchor.href = dataUrl;
+              anchor.download = '*.sav';
+              anchor.style.display = 'none';
+              document.body.appendChild(anchor);
+              anchor.click();
+              anchor.remove();
+            }}
+          >
+            Download Save
+          </button>
+        </div>
       </div>
     </div >
   );

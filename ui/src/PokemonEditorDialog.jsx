@@ -438,19 +438,7 @@ function PokemonEditorDialog({
             <div class="hover:outline-1 hover:outline-white hover:outline-dashed hover:cursor-pointer rounded-sm">
               <div class="rounded-sm bg-white h-fit w-fit m-0.25">
                 <button
-                  class="font-bold text-white bg-red-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onClose();
-                  }}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-            <div class="hover:outline-1 hover:outline-white hover:outline-dashed hover:cursor-pointer rounded-sm">
-              <div class="rounded-sm bg-white h-fit w-fit m-0.25">
-                <button
-                  class="font-bold text-white bg-blue-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"
+                  class="font-bold text-white bg-cyan-400 hover:opacity-90 px-4 py-1 rounded-sm w-40"
                   onClick={(event) => {
                     const save = bits();
                     const pokemonRef = pokemonData();

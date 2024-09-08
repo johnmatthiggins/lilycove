@@ -81,16 +81,21 @@ function PokemonType({ typeName, fullWidth = false }) {
   };
 
   return (
-    <span
-      class="text-sm shadow-sm font-mono font-bold rounded-sm text-[#FFFE] shadow-sm min-w-20 py-1 text-center border border-solid mr-1"
+    <div
+      class="text-sm text-center shadow-lg font-mono font-bold rounded-sm text-[#FFFE] shadow-sm min-w-20 p-2 py-1 text-center border border-solid mr-1 h-8 flex items-center justify-center"
       style={{
-        "width": fullWidth ? "100%" : "auto",
         "background-color": colors().border,
         "border-color": colors().border,
       }}
     >
-      {typeName().toUpperCase()}
-    </span>
+      <span
+        style={{
+          "width": fullWidth ? "100%" : "auto",
+        }}
+      >
+        {typeName().toUpperCase()}
+      </span>
+    </div>
   );
 }
 

@@ -47,29 +47,27 @@ function App() {
               Lilycove
             </h3>
             <h2 class="font-pacifico text-center text-white text-2xl">A Pokemon Save Editor</h2>
-            <div class="my-2 mx-auto hover:outline-white hover:outline-dashed w-fit p-0.5 rounded-sm">
-              <div class="hover:bg-white">
-                <label class="flex justify-center rounded-sm w-fit">
-                  <span
-                    class="text-white hover:opacity-95 font-bold text-lg px-6 py-1 border-2 border-solid border-indigo-500 bg-indigo-500 rounded-sm hover:cursor-pointer"
-                    role="button"
-                  >
-                    Upload Save
-                  </span>
-                  <input
-                    type="file"
-                    accept=".sav"
-                    class="hidden"
-                    onChange={async (event) => {
-                      const file = event.target.files[0];
-                      let bytes = [];
-                      for await (const chunk of file.stream()) {
-                        bytes = bytes.concat([...chunk]);
-                      }
-                      setBits(bytes);
-                    }} />
-                </label>
-              </div>
+            <div class="bg-white my-2 mx-auto hover:outline-1 hover:outline-white hover:outline-dashed w-fit rounded-sm">
+              <label class="flex justify-center rounded-sm w-fit">
+                <span
+                  class="text-white hover:opacity-90 font-bold text-lg text-center w-40 py-1 bg-blue-400 rounded-sm hover:cursor-pointer"
+                  role="button"
+                >
+                  Upload Save
+                </span>
+                <input
+                  type="file"
+                  accept=".sav"
+                  class="hidden"
+                  onChange={async (event) => {
+                    const file = event.target.files[0];
+                    let bytes = [];
+                    for await (const chunk of file.stream()) {
+                      bytes = bytes.concat([...chunk]);
+                    }
+                    setBits(bytes);
+                  }} />
+              </label>
             </div>
           </div>
         </Show>
