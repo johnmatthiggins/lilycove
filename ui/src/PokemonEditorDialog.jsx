@@ -40,7 +40,7 @@ function PokemonEditorDialog({
     evs.specialDefense,
   ]);
   const ppIncreases = () => pokemonData().getPowerPointIncreases();
-  const setPpIncreases = (ppUps) => {
+  const setPPIncreases = (ppUps) => {
     pokemonData().setPowerPointIncreases(ppUps);
     setPokemonData(pokemonData().copy());
   };
@@ -347,8 +347,8 @@ function PokemonEditorDialog({
                         {(move, index) => (<PokemonMove
                           moveId={move?.id || -1}
                           ppUpCount={() => ppIncreases()[index()]}
-                          setPpUpCount={(nextValue) =>
-                            setPpIncreases(ppIncreases().with(index(), nextValue))
+                          setPPUpCount={(nextValue) =>
+                            setPPIncreases(ppIncreases().with(index(), nextValue))
                           }
                           onChange={(moveId) => pokemonData().setMove(index(), moveId)}
                         />)}
@@ -357,14 +357,14 @@ function PokemonEditorDialog({
                   </Show>
                   <Show when={tab() === "stats"}>
                     <div>
-                      <div class="grid grid-cols-2" id="stats">
-                        <div class="px-2 pt-2">
+                      <div class="pl-2 flex flex-row gap-2" id="stats">
+                        <div class="pt-2">
                           <EvEditor evArray={evArray} setEvArray={setEvArray} />
                         </div>
-                        <div class="px-2 pt-2">
+                        <div class="pt-2">
                           <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                         </div>
-                        <div class="px-2 pt-2">
+                        <div class="pt-2">
                           <StatDisplay pokemonData={pokemonData} />
                         </div>
                       </div>

@@ -1,4 +1,5 @@
 import { createMemo, createSignal, Show } from "solid-js";
+import PPCounter from "./PPCounter";
 import PokemonType from "./PokemonType";
 
 import { moveList } from "./MoveList";
@@ -6,7 +7,7 @@ import { moveList } from "./MoveList";
 function PokemonMove({
   moveId,
   ppUpCount,
-  setPpUpCount,
+  setPPUpCount,
   onChange,
 }) {
   const [currentMoveId, setCurrentMoveId] = createSignal(moveId);
@@ -71,17 +72,7 @@ function PokemonMove({
       </div>
       <div class="flex justify-between">
         <p class="text-md">{description()}</p>
-        <div
-          class="font-mono border border-solid border-gray-400 flex justify-between pl-2 select-none hover:bg-gray-400 hover:cursor-pointer"
-          onClick={() => setPpUpCount((ppUpCount() + 1) % 4)}
-        >
-          <span>{ppUpCount()}</span>
-          <span class="h-1.5 rounded-sm">
-            <Show when={ppUpCount() === 3} fallback={<img class="sharp-pixels" src="/items/068.png" />}>
-              <img class="sharp-pixels" src="/items/070.png" />
-            </Show>
-          </span>
-        </div>
+        <PPCounter ppUpCount={ppUpCount} setPPUpCount={setPPUpCount} />
       </div>
     </div>
   );

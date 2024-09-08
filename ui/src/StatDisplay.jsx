@@ -4,8 +4,8 @@ function StatDisplay({ pokemonData }) {
 
   return (
     <div>
-      <h3 class="text-2xl font-bold">Stats</h3>
-      <div class="flex flex-row gap-2">
+      <h3 class="text-2xl font-bold w-32">Stats</h3>
+      <div class="flex flex-row gap-2 w-20">
         <section class="flex flex-col gap-1">
           <div class="h-8 flex items-center">
             <label for="hp-stat" class="font-bold h-8 text-center">HP</label>

@@ -4,76 +4,76 @@ function PokemonType({ typeName, fullWidth = false }) {
     let borderColor;
     switch (typeName().toUpperCase()) {
       case 'BUG':
-        color = '#a8b920';
-        borderColor = '#d1d72f';
+        borderColor = '#a8b920';
+        color = '#d1d72f';
         break;
       case 'DARK':
-        color = '#705848';
-        borderColor = '#a2a275';
+        borderColor = '#705848';
+        color = '#a2a275';
         break;
       case 'DRAGON':
-        color = '#7038f8';
-        borderColor = '#b49bf8';
+        borderColor = '#7038f8';
+        color = '#b49bf8';
         break;
       case 'ELECTRIC':
-        color = '#f8d132';
-        borderColor = '#f8f674';
+        borderColor = '#f8d132';
+        color = '#f8f674';
         break;
       case 'FIGHTING':
-        color = '#C2452D';
-        borderColor = '#ee7c30';
+        borderColor = '#C2452D';
+        color = '#ee7c30';
         break;
       case 'FIRE':
-        color = '#c03128';
-        borderColor = '#f8cb30';
+        borderColor = '#f08030';
+        color = '#f8cb30';
         break;
       case 'FLYING':
-        color = '#a890f0';
-        borderColor = '#c5bff8';
+        borderColor = '#a890f0';
+        color = '#c5bff8';
         break;
       case 'GHOST':
-        color = '#705898';
-        borderColor = '#a58deb';
+        borderColor = '#705898';
+        color = '#a58deb';
         break;
       case 'GRASS':
-        color = '#79c94f';
-        borderColor = '#bcf75e';
+        borderColor = '#79c94f';
+        color = '#bcf75e';
         break;
       case 'GROUND':
-        color = '#e0c068';
-        borderColor = '#f7f577';
+        borderColor = '#e0c068';
+        color = '#f7f577';
         break;
       case 'ICE':
-        color = '#98d8d8';
-        borderColor = '#cdf6e6';
+        borderColor = '#98d8d8';
+        color = '#cdf6e6';
         break;
       case 'NORMAL':
-        color = '#a8a878';
-        borderColor = '#d6d6bd';
+        borderColor = '#a8a878';
+        color = '#d6d6bd';
         break;
       case 'POISON':
-        color = '#a140a0';
-        borderColor = '#d07cb0';
+        borderColor = '#a140a0';
+        color = '#d07cb0';
         break;
       case 'PSYCHIC':
-        color = '#f85888';
-        borderColor = '#f8b1aa';
+        borderColor = '#f85888';
+        color = '#f8b1aa';
         break;
       case 'ROCK':
-        color = '#b8a039';
-        borderColor = '#debe65';
+        borderColor = '#b8a039';
+        color = '#debe65';
         break;
       case 'STEEL':
-        color = '#b8b8d0';
-        borderColor = '#d6d6c1';
+        borderColor = '#b8b8d0';
+        color = '#d6d6c1';
         break;
       case 'WATER':
-        color = '#6790f0';
-        borderColor = '#95d5d9';
+        borderColor = '#6790f0';
+        color = '#95d5d9';
         break;
       default:
-        color = 'black';
         borderColor = 'black';
+        color = 'black';
         break;
     }
 
@@ -82,10 +82,10 @@ function PokemonType({ typeName, fullWidth = false }) {
 
   return (
     <span
-      class="text-sm shadow-sm font-mono font-bold rounded-sm text-white shadow-sm min-w-20 py-1 text-center border border-solid mr-1"
+      class="text-sm shadow-sm font-mono font-bold rounded-sm text-[#FFFE] shadow-sm min-w-20 py-1 text-center border border-solid mr-1"
       style={{
         "width": fullWidth ? "100%" : "auto",
-        "background-color": colors().background,
+        "background-color": colors().border,
         "border-color": colors().border,
       }}
     >

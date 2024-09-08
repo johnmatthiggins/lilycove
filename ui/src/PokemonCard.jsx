@@ -26,7 +26,6 @@ function PokemonCard({ pokemon }) {
 
   const handleClick = () => setOpen(true);
   const handleClose = () => {
-    console.log('hello world');
     setOpen(false);
   };
 
