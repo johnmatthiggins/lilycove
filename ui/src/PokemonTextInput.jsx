@@ -26,7 +26,6 @@ function PokemonTextInput({
   const [left, setLeft] = createSignal();
 
   onMount(() => {
-    console.log(ref);
     setLeft(ref.offsetLeft);
     setTop(ref.offsetTop + ref.offsetHeight);
   });

@@ -852,6 +852,10 @@ video {
   width: 5rem;
 }
 
+.w-60 {
+  width: 15rem;
+}
+
 .min-w-16 {
   min-width: 4rem;
 }
@@ -1459,6 +1463,10 @@ video {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.opacity-50 {
+  opacity: 0.5;
+}
+
 .shadow-md {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
@@ -1538,6 +1546,10 @@ html:has(dialog[open]) {
 
 .hover\:cursor-pointer:hover {
   cursor: pointer;
+}
+
+.hover\:cursor-not-allowed:hover {
+  cursor: not-allowed;
 }
 
 .hover\:border:hover {

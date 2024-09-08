@@ -449,12 +449,11 @@ class BoxPokemon {
   // 1 or 0... We'll do a mod 2 on it so it doesn't really matter what you pass in.
   setAbilityBit(abilityBit) {
     this._decrypt();
-    const byte = ((Number(abilityBit) % 2) << 7) & 0x7F;
-
-    const offset = this._buffer['data_section_misc'] + 3;
+    const byte = (Number(abilityBit) & 0x1) << 7;
+    const offset = this._offsetMap['data_section_misc'] + 7;
 
     // write only last bit of byte...
-    this._buffer[offset] = this._buffer[offset] & byte;
+    this._buffer[offset] = (this._buffer[offset] & 0x7F) | byte;
 
     this._encrypt();
   }
@@ -753,14 +752,13 @@ class BoxPokemon {
 
   setIndividualValues(ivs) {
     this._decrypt();
-    console.log('ivs = ', ivs);
 
     const hp = BigInt(ivs[0]);
     const atk = BigInt(ivs[1]);
     const def = BigInt(ivs[2]);
     const speed = BigInt(ivs[3]);
-    const satk = BigInt(ivs[5]);
-    const sdef = BigInt(ivs[4]);
+    const satk = BigInt(ivs[4]);
+    const sdef = BigInt(ivs[5]);
 
     let ivWord = hp | atk << 5n | def << 10n | speed << 15n | satk << 20n | sdef << 25n;
     const b0 = Number(ivWord & 0xFFn);
@@ -775,6 +773,71 @@ class BoxPokemon {
     this._buffer[ivOffset + 3] = b3;
 
     this._encrypt();
+  }
+
+  getStats(level, baseStats) {
+    const ivs = this.getIndividualValues();
+    const evs = this.getEffortValues();
+    const hpStat = BoxPokemon._calcHPStat(
+      level,
+      baseStats.hp,
+      ivs.hp,
+      evs.hp
+    );
+
+    const atkStat = BoxPokemon._calcStat(
+      level,
+      baseStats.attack,
+      ivs.attack,
+      evs.attack,
+      atkMultiplier
+    );
+    const defStat = BoxPokemon._calcStat(
+      level,
+      baseStats.defense,
+      ivs.defense,
+      evs.defense,
+      defMultiplier
+    );
+    const speedStat = BoxPokemon._calcStat(
+      level,
+      baseStats.speed,
+      ivs.speed,
+      evs.speed,
+      defMultiplier
+    );
+
+    const satkStat = BoxPokemon._calcStat(
+      level,
+      baseStats.specialAttack,
+      ivs.specialAttack,
+      evs.specialAttack,
+      satkMultiplier
+    );
+    const sdefStat = BoxPokemon._calcStat(
+      level,
+      baseStats.specialDefense,
+      ivs.specialDefense,
+      evs.specialDefense,
+      sdefMultiplier
+    );
+
+    return {
+      hp: hpStat,
+      attack: atkStat,
+      defense: defStat,
+      speed: speedStat,
+      specialAttack: satkStat,
+      specialDefense: sdefStat,
+    };
+  }
+
+  static _calcStat(level, base, iv, ev, multiplier) {
+  }
+
+  static _calcHPStat(level, base, iv, ev) {
+    const numerator = 2 * base + iv + Math.floor(ev / 4) * level;
+    return Math.floor(numerator / 100) + level + 10;
   }
 
   // byte array that contains save bits

@@ -25,9 +25,7 @@ function PokemonCard({ pokemon }) {
   };
 
   const handleClick = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   return (
     <>

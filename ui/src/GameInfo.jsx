@@ -58,7 +58,6 @@ function GameInfo({ bits }) {
       sectionOffsets()['pc_buffer_H'] + 4,
       sectionOffsets()['pc_buffer_I'] + 4,
     ];
-    console.log('boxOffsets = ', boxOffsets);
 
     let boxBuffers = [];
     for (let i = 0; i < boxOffsets.length; i += 1) {
@@ -140,7 +139,7 @@ function GameInfo({ bits }) {
       <div class="w-full flex justify-center">
         <div class="bg-white hover:outline-1 hover:outline-white hover:outline-dotted rounded-sm">
           <button
-            class="py-1 w-40 text-lg text-white hover:cursor-pointer hover:opacity-90 bg-cyan-400 rounded-sm font-bold text-center"
+            class="py-1 w-40 text-md text-white hover:cursor-pointer hover:opacity-90 bg-cyan-400 rounded-sm font-bold text-center"
             onClick={() => {
               const saveData = bits();
               if (trainerInfoOffset() >= 0xE000) {

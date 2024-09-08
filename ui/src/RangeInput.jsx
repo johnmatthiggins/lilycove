@@ -4,7 +4,6 @@ function RangeInput({ onChange, step, min, max, value, 'class': className = "" }
   const [state, setState] = createSignal(value);
   const handleChange = (event) => {
     if (onChange) {
-      console.log('running on change');
       onChange(event);
     }
     setState(event.target.value);

@@ -20,7 +20,7 @@ function PokemonMove({
 
   const description = () => moveData()?.effect || '(Empty move slots have no effects in battle.)';
   const power = () => {
-    if (moveData().name === 'Hidden Power') {
+    if (moveData()?.name === 'Hidden Power') {
       const ivs = pokemonData().getIndividualValues();
       const ivArray = [
         ivs.hp,
@@ -41,20 +41,24 @@ function PokemonMove({
     return result;
   };
   const moveType = () => {
-    if (moveData().name !== "Hidden Power") {
-      return moveData()?.move_type || '???';
+    if (moveData()) {
+      if (moveData().name !== "Hidden Power") {
+        return moveData().move_type;
+      } else {
+        const ivs = pokemonData().getIndividualValues();
+        const ivArray = [
+          ivs.hp,
+          ivs.attack,
+          ivs.defense,
+          ivs.speed,
+          ivs.specialAttack,
+          ivs.specialDefense,
+        ];
+        return hiddenPowerType(...ivArray);
+      }
+    } else {
+      return '???';
     }
-
-    const ivs = pokemonData().getIndividualValues();
-    const ivArray = [
-      ivs.hp,
-      ivs.attack,
-      ivs.defense,
-      ivs.speed,
-      ivs.specialAttack,
-      ivs.specialDefense,
-    ];
-    return hiddenPowerType(...ivArray);
   };
 
   const handleMoveChange = (event) => {

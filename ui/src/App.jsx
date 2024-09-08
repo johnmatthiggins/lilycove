@@ -37,7 +37,7 @@ function App() {
         'background-attachment': 'fixed',
       }}
     >
-      <div class="grow justify-center items-center">
+      <div class="grow justify-center items-center w-full">
         <Show when={bits().length === 0}>
           <div class="rounded-lg p-2 w-1/2 mx-auto">
             <h3

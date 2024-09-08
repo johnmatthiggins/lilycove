@@ -98,7 +98,7 @@ function PokemonEditorDialog({
   const abilityIndex = () => pokemonData().getAbilityBit();
   const setAbilityIndex = (value) => {
     pokemonData().setAbilityBit(Number(value));
-    setPokemonData((p) => p.copy());
+    setPokemonData(pokemonData().copy());
   };
 
   const pokeballIndex = () => Number(pokemonData().getPokeballItemId());
@@ -166,16 +166,15 @@ function PokemonEditorDialog({
     <div
       id="backdrop"
       onClick={onClose}
+      class="m-0"
       style={{
         "z-index": 1000,
-        "background-color": 'rgba(0, 0, 0, 0.6)',
+        "background-color": 'rgba(0, 0, 0, 0.4)',
         top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        "min-height": '100vh',
-        "min-width": '100vw',
-        position: 'absolute',
+        left: '-20vw',
+        "height": '100vh',
+        "width": '100vw',
+        position: 'fixed',
       }}
     >
       <dialog
@@ -183,11 +182,6 @@ function PokemonEditorDialog({
         onClick={blockClickCascade}
         class="border border-gray-400 border-solid mt-2 rounded-sm p-2 min-w-[70vw]"
         style={{
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          position: 'fixed',
           height: 'fit-content',
           "backdrop-filter": 'blur(10px)',
           "background-color": 'rgba(255, 255, 255, 0.6)',
