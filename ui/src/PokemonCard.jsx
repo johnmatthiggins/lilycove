@@ -3,6 +3,7 @@ import { createSignal, Show } from 'solid-js';
 import PokemonTextChar from './PokemonTextChar';
 import PokemonEditorDialog from './PokemonEditorDialog';
 import { speciesList } from './PokemonList';
+import LazyImage from './LazyImage';
 
 function PokemonCard({ pokemon }) {
   const [pokemonData, setPokemonData] = createSignal(pokemon());
@@ -47,11 +48,7 @@ function PokemonCard({ pokemon }) {
           class="min-w-1/8 border-gray-400 flex justify-center grow hover:cursor-pointer"
         >
           <Show when={pokemonData().hasSpecies()}>
-            <img
-              class="sharp-pixels pt-[5px] px-[5px]"
-              src={imageURL()}
-              loading="lazy"
-            />
+            <LazyImage src={imageURL()} class="sharp-pixels pt-[5px] px-[5px]" />
           </Show>
         </div>
         <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
