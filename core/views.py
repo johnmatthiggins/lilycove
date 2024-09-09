@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import Http404
 from core.models import Move, Species, Item

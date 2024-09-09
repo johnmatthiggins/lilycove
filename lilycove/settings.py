@@ -29,9 +29,14 @@ DEFAULT_SECRET_KEY = (
 )
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", DEFAULT_SECRET_KEY)
 
-DEBUG = True
+# by default DEBUG mode is on...
+DEBUG = os.getenv("DEBUG", "TRUE") == "TRUE"
 
 ALLOWED_HOSTS = ["lilycove.xyz"]
+
+if DEBUG:
+    ALLOWED_HOSTS += ["localhost"]
+
 
 INSTALLED_APPS = [
     "core",
