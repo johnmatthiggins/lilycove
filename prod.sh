@@ -4,4 +4,4 @@
 HOST=127.0.0.1
 PORT=8000
 
-poetry run python -m gunicorn lilycove.asgi:application -w 4 -k uvicorn_worker.UvicornWorker
+poetry run python -m gunicorn lilycove.asgi:application -w 8 -k uvicorn_worker.UvicornWorker
