@@ -22,8 +22,8 @@ function PPCounter({
       </Show>
       <span>{ppUpCount()}</span>
       <span class="h-1.5 rounded-sm">
-        <Show when={ppUpCount() === 3} fallback={<img class="sharp-pixels" src="/items/068.png" />}>
-          <img class="sharp-pixels" src="/items/070.png" />
+        <Show when={ppUpCount() === 3} fallback={<img class="sharp-pixels" src="/static/items/068.png" />}>
+          <img class="sharp-pixels" src="/static/items/070.png" />
         </Show>
       </span>
       <Show when={ppUpCount() < 3} fallback={

@@ -25,7 +25,8 @@ function PokemonCard({ pokemon }) {
   const [isShiny, setIsShiny] = createSignal(pokemonData().isShiny());
   const imageURL = () => {
     if (!speciesData()) {
-      return `/api/pokemon-images/0.png`;
+      // broken link IDK...
+      return `/static/pokemon-images/0.png`;
     } else if (isShiny()) {
       return `/static/pokemon-images/${pokedexId()}s.png`;
     }
@@ -60,7 +61,7 @@ function PokemonCard({ pokemon }) {
                 {(byte) => (<PokemonTextChar byte={byte} />)}
               </For>
             </div>
-            <img src={`/items/${String(pokemonData().getPokeballItemId() + 1n).padStart(3, '0')}.png`} class="sharp-pixels w-5" />
+            <img src={`/static/items/${String(pokemonData().getPokeballItemId() + 1n).padStart(3, '0')}.png`} class="sharp-pixels w-5" />
           </Show>
         </div>
       </div>

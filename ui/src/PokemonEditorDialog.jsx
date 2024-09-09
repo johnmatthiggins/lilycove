@@ -217,7 +217,7 @@ function PokemonEditorDialog({
                   <Show when={itemCode() > 0}>
                     <img
                       class="sharp-pixels w-8"
-                      src={`/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
+                      src={`/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
                       style={{
                         position: 'fixed',
                         left: `${left()}px`,
