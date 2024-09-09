@@ -42,9 +42,6 @@ async def all_items(_):
 
     return HttpResponse(json_result, headers={"Content-Type": "application/json"})
 
-async def item_sprite(_, item_id):
-    return HttpResponseRedirect(f"/static/items/{item_id}")
-
 # TODO: Write method that returns available moves for pokemon species
 async def pokemon_moves(_, species_id):
     return Http404()
