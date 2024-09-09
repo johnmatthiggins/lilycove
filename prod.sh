@@ -7,6 +7,7 @@ cd "$(dirname $0)";
 
 test -f /root/.local/bin/poetry && export PATH="$PATH:/root/.local/bin/";
 
+export DEBUG=FALSE;
 if which poetry; then
 	poetry run python -m gunicorn lilycove.asgi:application -w 8 -k uvicorn_worker.UvicornWorker
 else
