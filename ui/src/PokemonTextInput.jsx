@@ -16,6 +16,9 @@ function PokemonTextInput({
 }) {
   const truncated = () => {
     const firstDelimiter = value().indexOf(0xff);
+    if (firstDelimiter === -1) {
+      return value();
+    }
     return value().slice(0, firstDelimiter);
   };
 

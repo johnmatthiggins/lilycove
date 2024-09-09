@@ -77,7 +77,7 @@ function PokemonMove({
           <select
             value={currentMoveId()}
             onChange={handleMoveChange}
-            class="bg-white border border-solid border-gray-400 rounded-sm p-2 w-40 h-8 text-left"
+            class="px-1 bg-white border border-solid border-gray-400 rounded-sm w-40 h-8 text-left"
           >
             <option value="-1">----------</option>
             <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>

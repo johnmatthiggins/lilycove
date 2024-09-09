@@ -169,7 +169,7 @@ function PokemonEditorDialog({
       style={{
         "z-index": 1000,
         top: 0,
-        left: '-20vw',
+        left: 0,
         "height": '100vh',
         "width": '100vw',
         position: 'fixed',
@@ -181,8 +181,8 @@ function PokemonEditorDialog({
         class="border border-gray-400 border-solid mt-2 rounded-md p-2 min-w-[70vw]"
         style={{
           height: 'fit-content',
-          "backdrop-filter": 'blur(10px)',
-          "background-color": 'rgba(255, 255, 255, 0.6)',
+          "backdrop-filter": 'blur(30px)',
+          "background-color": 'rgba(255, 255, 255, 0.3)',
         }}
       >
         <div
@@ -190,6 +190,7 @@ function PokemonEditorDialog({
           class="mt-2 rounded-sm p-2"
           style={{
             height: 'fit-content',
+            "background-color": 'rgba(255, 255, 255, 0.0)',
           }}
         >
           <div class="w-full px-1 flex flex-col justify-between">

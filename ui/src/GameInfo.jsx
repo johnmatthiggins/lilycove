@@ -86,11 +86,7 @@ function GameInfo({ bits }) {
 
   return (
     <div
-      class="p-2 my-1 w-[60vw] mx-auto rounded-sm border border-gray-400 border-solid"
-      style={{
-        "background-color": 'rgba(255, 255, 255, 0.6)',
-        "backdrop-filter": 'blur(10px)',
-      }}
+      class="bg-white p-2 my-1 w-[60vw] mx-auto rounded-sm border border-gray-400 border-solid"
     >
       <div class="flex flex-col justify-center">
         <div>
