@@ -36,6 +36,8 @@ function PokemonTextChar({ byte }) {
         return <p>{"?"}</p>;
       case 0xAD:
         return <p>{"."}</p>;
+      case 0xAE:
+        return <p>{"-"}</p>;
       case 0xB0:
         // ellipsis
         return <p>&#x2026;</p>;
