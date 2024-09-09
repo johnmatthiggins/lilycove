@@ -42,18 +42,6 @@ async def all_items(_):
 
     return HttpResponse(json_result, headers={"Content-Type": "application/json"})
 
-async def pokemon_sprite(_, species_id):
-    species_id = species_id.split('.')[0]
-    shiny = 's' in species_id
-    if shiny:
-        species_id = int(species_id[:-1])
-    species = await Species.objects.aget(species_id=species_id)
-    pokedex_id = str(species.pokedex_id).zfill(3)
-    if shiny:
-        pokedex_id += 's'
-
-    return HttpResponseRedirect(f"/static/pokemon-images/{pokedex_id}.png")
-
 async def item_sprite(_, item_id):
     return HttpResponseRedirect(f"/static/items/{item_id}")
 

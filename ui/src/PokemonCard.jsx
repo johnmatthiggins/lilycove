@@ -2,10 +2,13 @@ import { createSignal, Show } from 'solid-js';
 
 import PokemonTextChar from './PokemonTextChar';
 import PokemonEditorDialog from './PokemonEditorDialog';
+import { speciesList } from './PokemonList';
 
 function PokemonCard({ pokemon }) {
   const [pokemonData, setPokemonData] = createSignal(pokemon());
   const speciesId = () => pokemonData().getSpeciesId();
+
+  const speciesData = () => speciesList().find((p) => p.species_id === speciesId());
   const nickname = () => pokemonData().getNicknameBytes();
   const truncatedNickname = () => {
     const terminator = nickname().indexOf(0xff);
@@ -16,15 +19,17 @@ function PokemonCard({ pokemon }) {
   };
 
   let ref;
-  const id = () => String(speciesId()).padStart(3, '0');
+  const pokedexId = () => String(speciesData()?.pokedex_id).padStart(3, '0');
   const [open, setOpen] = createSignal(false);
 
   const [isShiny, setIsShiny] = createSignal(pokemonData().isShiny());
   const imageURL = () => {
-    if (isShiny()) {
-      return `/api/pokemon-images/${id()}s.png`;
+    if (!speciesData()) {
+      return `/api/pokemon-images/0.png`;
+    } else if (isShiny()) {
+      return `/static/pokemon-images/${pokedexId()}s.png`;
     }
-    return `/api/pokemon-images/${id()}.png`;
+    return `/static/pokemon-images/${pokedexId()}.png`;
   };
 
   const handleClick = () => setOpen(true);

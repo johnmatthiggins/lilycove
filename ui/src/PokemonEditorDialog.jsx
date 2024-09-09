@@ -125,7 +125,7 @@ function PokemonEditorDialog({
   const abilityList = () => pokemonSpecies().abilities;
 
   let imageRef;
-  const id = () => String(speciesId()).padStart(3, '0');
+  const id = () => String(pokemonSpecies()?.pokedex_id).padStart(3, '0');
 
   const pokemonTypes = createMemo(() => {
     const species = pokemonSpecies();
@@ -141,9 +141,9 @@ function PokemonEditorDialog({
   const [isShiny, setIsShiny] = createSignal(pokemonData().isShiny());
   const imageURL = () => {
     if (isShiny()) {
-      return `/api/pokemon-images/${id()}s.png`;
+      return `/static/pokemon-images/${id()}s.png`;
     }
-    return `/api/pokemon-images/${id()}.png`;
+    return `/static/pokemon-images/${id()}.png`;
   };
 
   const blockClickCascade = (event) => event.stopPropagation();
