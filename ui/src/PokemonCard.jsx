@@ -8,8 +8,11 @@ function PokemonCard({ pokemon }) {
   const speciesId = () => pokemonData().getSpeciesId();
   const nickname = () => pokemonData().getNicknameBytes();
   const truncatedNickname = () => {
-    const firstZero = nickname().indexOf(0xff);
-    return nickname().slice(0, firstZero);
+    const terminator = nickname().indexOf(0xff);
+    if (terminator === -1) {
+      return nickname();
+    }
+    return nickname().slice(0, terminator);
   };
 
   let ref;
