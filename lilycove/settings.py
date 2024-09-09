@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_SECRET_KEY = (
     "django-insecure-b#+6&*)c^0&%q-w$q-!w3_%n5y=klw&ng094)d43prefckywbn"
 )
-SECRET_KEY = os.getenv("", DEFAULT_SECRET_KEY)
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", DEFAULT_SECRET_KEY)
 
 DEBUG = True
 
@@ -116,6 +116,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
+    BASE_DIR / "ui" / "dist",
     BASE_DIR / "ui" / "public",
 ]
 

@@ -1,7 +1,9 @@
-# from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import Http404
 from core.models import Move, Species, Item
+
+def home(_):
+    return HttpResponseRedirect("/static/index.html")
 
 async def all_moves(_):
     movelist = []

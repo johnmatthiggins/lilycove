@@ -11,3 +11,5 @@ ui/public/items/*
 core/__pycache__/
 **/__pycache__/
 ./__pycache__/
+
+.env

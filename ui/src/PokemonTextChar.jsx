@@ -8,6 +8,8 @@ function PokemonTextChar({ byte }) {
       return <p>{String.fromCharCode(text)}</p>;
     }
     switch (byte) {
+      case 0x0:
+        return <p>&nbsp;</p>;
       case 0xA1:
         return <p>0</p>;
       case 0xA2:

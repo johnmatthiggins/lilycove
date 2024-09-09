@@ -19,6 +19,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/static': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
     },
     port: 3000,
   },

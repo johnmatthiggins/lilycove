@@ -132,6 +132,15 @@ function PokemonTextInput({
                 class="rounded-sm bg-gray-200 px-2 hover:bg-gray-400"
                 onClick={(event) => {
                   event.stopPropagation();
+                  onChange(truncated().concat(0x0));
+                }}
+              >
+                Space
+              </button>
+              <button
+                class="rounded-sm bg-gray-200 px-2 hover:bg-gray-400"
+                onClick={(event) => {
+                  event.stopPropagation();
                   onChange(truncated().slice(0, truncated().length - 1));
                 }}
               >
