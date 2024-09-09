@@ -1,4 +1,4 @@
-import { createEffect, createSignal, Show } from 'solid-js';
+import { createEffect, Show } from 'solid-js';
 
 import { setItemList } from './ItemList';
 import { setSpeciesList } from './PokemonList';
@@ -31,7 +31,7 @@ function App() {
     <div
       class="flex h-full w-full justify-center sharp-pixel min-h-[100vh] items-center"
       style={{
-        'background-image': 'url("public/backdrop.png")',
+        'background-image': 'url("backdrop.png")',
         'background-size': '2000px',
         'image-rendering': 'pixelated',
         'background-attachment': 'fixed',

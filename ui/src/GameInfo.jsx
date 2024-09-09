@@ -8,24 +8,6 @@ import PokemonCard from './PokemonCard.jsx';
 import { bytesToBase64 } from './utils/hex.jsx';
 import BoxPokemon from './BoxPokemon.jsx';
 
-function getGameCode(saveOffset, bits) {
-  const gameCodePosition = saveOffset + 0xAC;
-  const bytes = bits
-    .slice(gameCodePosition, gameCodePosition + 4)
-    .map((b) => BigInt(b));
-  const [b0, b1, b2, b3] = bytes;
-  const code = b0 | b1 >> 8n | b2 >> 16n | b3 >> 24n;
-
-  return code;
-}
-
-function getInGameTime(saveOffset, bits) {
-  const offset = saveOffset + 0xE;
-  const hours = new Uint16Array([bits[offset], bits[offset + 1]])[0];
-  const minutes = String(bits[offset + 2]);
-  return `${hours}:${minutes.padStart(2, '0')}`
-}
-
 function GameInfo({ bits }) {
   const [selectedBox, setSelectedBox] = createSignal(0);
   const isSaveValid = createMemo(() => areChecksumsValid(bits()));

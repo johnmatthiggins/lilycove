@@ -1,9 +1,17 @@
+from pathlib import Path
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import Http404
 from core.models import Move, Species, Item
 
 def home(_):
     return HttpResponseRedirect("/static/index.html")
+
+def assets(_, path):
+    asset_path = Path("/static/assets/") / Path(path)
+    print(asset_path)
+
+    return HttpResponseRedirect(str(asset_path))
 
 async def all_moves(_):
     movelist = []
@@ -43,8 +51,10 @@ async def pokemon_sprite(_, species_id):
     if shiny:
         pokedex_id += 's'
 
-    return HttpResponseRedirect(f"http://localhost:3000/pokemon-images/{pokedex_id}.png")
+    return HttpResponseRedirect(f"/static/pokemon-images/{pokedex_id}.png")
 
+async def item_sprite(_, item_id):
+    return HttpResponseRedirect(f"/static/items/{item_id}")
 
 # TODO: Write method that returns available moves for pokemon species
 async def pokemon_moves(_, species_id):
