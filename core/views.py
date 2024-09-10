@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import Http404
@@ -14,6 +15,7 @@ def assets(_, path):
 
     return HttpResponseRedirect(str(asset_path))
 
+@cache_page(60)
 async def all_moves(_):
     movelist = []
     async for move in Move.objects.all():
@@ -23,6 +25,7 @@ async def all_moves(_):
 
     return HttpResponse(json_result.encode('utf8'), headers={"Content-Type": "application/json"})
 
+@cache_page(60)
 async def all_pokemon(_):
     species = []
     async for pokemon_species in Species.objects.all():
@@ -32,6 +35,7 @@ async def all_pokemon(_):
 
     return HttpResponse(f"[{json_results}]", headers={"Content-Type": "application/json"})
 
+@cache_page(60)
 async def all_items(_):
     items = []
     async for item in Item.objects.all():
