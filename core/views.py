@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from django.views.decorators.cache import cache_page
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import Http404
 from core.models import Move, Species, Item
@@ -11,9 +10,16 @@ def home(_):
 
 def assets(_, path):
     asset_path = Path("/static/assets/") / Path(path)
-    print(asset_path)
-
     return HttpResponseRedirect(str(asset_path))
+
+# cache for a long time...
+@cache_page(60 * 1000)
+def site_webmanifest(_):
+    return HttpResponseRedirect("/static/site.webmanifest")
+
+@cache_page(60 * 1000)
+def favicon(_):
+    return HttpResponseRedirect("/static/favicon.ico");
 
 @cache_page(60)
 async def all_moves(_):
