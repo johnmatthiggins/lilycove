@@ -81,8 +81,8 @@ function _getDataSectionOffsets(
     case 10:
       return {
         "data_section_attacks": 0,
-        "data_section_growth": 12,
-        "data_section_misc": 24,
+        "data_section_misc": 12,
+        "data_section_growth": 24,
         "data_section_condition": 36,
       };
     case 11:
