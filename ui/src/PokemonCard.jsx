@@ -48,7 +48,7 @@ function PokemonCard({ pokemon }) {
           class="min-w-1/8 border-gray-400 flex justify-center grow hover:cursor-pointer"
         >
           <Show when={pokemonData().hasSpecies()}>
-            <LazyImage src={imageURL()} class="sharp-pixels pt-[5px] px-[5px]" />
+            <LazyImage src={imageURL} class="sharp-pixels pt-[5px] px-[5px]" />
           </Show>
         </div>
         <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">

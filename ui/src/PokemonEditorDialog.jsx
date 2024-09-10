@@ -13,6 +13,7 @@ import { setBits, bits } from './fileBits';
 import { recomputeSaveChecksums } from './utils/save';
 import { itemList } from './ItemList';
 import PokemonTextInput from './PokemonTextInput';
+import LazyImage from './LazyImage';
 import StatDisplay from './StatDisplay';
 
 function PokemonEditorDialog({
@@ -216,14 +217,14 @@ function PokemonEditorDialog({
                     src={imageURL()}
                   />
                   <Show when={itemCode() > 0}>
-                    <img
+                    <LazyImage
                       class="sharp-pixels w-8"
-                      src={`/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
-                      style={{
+                      src={() => `/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
+                      style={() => ({
                         position: 'fixed',
                         left: `${left()}px`,
                         top: `${top()}px`,
-                      }}
+                      })}
                     />
                   </Show>
                 </div>
