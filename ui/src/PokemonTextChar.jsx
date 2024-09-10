@@ -47,11 +47,11 @@ function PokemonTextChar({ byte }) {
         return <p>&#x201D;</p>;
       case 0xB3:
         return <p>&#x2018;</p>;
-      case 0xB3:
-        return <p>{"'"}</p>;
       case 0xB4:
-        return <p>&#x2642;</p>;
+        return <p>{"'"}</p>;
       case 0xB5:
+        return <p>&#x2642;</p>;
+      case 0xB6:
         return <p>&#x2640;</p>;
       case 0xB7:
         return <p>{","}</p>;

@@ -102,7 +102,7 @@ function GameInfo({ bits }) {
                 </For>
               </select>
               <h3 class="text-3xl font-bold">PC Box {Number(selectedBox()) + 1}</h3>
-              <Show when={isSaveValid()} fallback={<h3 class="text-3xl">&#9888;&#x26A0;</h3>}>
+              <Show when={isSaveValid()} fallback={<h3 class="text-3xl">&#x26A0;</h3>}>
                 <h3 class="text-2xl w-32 text-right">&#x2714;</h3>
               </Show>
             </div>
