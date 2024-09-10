@@ -61,10 +61,8 @@ function App() {
                   class="hidden"
                   onChange={async (event) => {
                     const file = event.target.files[0];
-                    let bytes = [];
-                    for await (const chunk of file.stream()) {
-                      bytes = bytes.concat([...chunk]);
-                    }
+                    let bytes = await file.arrayBuffer();
+                    bytes = Array.from(new Uint8Array(bytes));
                     setBits(bytes);
                   }} />
               </label>

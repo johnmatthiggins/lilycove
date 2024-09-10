@@ -3,28 +3,32 @@ import { createSignal, createEffect, Show } from "solid-js";
 function LazyImage({ src, 'class': className, style = () => ({}) }) {
   const [error, setError] = createSignal(false);
   const [loading, setLoading] = createSignal(true);
-  const [imageElement, setImageElement] = createSignal(new Image());
+  const imageElement = new Image();
 
   createEffect(() => {
-    imageElement().src = src();
-    imageElement().className = className;
-    Object.assign(imageElement().style, style());
-    if (imageElement().complete) {
+    const image = imageElement;
+
+    image.src = src();
+    image.className = className;
+    Object.assign(image.style, style());
+
+    const { complete } = imageElement;
+
+    if (complete) {
       setLoading(false);
     } else {
-      console.log('image not done loading...');
       const handleLoad = () => {
         setLoading(false)
-        imageElement().removeEventListener('load', handleLoad);
+        imageElement.removeEventListener('load', handleLoad);
       };
       const handleError = () => {
         setLoading(false);
         setError(true);
-        imageElement().removeEventListener('error', handleError);
-        imageElement().removeEventListener('load', handleLoad);
+        imageElement.removeEventListener('error', handleError);
+        imageElement.removeEventListener('load', handleLoad);
       };
-      imageElement().addEventListener('load', handleLoad);
-      imageElement().addEventListener('error', handleError);
+      imageElement.addEventListener('load', handleLoad);
+      imageElement.addEventListener('error', handleError);
     }
   });
 
@@ -49,7 +53,7 @@ function LazyImage({ src, 'class': className, style = () => ({}) }) {
           </svg>
         </div>
       }>
-        {imageElement()}
+        {imageElement}
       </Show>
     </Show>
   );
