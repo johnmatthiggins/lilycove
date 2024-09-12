@@ -8,28 +8,28 @@ function EvEditor({ evArray, setEvArray }) {
       <h3 class="text-2xl font-bold">EVs</h3>
       <div class="flex flex-row gap-2">
         <section id="labels" class="flex flex-col gap-1">
-          <div class="h-8 flex items-center">
+          <div class="min-h-9 flex items-center">
             <label for="hp-ev-slider" class="font-bold">HP</label>
           </div>
-          <div class="h-8 flex items-center">
+          <div class="min-h-9 flex items-center">
             <label for="attack-ev-slider" class="font-bold text-center">Atk</label>
           </div>
-          <div class="h-8 flex items-center">
+          <div class="min-h-9 flex items-center">
             <label for="defense-ev-slider" class="font-bold">Def</label>
           </div>
-          <div class="h-8 flex items-center">
+          <div class="min-h-9 flex items-center">
             <label for="spdef-ev-slider" class="font-bold">SpD</label>
           </div>
-          <div class="h-8 flex items-center">
+          <div class="min-h-9 flex items-center">
             <label for="spatk-ev-slider" class="font-bold">SpA</label>
           </div>
-          <div class="h-8 flex items-center">
+          <div class="min-h-9 flex items-center">
             <label for="speed-ev-slider" class="font-bold">Spe</label>
           </div>
         </section>
         <section id="ev-inputs" class="flex flex-col gap-1">
           <RangeInput
-            class="h-8"
+            class="min-h-9"
             step="4"
             min="0"
             max="252"
@@ -38,7 +38,7 @@ function EvEditor({ evArray, setEvArray }) {
           />
 
           <RangeInput
-            class="h-8"
+            class="min-h-9"
             step="4"
             min="0"
             max="252"
@@ -47,7 +47,7 @@ function EvEditor({ evArray, setEvArray }) {
           />
 
           <RangeInput
-            class="h-8"
+            class="min-h-9"
             step="4"
             min="0"
             max="252"
@@ -56,7 +56,7 @@ function EvEditor({ evArray, setEvArray }) {
           />
 
           <RangeInput
-            class="h-8"
+            class="min-h-9"
             step="4"
             min="0"
             max="252"
@@ -65,7 +65,7 @@ function EvEditor({ evArray, setEvArray }) {
           />
 
           <RangeInput
-            class="h-8"
+            class="min-h-9"
             step="4"
             min="0"
             max="252"
@@ -74,7 +74,7 @@ function EvEditor({ evArray, setEvArray }) {
           />
 
           <RangeInput
-            class="h-8"
+            class="min-h-9"
             type="range"
             step="4"
             min="0"

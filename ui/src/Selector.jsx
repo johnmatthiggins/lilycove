@@ -5,7 +5,7 @@ function Selector({ id, label, selectedValue, options, onChange, 'class': classN
       <select
         id={id}
         onChange={onChange ?? (() => 1)}
-        class={"border border-solid border-gray-400 bg-white px-1 py-1.5 rounded-sm " + className}
+        class={"border border-solid border-gray-400 bg-white px-1 py-1 rounded-sm " + className}
       >
         <For each={options()}>
           {({ value, label }) => (

@@ -1,4 +1,4 @@
-import { onMount, createMemo, createSignal, Show } from 'solid-js';
+import { createEffect, createMemo, createSignal, Show, createComputed } from 'solid-js';
 
 import BoxPokemon from './BoxPokemon';
 import { speciesList } from './PokemonList';
@@ -52,7 +52,7 @@ function PokemonEditorDialog({
   };
 
   const setEvArray = (evs) => {
-    pokemonData().setIndividualValues(evs);
+    pokemonData().setEffortValues(evs);
     setPokemonData(pokemonData().copy());
   };
 
@@ -125,7 +125,7 @@ function PokemonEditorDialog({
 
   const abilityList = () => pokemonSpecies().abilities;
 
-  let imageRef;
+  const [imageRef, setImageRef] = createSignal(null);
   const id = () => String(pokemonSpecies()?.pokedex_id).padStart(3, '0');
 
   const pokemonTypes = createMemo(() => {
@@ -157,9 +157,12 @@ function PokemonEditorDialog({
   const [top, setTop] = createSignal(0);
   const [left, setLeft] = createSignal(0);
 
-  onMount(() => {
-    setLeft(imageRef.offsetLeft + (3 * imageRef.clientWidth) / 4);
-    setTop(imageRef.offsetTop + (3 * imageRef.clientHeight) / 4);
+  createEffect(() => {
+    if (imageRef()) {
+      const actualImageRef = imageRef().children[0];
+      setLeft(actualImageRef.offsetLeft + (5 * actualImageRef.clientWidth) / 7);
+      setTop(actualImageRef.offsetTop + (3 * actualImageRef.clientHeight) / 5);
+    }
   });
 
   return (
@@ -210,21 +213,21 @@ function PokemonEditorDialog({
                     </div>
                   </div>
                 </div>
-                <div class="w-full flex justify-center">
-                  <img
-                    ref={imageRef}
-                    class="sharp-pixels hover:cursor-pointer w-32 mt-2 pb-2"
-                    src={imageURL()}
+                <div class="w-full flex justify-center" ref={setImageRef}>
+                  <LazyImage
+                    sharp
+                    class="hover:cursor-pointer w-32 mt-2 pb-2"
+                    src={imageURL}
                   />
                   <Show when={itemCode() > 0}>
-                    <LazyImage
-                      class="sharp-pixels w-8"
-                      src={() => `/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
-                      style={() => ({
+                    <img
+                      class="w-8 sharp-pixels"
+                      src={`/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
+                      style={{
                         position: 'fixed',
                         left: `${left()}px`,
                         top: `${top()}px`,
-                      })}
+                      }}
                     />
                   </Show>
                 </div>
@@ -236,7 +239,7 @@ function PokemonEditorDialog({
                 <div>
                   <Selector
                     id="species-input"
-                    class="w-44 h-8"
+                    class="w-44 min-h-9"
                     label="Species"
                     onChange={(event) => setSpeciesId(Number(event.target.value))}
                     selectedValue={speciesId}
@@ -255,7 +258,7 @@ function PokemonEditorDialog({
                 <div>
                   <Selector
                     id="ability-input"
-                    class="w-44 h-8"
+                    class="w-44 min-h-9"
                     label="Ability"
                     selectedValue={() => abilityIndex() % abilityList().length}
                     options={() => abilityList().map((ability, index) => ({ value: index, label: ability }))}
@@ -265,7 +268,7 @@ function PokemonEditorDialog({
                 <div>
                   <Selector
                     id="item-input"
-                    class="w-44 h-8"
+                    class="w-44 min-h-9"
                     label="Held Item"
                     selectedValue={() => itemCode()}
                     options={() => {
@@ -391,7 +394,7 @@ function PokemonEditorDialog({
                                 return result;
                               })}
                               id="nature-input"
-                              class="w-44 h-8"
+                              class="w-44 min-h-9"
                               label="Nature"
                               onChange={(event) => setNature(NATURES.findIndex((n) => n.name === event.target.value))}
                               selectedValue={() => nature().name}
@@ -402,7 +405,7 @@ function PokemonEditorDialog({
                             <input
                               id="experience-input"
                               type="text"
-                              class="px-1 py-1 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
+                              class="px-1 py-1 min-h-9 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
                               onInput={(event) => setExperience(event.target.value)}
                               value={experience()}
                             />
@@ -411,7 +414,7 @@ function PokemonEditorDialog({
                             <Selector
                               options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
                               id="level-input"
-                              class="w-44 h-8"
+                              class="w-44 min-h-9"
                               label="Level"
                               onChange={(event) => setLevel(event.target.value)}
                               selectedValue={level}
@@ -426,7 +429,7 @@ function PokemonEditorDialog({
                       <Selector
                         id="pokeball-input"
                         label="Pokeball"
-                        class="h-8"
+                        class="h-9"
                         selectedValue={pokeballIndex}
                         onChange={(event) => {
                           setPokeballIndex(Number(event.target.value));
