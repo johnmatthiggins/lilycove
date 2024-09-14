@@ -40,12 +40,12 @@ function PokemonCard({ pokemon }) {
   return (
     <>
       <div
-        class="bg-white rounded-sm flex flex-col w-32 h-32 hover:bg-gray-400 border border-solid border-gray-400 p-1 m-1"
+        class="bg-white rounded-md flex flex-col w-32 h-32 hover:bg-gray-400 p-1 m-1 shadow-md"
         onClick={handleClick}
       >
         <div
           ref={ref}
-          class="min-w-1/8 border-gray-400 flex justify-center grow hover:cursor-pointer"
+          class="min-w-1/8 flex justify-center grow hover:cursor-pointer"
         >
           <Show when={pokemonData().hasSpecies()}>
             <LazyImage sharp src={imageURL} class="pt-[5px] px-[5px]" />

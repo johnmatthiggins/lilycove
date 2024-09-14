@@ -1,6 +1,7 @@
 import { createMemo, createSignal, For } from 'solid-js';
 
 import { findSectionAddresses, areChecksumsValid } from './utils/save.jsx';
+import Button from './Button';
 
 // import GamePicture from './GamePicture';
 import PokemonCard from './PokemonCard.jsx';
@@ -115,38 +116,36 @@ function GameInfo({ bits }) {
         </div>
       </div>
       <div class="w-full flex justify-center">
-        <div class="bg-white hover:outline-1 hover:outline-black hover:outline-dotted rounded-sm">
-          <button
-            class="py-1 w-40 text-md text-white hover:cursor-pointer hover:opacity-90 bg-cyan-400 rounded-sm font-bold text-center"
-            onClick={() => {
-              const saveData = bits();
-              if (trainerInfoOffset() >= 0xE000) {
-                for (let i = 0; i < 0xE000; i += 1) {
-                  saveData[i] = saveData[0xE000 + i];
-                }
-              } else {
-                for (let i = 0; i < 0xE000; i += 1) {
-                  saveData[0xE000 + i] = saveData[i];
-                }
+        <Button
+          class="p-2 rounded-md text-lg w-32"
+          onClick={() => {
+            const saveData = bits();
+            if (trainerInfoOffset() >= 0xE000) {
+              for (let i = 0; i < 0xE000; i += 1) {
+                saveData[i] = saveData[0xE000 + i];
               }
+            } else {
+              for (let i = 0; i < 0xE000; i += 1) {
+                saveData[0xE000 + i] = saveData[i];
+              }
+            }
 
-              const bytes = new Uint8Array(bits());
-              let b64 = bytesToBase64(bytes);
-              const dataUrl = `data:application/octet-stream;base64,${b64}`;
-              const anchor = document.createElement('a')
-              anchor.href = dataUrl;
-              anchor.download = '*.sav';
-              anchor.style.display = 'none';
-              document.body.appendChild(anchor);
-              anchor.click();
-              anchor.remove();
-            }}
-          >
-            Download Save
-          </button>
-        </div>
+            const bytes = new Uint8Array(bits());
+            let b64 = bytesToBase64(bytes);
+            const dataUrl = `data:application/octet-stream;base64,${b64}`;
+            const anchor = document.createElement('a')
+            anchor.href = dataUrl;
+            anchor.download = '*.sav';
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+          }}
+        >
+          Download
+        </Button>
       </div>
-    </div >
+    </div>
   );
 }
 

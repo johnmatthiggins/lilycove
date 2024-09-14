@@ -47,10 +47,10 @@ function App() {
               Lilycove
             </h3>
             <h2 class="font-pacifico text-center text-white text-2xl">A Pokemon Save Editor</h2>
-            <div class="bg-white my-2 mx-auto hover:outline-1 hover:outline-black hover:outline-dotted w-fit rounded-sm">
-              <label class="flex justify-center rounded-sm w-fit">
+            <div class="my-2 mx-auto w-fit rounded-md" style={{ "background-color": "black" }}>
+              <label class="flex justify-center rounded-md w-fit bg-black">
                 <span
-                  class="text-white hover:opacity-90 font-bold text-lg text-center w-40 py-1 bg-blue-400 rounded-sm hover:cursor-pointer"
+                  class="text-black hover:opacity-90 font-bold text-lg text-center w-40 py-1 bg-white rounded-md hover:cursor-pointer"
                   role="button"
                 >
                   Upload Save
