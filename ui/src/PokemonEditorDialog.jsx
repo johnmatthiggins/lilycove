@@ -159,10 +159,12 @@ function PokemonEditorDialog({
   const [left, setLeft] = createSignal(0);
 
   createEffect(() => {
+    console.log('effect was run...');
     if (imageRef()) {
-      const actualImageRef = imageRef().children[0];
-      setLeft(actualImageRef.offsetLeft + (5 * actualImageRef.clientWidth) / 7);
-      setTop(actualImageRef.offsetTop + (3 * actualImageRef.clientHeight) / 5);
+      const actualImageRef = imageRef();
+      const { left: x, top: y, width, height } = actualImageRef.getBoundingClientRect();
+      setLeft(x + (width / 2));
+      setTop(y + (height / 2));
     }
   });
 
