@@ -8,8 +8,8 @@ function IvEditor({
 }) {
   const setIv = (index, newValue) => setIvArray(ivArray().with(index, newValue));
   return (
-    <>
-      <h3 class="text-2xl font-bold">IVs</h3>
+    <div class="text-gray-700">
+      <h3 class="text-2xl font-bold text-gray-700" > IVs</h3 >
       <div class="flex flex-row gap-2">
         <section id="labels" class="flex flex-col gap-1">
           <label for="hp-iv-slider" class="min-h-9 font-bold">HP</label>
@@ -46,7 +46,7 @@ function IvEditor({
           <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
         </div>
       </div>
-    </>
+    </div >
   );
 }
 

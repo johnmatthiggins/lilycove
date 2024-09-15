@@ -4,7 +4,7 @@ function EvEditor({ evArray, setEvArray }) {
   const evSum = () => evArray().reduce((a, b) => a + b);
   const setEv = (index, newValue) => setEvArray(evArray().with(index, newValue));
   return (
-    <>
+    <div class="text-gray-700">
       <h3 class="text-2xl font-bold">EVs</h3>
       <div class="flex flex-row gap-2">
         <section id="labels" class="flex flex-col gap-1">
@@ -85,10 +85,10 @@ function EvEditor({ evArray, setEvArray }) {
         </section>
       </div>
       <div>
-        <label for="ev-total" class="font-bold block">Total</label>
+        <label for="ev-total" class="font-bold block text-gray-700">Total</label>
         <input
           id="ev-total"
-          class="border border-solid border-gray-400 p-1"
+          class="border border-solid border-gray-400 rounded-md px-1 min-h-9"
           style={{
             // highlight text red if total evs exceed 510
             color: evSum() <= 510 ? "inherit" : "#dc2626",
@@ -97,7 +97,7 @@ function EvEditor({ evArray, setEvArray }) {
           disabled
         />
       </div>
-    </>
+    </div>
   );
 }
 

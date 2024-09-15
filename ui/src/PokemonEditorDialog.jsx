@@ -183,12 +183,7 @@ function PokemonEditorDialog({
       <dialog
         open
         onClick={blockClickCascade}
-        class="border border-gray-400 border-solid mt-2 rounded-md p-2 min-w-[70vw]"
-        style={{
-          height: 'fit-content',
-          "backdrop-filter": 'blur(30px)',
-          "background-color": 'rgba(255, 255, 255, 0.3)',
-        }}
+        class="border border-gray-400 border-solid mt-2 rounded-md p-2 min-w-[70vw] h-fit"
       >
         <div
           onClick={blockClickCascade}
@@ -217,7 +212,7 @@ function PokemonEditorDialog({
                 <div class="w-full flex justify-center" ref={setImageRef}>
                   <LazyImage
                     sharp
-                    class="hover:cursor-pointer w-32 mt-2 pb-2"
+                    class="hover:cursor-pointer w-32 mt-2 pb-2 motion-reduced:animate-bounce"
                     src={imageURL}
                   />
                   <Show when={itemCode() > 0}>
@@ -244,16 +239,13 @@ function PokemonEditorDialog({
                     label="Species"
                     onChange={(event) => setSpeciesId(Number(event.target.value))}
                     selectedValue={speciesId}
-                    options={() => {
-                      console.log('rerender species list...');
-                      return speciesList()
-                        .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
-                        .map((species) => {
-                          const label = `${String(species.pokedex_id).padStart(3, '0')} ${species.name}`;
-                          const value = species.species_id;
-                          return { label, value };
-                        });
-                    }}
+                    options={() => speciesList()
+                      .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
+                      .map((species) => {
+                        const label = `${String(species.pokedex_id).padStart(3, '0')} ${species.name}`;
+                        const value = species.species_id;
+                        return { label, value };
+                      })}
                   />
                 </div>
                 <div>
@@ -294,77 +286,91 @@ function PokemonEditorDialog({
                 <ul id="tabs" class="flex gap-1">
                   <li
                     onClick={() => setTab("moves")}
-                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer"
+                    class="bg-white px-2 font-bold hover:bg-gray-400 hover:cursor-pointer w-24 text-center hover:border-l-dashed hover:border-t-dashed hover:border-r-dashed"
                     style={{
-                      'border-top-right-radius': '0.25em',
-                      'border-top-left-radius': '0.25em',
-                      'border-top-color': '#9ca3af',
-                      'border-right-color': '#9ca3af',
-                      'border-left-color': '#9ca3af',
                       'border-top-style': 'solid',
-                      'border-right-style': 'solid',
                       'border-left-style': 'solid',
-                      'border-width': '0.0625em',
+                      'border-right-style': 'solid',
+                      'border-top-width': '0.0625em',
+                      'border-left-width': '0.0625em',
+                      'border-right-width': '0.0625em',
+                      'border-left-style': 'solid',
+                      'border-right-style': 'solid',
+                      'border-top-color': '#9ca3af',
+                      'border-left-color': '#9ca3af',
+                      'border-right-color': '#9ca3af',
+                      'border-top-left-radius': '0.25em',
+                      'border-top-right-radius': '0.25em',
+                      'background-color': tab() === "moves" ? 'white' : '#e5e7eb',
                     }}
                   >
                     Moves
                   </li>
                   <li
-                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer"
+                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer w-24 text-center"
                     onClick={() => setTab("stats")}
                     style={{
-                      'border-top-right-radius': '0.25em',
-                      'border-top-left-radius': '0.25em',
-                      'border-top-color': '#9ca3af',
-                      'border-right-color': '#9ca3af',
-                      'border-left-color': '#9ca3af',
-                      'bordre-bottom-color': 'white',
                       'border-top-style': 'solid',
-                      'border-right-style': 'solid',
                       'border-left-style': 'solid',
-                      'border-width': '0.0625em',
+                      'border-right-style': 'solid',
+                      'border-top-width': '0.0625em',
+                      'border-left-width': '0.0625em',
+                      'border-right-width': '0.0625em',
+                      'border-left-style': 'solid',
+                      'border-right-style': 'solid',
+                      'border-top-color': '#9ca3af',
+                      'border-left-color': '#9ca3af',
+                      'border-right-color': '#9ca3af',
+                      'border-top-left-radius': '0.25em',
+                      'border-top-right-radius': '0.25em',
+                      'background-color': tab() === "stats" ? 'white' : '#e5e7eb'
                     }}
                   >
                     Stats
                   </li>
                   <li
-                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer"
+                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer w-24 text-center"
                     onClick={() => setTab("misc")}
                     style={{
-                      'border-top-right-radius': '0.25em',
-                      'border-top-left-radius': '0.25em',
-                      'border-top-color': '#9ca3af',
-                      'border-right-color': '#9ca3af',
-                      'border-left-color': '#9ca3af',
-                      'bordre-bottom-color': 'white',
                       'border-top-style': 'solid',
-                      'border-right-style': 'solid',
                       'border-left-style': 'solid',
-                      'border-width': '0.0625em',
+                      'border-right-style': 'solid',
+                      'border-top-width': '0.0625em',
+                      'border-left-width': '0.0625em',
+                      'border-right-width': '0.0625em',
+                      'border-left-style': 'solid',
+                      'border-right-style': 'solid',
+                      'border-top-color': '#9ca3af',
+                      'border-left-color': '#9ca3af',
+                      'border-right-color': '#9ca3af',
+                      'border-top-left-radius': '0.25em',
+                      'border-top-right-radius': '0.25em',
+                      'background-color': tab() === "misc" ? 'white' : '#e5e7eb',
                     }}
                   >
                     Misc.
                   </li>
                 </ul>
                 <div
-                  class="bg-white border border-gray-400 border-solid flex flex-row justify-start grow h-full"
+                  class="bg-white flex flex-row justify-start grow h-full border border-gray-400"
                   style={{
-                    "border-bottom-right-radius": '0.125em',
-                    "border-bottom-left-radius": '0.125em',
+                    "border-bottom-right-radius": '0.5em',
+                    "border-bottom-left-radius": '0.5em',
+                    "border-top-right-radius": '0.5em',
                   }}
                 >
                   <Show when={tab() === "moves"}>
                     <div class="flex flex-col gap-1 p-1 grow" id="moveset">
                       <For each={pokemonMoves()}>
-                        {(move, index) => (<PokemonMove
-                          pokemonData={pokemonData}
-                          moveId={move?.id || -1}
-                          ppUpCount={() => ppIncreases()[index()]}
-                          setPPUpCount={(nextValue) =>
-                            setPPIncreases(ppIncreases().with(index(), nextValue))
-                          }
-                          onChange={(moveId) => pokemonData().setMove(index(), moveId)}
-                        />)}
+                        {(move, index) => (
+                          <PokemonMove
+                            pokemonData={pokemonData}
+                            moveId={move?.id || -1}
+                            ppUpCount={() => ppIncreases()[index()]}
+                            setPPUpCount={(nextValue) => setPPIncreases(ppIncreases().with(index(), nextValue))}
+                            onChange={(moveId) => pokemonData().setMove(index(), moveId)}
+                          />
+                        )}
                       </For>
                     </div>
                   </Show>
@@ -402,11 +408,11 @@ function PokemonEditorDialog({
                             />
                           </div>
                           <div>
-                            <label class="font-bold block" for="experience-input">Experience</label>
+                            <label class="font-bold block text-gray-700" for="experience-input">Experience</label>
                             <input
                               id="experience-input"
                               type="text"
-                              class="px-1 py-1 min-h-9 rounded-sm border border-solid border-gray-400 focus:outline-2 focus:outline-solid focus:outline-emerald-400 w-36"
+                              class="px-2 py-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-green-500 w-36"
                               onInput={(event) => setExperience(event.target.value)}
                               value={experience()}
                             />
@@ -430,7 +436,7 @@ function PokemonEditorDialog({
                       <Selector
                         id="pokeball-input"
                         label="Pokeball"
-                        class="h-9"
+                        class="min-h-9"
                         selectedValue={pokeballIndex}
                         onChange={(event) => {
                           setPokeballIndex(Number(event.target.value));
@@ -450,7 +456,7 @@ function PokemonEditorDialog({
           </div>
           <div class="flex flex-row justify-center w-full my-1 pt-8 gap-3">
             <Button
-              class="w-32 p-2 rounded-md bg-white"
+              class="w-32 p-1 bg-white"
               onClick={(event) => {
                 const save = bits();
                 const pokemonRef = pokemonData();
@@ -469,8 +475,8 @@ function PokemonEditorDialog({
             </Button>
           </div>
         </div>
-      </dialog>
-    </div>
+      </dialog >
+    </div >
   );
 }
 

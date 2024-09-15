@@ -70,14 +70,14 @@ function PokemonMove({
   };
 
   return (
-    <div class="p-1 w-full rounded-sm bg-white">
+    <div class="p-1 w-full bg-white">
       <div class="flex flex-row items-center justify-between text-md">
         <div class="flex flex-row items-center justify-start pb-2">
           <PokemonType typeName={moveType} />
           <select
             value={currentMoveId()}
             onChange={handleMoveChange}
-            class="px-1 bg-white border border-solid border-gray-400 rounded-sm w-40 h-8 text-left"
+            class="px-2 bg-white border border-solid border-gray-400 rounded-md w-40 h-8 text-left"
           >
             <option value="-1">----------</option>
             <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
@@ -89,13 +89,16 @@ function PokemonMove({
             </For>
           </select>
         </div>
-        <div class="w-fit flex flex-row justify-end border border-solid border-gray-400 rounded-sm">
+        <div class="w-fit flex flex-row justify-end border border-solid border-gray-400 rounded-md">
           <table class="border-1 border-solid border-gray-400 h-8">
             <thead>
               <tr>
                 <td class="px-1 w-16 text-center">
                   <Show when={Number(power())} fallback={"--"}>
-                    {power()} &#x26A1;
+                    <div class="flex gap-2 pl-2">
+                      <p>{power()}</p>
+                      <img class="w-4" src="/fist.svg" />
+                    </div>
                   </Show>
                 </td>
                 <td class="px-1 w-14 text-center">

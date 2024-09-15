@@ -1,11 +1,11 @@
 function Selector({ id, label, selectedValue, options, onChange, 'class': className = '' }) {
   return (
     <>
-      <label class="font-bold block" for={id}>{label}</label>
+      <label class="font-bold block text-gray-700" for={id}>{label}</label>
       <select
         id={id}
         onChange={onChange ?? (() => 1)}
-        class={"border border-solid border-gray-400 bg-white px-1 py-1 rounded-sm " + className}
+        class={"border border-solid border-gray-400 bg-white px-2 py-1 rounded-md " + className}
       >
         <For each={options()}>
           {({ value, label }) => (

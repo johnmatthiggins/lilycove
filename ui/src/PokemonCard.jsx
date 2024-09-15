@@ -40,25 +40,15 @@ function PokemonCard({ pokemon }) {
   return (
     <>
       <div
-        class="bg-white rounded-md flex flex-col w-32 h-32 hover:bg-gray-400 p-1 m-1 shadow-md"
+        class="flex flex-col bg-white rounded-md w-32 h-32 border-2 border-solid border-gray-200 hover:border-emerald-400 p-2 m-1 shadow-sm"
         onClick={handleClick}
       >
         <div
           ref={ref}
-          class="min-w-1/8 flex justify-center grow hover:cursor-pointer"
+          class="min-w-1/8 flex justify-center grow hover:cursor-pointer p-1"
         >
           <Show when={pokemonData().hasSpecies()}>
-            <LazyImage sharp src={imageURL} class="pt-[5px] px-[5px]" />
-          </Show>
-        </div>
-        <div class="font-mono text-sm flex gap-1 justify-between px-1 items-center hover:cursor-pointer">
-          <Show when={pokemonData().hasSpecies()}>
-            <div class="flex text-sm">
-              <For each={truncatedNickname()}>
-                {(byte) => (<PokemonTextChar byte={byte} />)}
-              </For>
-            </div>
-            <img src={`/static/items/${String(pokemonData().getPokeballItemId() + 1n).padStart(3, '0')}.png`} class="sharp-pixels w-5" />
+            <LazyImage sharp src={imageURL} />
           </Show>
         </div>
       </div>

@@ -54,11 +54,14 @@ function PokemonTextInput({
       <span
         id={id}
         ref={ref}
-        tabindex={0}
-        onClick={() => {
-          setFocused(true)
+        tabindex="0"
+        onClick={() => setFocused(true)}
+        style={{
+          "outline-width": '0.125em',
+          "outline-color": focused() ? '#22c55e' : 'white',
+          "outline-style": 'solid',
         }}
-        class={"flex bg-white hover:cursor-pointer px-1 py-1 min-h-9 rounded-sm border border-solid border-gray-400 " + className}
+        class={"flex items-center bg-white hover:cursor-pointer px-2 min-h-9 rounded-md border border-solid border-gray-400 " + className}
       >
         <For each={truncated()}>
           {(byte) => <PokemonTextChar byte={byte} />}

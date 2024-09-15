@@ -1,6 +1,13 @@
 import { createSignal } from 'solid-js';
 
-function RangeInput({ onChange, step, min, max, value, 'class': className = "" }) {
+function RangeInput({
+  onChange,
+  step,
+  min,
+  max,
+  value,
+  'class': className = "",
+}) {
   const [state, setState] = createSignal(value);
   const handleChange = (event) => {
     if (onChange) {
@@ -19,7 +26,7 @@ function RangeInput({ onChange, step, min, max, value, 'class': className = "" }
         onInput={handleChange}
       />
       <input
-        class="w-12 border border-solid border-gray-400 px-1"
+        class="w-12 border border-solid border-gray-400 px-1 rounded-md"
         type="number"
         min={min}
         max={max}
