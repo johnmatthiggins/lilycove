@@ -93,7 +93,7 @@ function PokemonTextInput({
           >
             <div class="flex w-full justify-end">
               <div
-                class="px-2 hover:cursor-pointer hover:bg-gray-200 text-center rounded-sm m-0.5"
+                class="p-1 hover:cursor-pointer hover:bg-gray-200 text-center rounded-sm m-0.5"
                 role="button"
                 onClick={(event) => {
                   setFocused(false)

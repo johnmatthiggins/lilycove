@@ -718,6 +718,10 @@ video {
   height: 0.5rem;
 }
 
+.h-24 {
+  height: 6rem;
+}
+
 .h-3 {
   height: 0.75rem;
 }
@@ -847,8 +851,8 @@ video {
   width: 2rem;
 }
 
-.w-\[60vw\] {
-  width: 60vw;
+.w-\[50vw\] {
+  width: 50vw;
 }
 
 .w-fit {
@@ -966,6 +970,10 @@ video {
 
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .grid-rows-2 {

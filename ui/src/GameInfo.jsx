@@ -16,12 +16,9 @@ function GameInfo({ bits }) {
   const sectionOffsets = createMemo(() => findSectionAddresses(bits()));
   const trainerInfoOffset = () => sectionOffsets()['trainer_info'];
 
-  const boxNames = () => {
-    let array = new Array(14).fill(0).map(
-      (_, i) => ({ name: `Box ${i + 1}`, index: i })
-    );
-    return array;
-  };
+  const boxNames = () => new Array(14).fill(0).map(
+    (_, i) => ({ name: `Box ${i + 1}`, index: i })
+  );
 
   const boxPokemon = () => {
     const firstBoxOffset = sectionOffsets()['pc_buffer_A'];
@@ -87,14 +84,14 @@ function GameInfo({ bits }) {
 
   return (
     <div
-      class="bg-white p-2 my-1 w-[60vw] mx-auto rounded-sm border border-gray-400 border-solid"
+      class="bg-white p-2 my-1 w-fit mx-auto rounded-lg border border-gray-200 border-solid"
     >
       <div class="flex flex-col justify-center">
         <div>
           <div>
             <div class="flex justify-between">
               <select
-                class="w-32 rounded-md ml-1 bg-white border border-solid border-gray-400 px-2"
+                class="w-32 rounded-md ml-1 bg-white border-2 border-solid border-gray-200 px-2"
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >
@@ -107,7 +104,7 @@ function GameInfo({ bits }) {
                 <h3 class="text-2xl w-32 text-right">&#x2714;</h3>
               </Show>
             </div>
-            <div class="flex flex-wrap justify-between w-128 w-full">
+            <div class="grid grid-cols-6 justify-between w-full">
               <For each={boxPokemon()[selectedBox()]}>
                 {(p) => <PokemonCard pokemon={() => p} />}
               </For>
@@ -117,7 +114,7 @@ function GameInfo({ bits }) {
       </div>
       <div class="w-full flex justify-center">
         <Button
-          class="p-2 rounded-md text-lg w-32"
+          class="py-1 px-2 rounded-md text-md w-32"
           onClick={() => {
             const saveData = bits();
             if (trainerInfoOffset() >= 0xE000) {

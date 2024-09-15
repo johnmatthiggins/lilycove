@@ -13,11 +13,9 @@ function PokemonMove({
   onChange,
 }) {
   const [currentMoveId, setCurrentMoveId] = createSignal(moveId);
-  const moveData = createMemo(() => {
-    const selected = moveList().find((m) => m.id === currentMoveId());
-    return selected;
-  });
-
+  const moveData = createMemo(
+    () => moveList().find((m) => m.id === currentMoveId())
+  );
   const description = () => moveData()?.effect || '(Empty move slots have no effects in battle.)';
   const power = () => {
     if (moveData()?.name === 'Hidden Power') {
@@ -77,7 +75,7 @@ function PokemonMove({
           <select
             value={currentMoveId()}
             onChange={handleMoveChange}
-            class="px-2 bg-white border border-solid border-gray-400 rounded-md w-40 h-8 text-left"
+            class="p-1 bg-white border border-solid border-gray-400 rounded-md w-40 h-8 text-left"
           >
             <option value="-1">----------</option>
             <For each={moveList().toSorted((a, b) => a.name.localeCompare(b.name, 'en'))}>
