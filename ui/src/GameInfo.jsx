@@ -89,9 +89,9 @@ function GameInfo({ bits }) {
       <div class="flex flex-col justify-center">
         <div>
           <div>
-            <div class="flex justify-between">
+            <div class="flex justify-between pb-1">
               <select
-                class="w-32 rounded-md ml-1 bg-white border-2 border-solid border-gray-200 px-2"
+                class="w-32 rounded-md bg-white border-2 border-solid border-gray-200 px-2"
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >
@@ -104,7 +104,7 @@ function GameInfo({ bits }) {
                 <h3 class="text-2xl w-32 text-right">&#x2714;</h3>
               </Show>
             </div>
-            <div class="grid grid-cols-6 justify-between w-full">
+            <div class="grid grid-cols-6 gap-1 justify-between w-full pb-1">
               <For each={boxPokemon()[selectedBox()]}>
                 {(p) => <PokemonCard pokemon={() => p} />}
               </For>

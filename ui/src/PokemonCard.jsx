@@ -40,14 +40,20 @@ function PokemonCard({ pokemon }) {
   return (
     <>
       <div
-        class="flex flex-col bg-white rounded-md w-24 h-24 border-2 border-solid border-gray-200 hover:border-emerald-400 p-2 m-1 shadow-sm hover:shadow-lg"
+        class="flex flex-col bg-white rounded-md w-24 h-24 border-2 border-solid border-gray-200 hover:border-emerald-400 p-2 shadow-sm hover:shadow-lg"
         onClick={handleClick}
       >
         <div
           ref={ref}
           class="flex justify-center grow hover:cursor-pointer p-1"
         >
-          <Show when={pokemonData().hasSpecies()}>
+          <Show when={pokemonData().hasSpecies()} fallback={
+            <div class="flex justify-center items-center">
+              <svg classs="w-1/2" width="2em" height="2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 12H18M12 6V18" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+          }>
             <LazyImage sharp src={imageURL} />
           </Show>
         </div>
