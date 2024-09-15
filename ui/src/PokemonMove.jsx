@@ -95,7 +95,7 @@ function PokemonMove({
                   <Show when={Number(power())} fallback={"--"}>
                     <div class="flex gap-2 pl-2">
                       <p>{power()}</p>
-                      <img class="w-4" src="/assets/fist.svg" />
+                      <img class="w-4" src="/static/fist.svg" />
                     </div>
                   </Show>
                 </td>
