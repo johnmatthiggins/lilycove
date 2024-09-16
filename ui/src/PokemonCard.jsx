@@ -40,7 +40,7 @@ function PokemonCard({ pokemon }) {
   return (
     <>
       <div
-        class="flex flex-col bg-white rounded-md w-24 h-24 border-2 border-solid border-gray-200 hover:border-emerald-400 p-2 shadow-sm hover:shadow-lg"
+        class="flex flex-col bg-white rounded-md w-24 h-24 border-2 border-solid border-gray-200 hover:outline hover:outline-3 hover:outline-solid hover:outline-black p-2 shadow-sm hover:shadow-lg"
         onClick={handleClick}
       >
         <div

@@ -91,7 +91,7 @@ function GameInfo({ bits }) {
           <div>
             <div class="flex justify-between pb-1">
               <select
-                class="w-32 rounded-md bg-white border-2 border-solid border-gray-200 px-2"
+                class="w-32 rounded-md bg-white border-2 border-solid border-gray-200 px-2 shadow-sm hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
                 id="box-selector"
                 onChange={(event) => setSelectedBox(event.target.value)}
               >

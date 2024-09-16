@@ -58,10 +58,10 @@ function PokemonTextInput({
         onClick={() => setFocused(true)}
         style={{
           "outline-width": '0.125em',
-          "outline-color": focused() ? '#22c55e' : 'white',
+          "outline-color": focused() ? 'black' : 'white',
           "outline-style": 'solid',
         }}
-        class={"flex items-center bg-white hover:cursor-pointer px-2 min-h-9 rounded-md border border-solid border-gray-400 " + className}
+        class={"flex items-center bg-white hover:cursor-pointer px-1 min-h-9 rounded-md border border-solid border-gray-400 " + className}
       >
         <For each={truncated()}>
           {(byte) => <PokemonTextChar byte={byte} />}

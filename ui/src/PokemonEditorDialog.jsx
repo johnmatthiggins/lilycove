@@ -179,6 +179,8 @@ function PokemonEditorDialog({
         left: 0,
         "height": '100vh',
         "width": '100vw',
+        "backdrop-filter": 'blur(2px)',
+        "background-color": 'rgba(0,0,0,0.1)',
         position: 'fixed',
       }}
     >

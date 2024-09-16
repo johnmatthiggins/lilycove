@@ -50,7 +50,7 @@ function App() {
             <div class="my-2 mx-auto w-fit rounded-md" style={{ "background-color": "black" }}>
               <label class="flex justify-center rounded-md w-fit bg-black">
                 <span
-                  class="text-black font-bold text-lg text-center w-40 py-2 bg-white rounded-md shadow-sm hover:shadow-lg hover:cursor-pointer border-2 border-solid border-gray-200"
+                  class="text-black font-bold text-lg text-center w-40 py-1 bg-white rounded-md shadow-sm hover:shadow-lg hover:cursor-pointer border-2 border-solid border-gray-200"
                   role="button"
                 >
                   Upload Save
