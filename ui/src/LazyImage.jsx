@@ -7,8 +7,8 @@ function LazyImage({
   sharp = false,
   fullWidth = false,
   spinnerProps = {
-    width: '80%',
-    height: '80%',
+    width: '90%',
+    height: '90%',
   },
 }) {
   const [error, setError] = createSignal(false);
