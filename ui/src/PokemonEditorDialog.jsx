@@ -105,6 +105,7 @@ function PokemonEditorDialog({
 
   const pokeballIndex = () => Number(pokemonData().getPokeballItemId());
   const setPokeballIndex = (itemId) => pokemonData().setPokeballWithItemId(itemId);
+  const pokeballImageURL = () => `/static/items/${String(pokeballIndex() + 1).padStart(3, '0')}.png`;
 
   const pokemonSpecies = () =>
     speciesList()
@@ -449,7 +450,7 @@ function PokemonEditorDialog({
                     </div>
                   </Show>
                   <Show when={tab() === "misc"}>
-                    <div class="pt-1 px-2 pb-2 flex flex-row gap-1 h-9">
+                    <div class="pt-1 px-2 pb-2 flex gap-1 items-start">
                       <div>
                         <Selector
                           id="pokeball-input"
@@ -467,8 +468,8 @@ function PokemonEditorDialog({
                             }))}
                         />
                       </div>
-                      <div class="min-h-9 flex flex-col items-end">
-                        <LazyImage sharp src={() => `/static/items/${String(pokeballIndex()).padStart(3, '0')}.png`} />
+                      <div class="flex flex-col items-end w-auto h-fit">
+                        <img class="sharp-pixels" src={pokeballImageURL()} />
                       </div>
                     </div>
                   </Show>
