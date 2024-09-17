@@ -908,8 +908,8 @@ video {
   min-width: 24rem;
 }
 
-.min-w-\[70vw\] {
-  min-width: 70vw;
+.min-w-\[55vw\] {
+  min-width: 55vw;
 }
 
 .min-w-full {

@@ -192,7 +192,7 @@ function PokemonEditorDialog({
       <dialog
         open
         onClick={blockClickCascade}
-        class="border border-gray-400 border-solid mt-2 rounded-md p-2 min-w-[70vw] h-fit"
+        class="border border-gray-400 border-solid mt-2 rounded-md p-2 min-w-[55vw] h-fit"
       >
         <div
           onClick={blockClickCascade}
@@ -221,20 +221,9 @@ function PokemonEditorDialog({
                 <div class="w-full flex justify-center" ref={setImageRef}>
                   <LazyImage
                     sharp
-                    class="hover:cursor-pointer w-32 mt-2 pb-2 motion-reduced:animate-bounce"
+                    class="hover:cursor-pointer w-32 mt-2 pb-2"
                     src={imageURL}
                   />
-                  <Show when={itemCode() > 0}>
-                    <img
-                      class="w-8 sharp-pixels"
-                      src={`/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
-                      style={{
-                        position: 'fixed',
-                        left: `${left()}px`,
-                        top: `${top()}px`,
-                      }}
-                    />
-                  </Show>
                 </div>
                 <div class="flex gap-1">
                   <For each={pokemonTypes()}>
@@ -251,7 +240,7 @@ function PokemonEditorDialog({
                     options={() => speciesList()
                       .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
                       .map((species) => {
-                        const label = `${String(species.pokedex_id).padStart(3, '0')} ${species.name}`;
+                        const label = `${species.name} #${String(species.pokedex_id).padStart(3, '0')}`;
                         const value = species.species_id;
                         return { label, value };
                       })}
@@ -267,28 +256,39 @@ function PokemonEditorDialog({
                     onChange={(event) => setAbilityIndex(Number(event.target.value))}
                   />
                 </div>
-                <div>
-                  <Selector
-                    id="item-input"
-                    class="w-44 min-h-9"
-                    label="Held Item"
-                    selectedValue={() => itemCode()}
-                    options={() => {
-                      const items = itemList()
-                        .map((item) => ({ value: item.id, label: item.name }))
-                        .concat([{ value: 0, label: 'None' }])
-                      return items.toSorted((a, b) => {
-                        if (a.value === 0) {
-                          return -1;
-                        } else if (b.value === 0) {
-                          return 1;
-                        } else {
-                          return String(a.label).localeCompare(b.label, 'en');
-                        }
-                      });
-                    }}
-                    onChange={(event) => setItemCode(Number(event.target.value))}
-                  />
+                <div class="flex flex-row items-end gap-2">
+                  <div>
+                    <Selector
+                      id="item-input"
+                      class="w-32 min-h-9"
+                      label="Held Item"
+                      selectedValue={() => itemCode()}
+                      options={() => {
+                        const items = itemList()
+                          .map((item) => ({ value: item.id, label: item.name }))
+                          .concat([{ value: 0, label: 'None' }])
+                        return items.toSorted((a, b) => {
+                          if (a.value === 0) {
+                            return -1;
+                          } else if (b.value === 0) {
+                            return 1;
+                          } else {
+                            return String(a.label).localeCompare(b.label, 'en');
+                          }
+                        });
+                      }}
+                      onChange={(event) => setItemCode(Number(event.target.value))}
+                    />
+                  </div>
+                  <div class="flex items-center min-h-9">
+                    <Show when={itemCode() > 0}>
+                      <LazyImage
+                        sharp
+                        class="w-8"
+                        src={() => `/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
+                      />
+                    </Show>
+                  </div>
                 </div>
               </div>
               <div class="pt-1 w-full">
@@ -398,11 +398,8 @@ function PokemonEditorDialog({
                         <div class="pt-2">
                           <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                         </div>
-                        {/*<div class="pt-2">
-                          <StatDisplay pokemonData={pokemonData} />
-                        </div> */}
                       </div>
-                      <div class="px-2 pb-2">
+                      <div class="px-2 pb-2 flex flex-col gap-1">
                         <div class="flex justify-start gap-2">
                           <div>
                             <Selector
@@ -429,26 +426,34 @@ function PokemonEditorDialog({
                             <input
                               id="experience-input"
                               type="text"
-                              class="px-2 py-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-36"
+                              class="p-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-20"
                               onInput={(event) => setExperience(event.target.value)}
                               value={experience()}
                             />
                           </div>
-                          <div>
-                            <Selector
-                              options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
-                              id="level-input"
-                              class="w-44 min-h-9"
-                              label="Level"
-                              onChange={(event) => setLevel(event.target.value)}
-                              selectedValue={level}
-                            />
-                          </div>
-                          <div>
-                            <label class="font-bold block">Hidden Power</label>
-                            <div class="w-full flex">
-                              <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
+                          <div class="flex items-end gap-2">
+                            <div>
+                              <Selector
+                                options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
+                                id="level-input"
+                                class="w-16 min-h-9"
+                                label="Level"
+                                onChange={(event) => setLevel(event.target.value)}
+                                selectedValue={level}
+                              />
                             </div>
+                            <button
+                              class="bg-white text-black text-center hover:outline hover:outline-2 hover:outline-black hover:outline-solid border-2 border-2-solid border-2-gray-200 px-1 min-h-9 rounded-md hover:cursor-pointer hover:shadow-md shadow-sm font-bold"
+                              onClick={() => setLevel(100)}
+                            >
+                              MAX
+                            </button>
+                          </div>
+                        </div>
+                        <div>
+                          <label class="font-bold block text-gray-700">Hidden Power</label>
+                          <div class="w-full flex">
+                            <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
                           </div>
                         </div>
                       </div>
@@ -486,9 +491,9 @@ function PokemonEditorDialog({
               Save
             </Button>
           </div>
-        </div >
-      </dialog >
-    </div >
+        </div>
+      </dialog>
+    </div>
   );
 }
 
