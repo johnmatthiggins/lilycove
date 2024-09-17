@@ -854,13 +854,13 @@ class BoxPokemon {
 
     switch (growthRate) {
       case 'erratic':
-        levelFunction = _erraticLevel;
+        levelFunction = (level) => Math.floor(_erraticLevel(level));
         break;
       case 'fast':
-        levelFunction = (level) => (4 * (level ** 3)) / 5;
+        levelFunction = (level) => Math.floor((4 * (level ** 3)) / 5);
         break;
       case 'medium fast':
-        levelFunction = (level) => level ** 3;
+        levelFunction = (level) => Math.floor(level ** 3);
         break;
       case 'medium slow':
         levelFunction = (level) => {
@@ -868,15 +868,15 @@ class BoxPokemon {
           const b = 15 * (level ** 2);
           const c = 100 * level;
           const d = 140;
-          return a - b + c - d;
+          return Math.floor(a - b + c - d);
         };
         break;
       case 'slow':
-        levelFunction = (level) => (5 * (level ** 3)) / 4;
+        levelFunction = (level) => Math.floor((5 * (level ** 3)) / 4);
         break;
       case 'fluctating':
         // todo write fluctuating function
-        levelFunction = _fluctuatingLevel;
+        levelFunction = (level) => Math.floor(_fluctuatingLevel(level));
         break;
       default:
         levelFunction = (level) => level + 1;

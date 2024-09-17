@@ -82,7 +82,7 @@ function PokemonType({ typeName, fullWidth = false }) {
 
   return (
     <div
-      class="text-sm text-center shadow-lg font-mono font-bold rounded-sm text-[#FFFE] min-w-20 p-2 py-1 text-center border border-solid mr-1 h-8 flex items-center justify-center"
+      class="text-sm text-center shadow-sm font-mono font-bold rounded-sm text-[#FFFE] min-w-20 p-2 py-1 text-center border border-solid mr-1 h-8 flex items-center justify-center"
       style={{
         "background-color": colors().border,
         "border-color": colors().border,

@@ -1,5 +1,6 @@
 import { createEffect, createMemo, createSignal, Show, createComputed } from 'solid-js';
 
+import { hiddenPowerType } from './utils/pokemonDataStructure';
 import BoxPokemon from './BoxPokemon';
 import { speciesList } from './PokemonList';
 import { moveList } from './MoveList';
@@ -290,7 +291,8 @@ function PokemonEditorDialog({
                 <ul id="tabs" class="flex gap-1">
                   <li
                     onClick={() => setTab("moves")}
-                    class="bg-white px-2 font-bold hover:bg-gray-400 hover:cursor-pointer w-24 text-center hover:border-l-dashed hover:border-t-dashed hover:border-r-dashed"
+                    tabindex={0}
+                    class="px-2 font-bold bg-gray-200 hover:bg-white hover:cursor-pointer w-20 text-center text-gray-700 transition"
                     style={{
                       'border-top-style': 'solid',
                       'border-left-style': 'solid',
@@ -303,16 +305,18 @@ function PokemonEditorDialog({
                       'border-top-color': '#9ca3af',
                       'border-left-color': '#9ca3af',
                       'border-right-color': '#9ca3af',
-                      'border-top-left-radius': '0.25em',
-                      'border-top-right-radius': '0.25em',
-                      'background-color': tab() === "moves" ? 'white' : '#e5e7eb',
+                      'border-top-left-radius': '0.5em',
+                      'border-top-right-radius': '0.5em',
+                      'background-color': tab() === "moves" ? 'white' : undefined,
+                      'margin-bottom': tab() === "moves" ? '-1px' : 0,
                     }}
                   >
                     Moves
                   </li>
                   <li
-                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer w-24 text-center"
                     onClick={() => setTab("stats")}
+                    tabindex={0}
+                    class="px-2 font-bold bg-gray-200 hover:bg-white hover:cursor-pointer w-20 text-center text-gray-700 transition"
                     style={{
                       'border-top-style': 'solid',
                       'border-left-style': 'solid',
@@ -325,16 +329,18 @@ function PokemonEditorDialog({
                       'border-top-color': '#9ca3af',
                       'border-left-color': '#9ca3af',
                       'border-right-color': '#9ca3af',
-                      'border-top-left-radius': '0.25em',
-                      'border-top-right-radius': '0.25em',
-                      'background-color': tab() === "stats" ? 'white' : '#e5e7eb'
+                      'border-top-left-radius': '0.5em',
+                      'border-top-right-radius': '0.5em',
+                      'background-color': tab() === "stats" ? 'white' : undefined,
+                      'margin-bottom': tab() === "stats" ? '-1px' : 0,
                     }}
                   >
                     Stats
                   </li>
                   <li
-                    class="bg-white px-2 font-bold hover:bg-gray-200 hover:cursor-pointer w-24 text-center"
                     onClick={() => setTab("misc")}
+                    tabindex={0}
+                    class="px-2 font-bold bg-gray-200 hover:bg-white hover:cursor-pointer w-20 text-center text-gray-700 transition"
                     style={{
                       'border-top-style': 'solid',
                       'border-left-style': 'solid',
@@ -347,9 +353,10 @@ function PokemonEditorDialog({
                       'border-top-color': '#9ca3af',
                       'border-left-color': '#9ca3af',
                       'border-right-color': '#9ca3af',
-                      'border-top-left-radius': '0.25em',
-                      'border-top-right-radius': '0.25em',
-                      'background-color': tab() === "misc" ? 'white' : '#e5e7eb',
+                      'border-top-left-radius': '0.5em',
+                      'border-top-right-radius': '0.5em',
+                      'background-color': tab() === "misc" ? 'white' : undefined,
+                      'margin-bottom': tab() === "misc" ? '-1px' : 0,
                     }}
                   >
                     Misc.
@@ -416,7 +423,7 @@ function PokemonEditorDialog({
                             <input
                               id="experience-input"
                               type="text"
-                              class="px-2 py-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-green-500 w-36"
+                              class="px-2 py-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-36"
                               onInput={(event) => setExperience(event.target.value)}
                               value={experience()}
                             />
@@ -430,6 +437,12 @@ function PokemonEditorDialog({
                               onChange={(event) => setLevel(event.target.value)}
                               selectedValue={level}
                             />
+                          </div>
+                          <div>
+                            <label class="font-bold block">Hidden Power</label>
+                            <div class="w-full flex">
+                              <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
+                            </div>
                           </div>
                         </div>
                       </div>

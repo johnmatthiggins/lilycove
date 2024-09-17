@@ -57,11 +57,11 @@ function PokemonTextInput({
         tabindex="0"
         onClick={() => setFocused(true)}
         style={{
-          "outline-width": '0.125em',
-          "outline-color": focused() ? 'black' : 'white',
-          "outline-style": 'solid',
+          "outline-width": focused() ? '0.125em' : undefined,
+          "outline-color": focused() ? 'black' : undefined,
+          "outline-style": focused() ? 'solid' : undefined,
         }}
-        class={"flex items-center bg-white hover:cursor-pointer px-1 min-h-9 rounded-md border border-solid border-gray-400 " + className}
+        class={"flex items-center bg-white hover:cursor-pointer px-1 min-h-9 rounded-md border border-solid border-gray-400 hover:outline hover:outline-2 hover:outline-solid hover:outline-black " + className}
       >
         <For each={truncated()}>
           {(byte) => <PokemonTextChar byte={byte} />}
@@ -84,40 +84,43 @@ function PokemonTextInput({
           <dialog
             open
             class="bg-white border border-gray-200 border-solid rounded-sm"
+            onClick={(event) => event.stopPropagation()}
             style={{
               "z-index": 800000,
               position: "fixed",
-              top: `${top()}px`,
               left: `${left()}px`,
+              bottom: '0px',
             }}
           >
             <div class="flex w-full justify-end">
-              <div
-                class="p-1 hover:cursor-pointer hover:bg-gray-200 text-center rounded-sm m-0.5"
-                role="button"
+              <button
+                class="w-8 h-auto hover:cursor-pointer hover:bg-gray-200 text-center rounded-full m-0.5 text-lg font-bold active:bg-gray-400"
                 onClick={(event) => {
                   setFocused(false)
                   event.stopPropagation();
                 }}
               >
                 &times;
-              </div>
+              </button>
             </div>
-            <table class="font-mono p-1">
+            <table class="font-mono m-1">
               <For each={cellSymbols()}>
                 {(row) => (<tr>
                   <For each={row}>
                     {(cell) => (
                       <td
-                        class="px-1 select-none hover:cursor-pointer hover:bg-gray-200"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onChange(truncated().concat([cell]));
-                        }}
                       >
-                        <PokemonTextChar
-                          byte={cell}
-                        />
+                        <button
+                          class="px-1 select-none hover:cursor-pointer hover:bg-gray-200 w-12 h-8 text-center rounded-sm active:bg-gray-400"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            onChange(truncated().concat([cell]));
+                          }}
+                        >
+                          <PokemonTextChar
+                            byte={cell}
+                          />
+                        </button>
                       </td>
                     )}
                   </For>
