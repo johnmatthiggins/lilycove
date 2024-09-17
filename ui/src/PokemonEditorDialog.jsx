@@ -449,22 +449,27 @@ function PokemonEditorDialog({
                     </div>
                   </Show>
                   <Show when={tab() === "misc"}>
-                    <div class="pt-1 px-2 pb-2">
-                      <Selector
-                        id="pokeball-input"
-                        label="Pokeball"
-                        class="min-h-9"
-                        selectedValue={pokeballIndex}
-                        onChange={(event) => {
-                          setPokeballIndex(Number(event.target.value));
-                        }}
-                        options={() => itemList()
-                          .filter((item) => Number(item.id) < 13)
-                          .map((item) => ({
-                            label: item.name,
-                            value: Number(item.id),
-                          }))}
-                      />
+                    <div class="pt-1 px-2 pb-2 flex flex-row gap-1 h-9">
+                      <div>
+                        <Selector
+                          id="pokeball-input"
+                          label="Pokeball"
+                          class="min-h-9"
+                          selectedValue={pokeballIndex}
+                          onChange={(event) => {
+                            setPokeballIndex(Number(event.target.value));
+                          }}
+                          options={() => itemList()
+                            .filter((item) => Number(item.id) < 13)
+                            .map((item) => ({
+                              label: item.name,
+                              value: Number(item.id),
+                            }))}
+                        />
+                      </div>
+                      <div class="min-h-9 flex flex-col items-end">
+                        <LazyImage sharp src={() => `/static/items/${String(pokeballIndex()).padStart(3, '0')}.png`} />
+                      </div>
                     </div>
                   </Show>
                 </div>
