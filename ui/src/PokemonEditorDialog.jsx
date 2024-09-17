@@ -17,6 +17,7 @@ import PokemonTextInput from './PokemonTextInput';
 import LazyImage from './LazyImage';
 import StatDisplay from './StatDisplay';
 import Button from './Button';
+import PokeballSelector from './PokeballSelector';
 
 function PokemonEditorDialog({
   onClose,
@@ -104,7 +105,10 @@ function PokemonEditorDialog({
   };
 
   const pokeballIndex = () => Number(pokemonData().getPokeballItemId());
-  const setPokeballIndex = (itemId) => pokemonData().setPokeballWithItemId(itemId);
+  const setPokeballIndex = (itemId) => {
+    pokemonData().setPokeballWithItemId(itemId);
+    setPokemonData(pokemonData().copy());
+  };
   const pokeballImageURL = () => `/static/items/${String(pokeballIndex() + 1).padStart(3, '0')}.png`;
 
   const pokemonSpecies = () =>
@@ -161,7 +165,6 @@ function PokemonEditorDialog({
   const [left, setLeft] = createSignal(0);
 
   createEffect(() => {
-    console.log('effect was run...');
     if (imageRef()) {
       const actualImageRef = imageRef();
       const { left: x, top: y, width, height } = actualImageRef.getBoundingClientRect();
@@ -420,7 +423,9 @@ function PokemonEditorDialog({
                             />
                           </div>
                           <div>
-                            <label class="font-bold block text-gray-700" for="experience-input">Experience</label>
+                            <label class="font-bold block text-gray-700" for="experience-input">
+                              Experience
+                            </label>
                             <input
                               id="experience-input"
                               type="text"
@@ -451,25 +456,9 @@ function PokemonEditorDialog({
                   </Show>
                   <Show when={tab() === "misc"}>
                     <div class="pt-1 px-2 pb-2 flex gap-1 items-start">
-                      <div>
-                        <Selector
-                          id="pokeball-input"
-                          label="Pokeball"
-                          class="min-h-9"
-                          selectedValue={pokeballIndex}
-                          onChange={(event) => {
-                            setPokeballIndex(Number(event.target.value));
-                          }}
-                          options={() => itemList()
-                            .filter((item) => Number(item.id) < 13)
-                            .map((item) => ({
-                              label: item.name,
-                              value: Number(item.id),
-                            }))}
-                        />
-                      </div>
-                      <div class="flex flex-col items-end w-auto h-fit">
-                        <img class="sharp-pixels" src={pokeballImageURL()} />
+                      <div class="flex flex-col justify-start">
+                        <label class="font-bold block text-gray-700">Pokeball</label>
+                        <PokeballSelector value={pokeballIndex} onChange={setPokeballIndex} />
                       </div>
                     </div>
                   </Show>
@@ -497,7 +486,7 @@ function PokemonEditorDialog({
               Save
             </Button>
           </div>
-        </div>
+        </div >
       </dialog >
     </div >
   );

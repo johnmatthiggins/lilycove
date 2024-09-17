@@ -330,7 +330,6 @@ class BoxPokemon {
 
   // takes in the pokeball item id
   setPokeballWithItemId(pokeballId) {
-    console.log('pokeballId = ', pokeballId);
     this._decrypt();
 
     const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
