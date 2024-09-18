@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Show, createComputed } from 'solid-js';
+import { createEffect, createMemo, createSignal, Show, Switch, Match } from 'solid-js';
 
 import { hiddenPowerType } from './utils/pokemonDataStructure';
 import BoxPokemon from './BoxPokemon';
@@ -374,99 +374,101 @@ function PokemonEditorDialog({
                     "border-top-right-radius": '0.5em',
                   }}
                 >
-                  <Show when={tab() === "moves"}>
-                    <div class="flex flex-col gap-1 p-1 grow" id="moveset">
-                      <For each={pokemonMoves()}>
-                        {(move, index) => (
-                          <PokemonMove
-                            pokemonData={pokemonData}
-                            moveId={move?.id || -1}
-                            ppUpCount={() => ppIncreases()[index()]}
-                            setPPUpCount={(nextValue) => setPPIncreases(ppIncreases().with(index(), nextValue))}
-                            onChange={(moveId) => pokemonData().setMove(index(), moveId)}
-                          />
-                        )}
-                      </For>
-                    </div>
-                  </Show>
-                  <Show when={tab() === "stats"}>
-                    <div>
-                      <div class="pl-2 flex flex-row gap-2" id="stats">
-                        <div class="pt-2">
-                          <EvEditor evArray={evArray} setEvArray={setEvArray} />
-                        </div>
-                        <div class="pt-2">
-                          <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
-                        </div>
+                  <Switch>
+                    <Match when={tab() === "moves"}>
+                      <div class="flex flex-col gap-1 p-1 grow" id="moveset">
+                        <For each={pokemonMoves()}>
+                          {(move, index) => (
+                            <PokemonMove
+                              pokemonData={pokemonData}
+                              moveId={move?.id || -1}
+                              ppUpCount={() => ppIncreases()[index()]}
+                              setPPUpCount={(nextValue) => setPPIncreases(ppIncreases().with(index(), nextValue))}
+                              onChange={(moveId) => pokemonData().setMove(index(), moveId)}
+                            />
+                          )}
+                        </For>
                       </div>
-                      <div class="px-2 pb-2 flex flex-col gap-1">
-                        <div class="flex justify-start gap-2">
-                          <div>
-                            <Selector
-                              options={() => NATURES.map(({ name, increase, decrease }) => {
-                                let result;
-                                if (increase === decrease) {
-                                  result = { value: name, label: name };
-                                } else {
-                                  result = { value: name, label: `${name} (+${increase},-${decrease})` };
-                                }
-                                return result;
-                              })}
-                              id="nature-input"
-                              class="w-44 min-h-9"
-                              label="Nature"
-                              onChange={(event) => setNature(NATURES.findIndex((n) => n.name === event.target.value))}
-                              selectedValue={() => nature().name}
-                            />
+                    </Match>
+                    <Match when={tab() === "stats"}>
+                      <div>
+                        <div class="pl-2 flex flex-row gap-2" id="stats">
+                          <div class="pt-2">
+                            <EvEditor evArray={evArray} setEvArray={setEvArray} />
                           </div>
-                          <div>
-                            <label class="font-bold block text-gray-700" for="experience-input">
-                              Experience
-                            </label>
-                            <input
-                              id="experience-input"
-                              type="text"
-                              class="p-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-20"
-                              onInput={(event) => setExperience(event.target.value)}
-                              value={experience()}
-                            />
+                          <div class="pt-2">
+                            <IvEditor ivArray={ivArray} setIvArray={setIvArray} />
                           </div>
-                          <div class="flex items-end gap-2">
+                        </div>
+                        <div class="px-2 flex flex-col gap-1">
+                          <div class="flex justify-start gap-2">
                             <div>
                               <Selector
-                                options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
-                                id="level-input"
-                                class="w-16 min-h-9"
-                                label="Level"
-                                onChange={(event) => setLevel(event.target.value)}
-                                selectedValue={level}
+                                options={() => NATURES.map(({ name, increase, decrease }) => {
+                                  let result;
+                                  if (increase === decrease) {
+                                    result = { value: name, label: name };
+                                  } else {
+                                    result = { value: name, label: `${name} (+${increase},-${decrease})` };
+                                  }
+                                  return result;
+                                })}
+                                id="nature-input"
+                                class="w-44 min-h-9"
+                                label="Nature"
+                                onChange={(event) => setNature(NATURES.findIndex((n) => n.name === event.target.value))}
+                                selectedValue={() => nature().name}
                               />
                             </div>
-                            <button
-                              class="bg-white text-black text-center hover:outline hover:outline-2 hover:outline-black hover:outline-solid border-2 border-2-solid border-2-gray-200 px-1 min-h-9 rounded-md hover:cursor-pointer hover:shadow-md shadow-sm font-bold"
-                              onClick={() => setLevel(100)}
-                            >
-                              MAX
-                            </button>
+                            <div>
+                              <label class="font-bold block text-gray-700" for="experience-input">
+                                Experience
+                              </label>
+                              <input
+                                id="experience-input"
+                                type="text"
+                                class="p-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-20"
+                                onInput={(event) => setExperience(event.target.value)}
+                                value={experience()}
+                              />
+                            </div>
+                            <div class="flex items-end gap-2">
+                              <div>
+                                <Selector
+                                  options={() => Array(100).fill(0).map((_, i) => ({ value: i + 1, label: String(i + 1) }))}
+                                  id="level-input"
+                                  class="w-16 min-h-9"
+                                  label="Level"
+                                  onChange={(event) => setLevel(event.target.value)}
+                                  selectedValue={level}
+                                />
+                              </div>
+                              <button
+                                class="bg-white text-black text-center hover:outline hover:outline-2 hover:outline-black hover:outline-solid border-2 border-2-solid border-2-gray-200 px-1 min-h-9 rounded-md hover:cursor-pointer hover:shadow-md shadow-sm font-bold"
+                                onClick={() => setLevel(100)}
+                              >
+                                MAX
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <div>
-                          <label class="font-bold block text-gray-700">Hidden Power</label>
-                          <div class="w-full flex">
-                            <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
+                          <div>
+                            <label class="font-bold block text-gray-700">Hidden Power</label>
+                            <div class="w-full flex">
+                              <PokemonType fullWidth typeName={() => hiddenPowerType(...ivArray())} />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Show>
-                  <Show when={tab() === "misc"}>
-                    <div class="pt-1 px-2 pb-2 flex gap-1 items-start">
-                      <div class="flex flex-col justify-start">
-                        <label class="font-bold block text-gray-700">Pokeball</label>
-                        <PokeballSelector value={pokeballIndex} onChange={setPokeballIndex} />
+                    </Match>
+                    <Match when={tab() === "misc"}>
+                      <div class="pt-1 px-2 pb-2 flex gap-1 items-start">
+                        <div class="flex flex-col justify-start">
+                          <label class="font-bold block text-gray-700">Pokeball</label>
+                          <PokeballSelector value={pokeballIndex} onChange={setPokeballIndex} />
+                        </div>
                       </div>
-                    </div>
-                  </Show>
+                    </Match>
+                  </Switch>
                 </div>
               </div>
             </div>

@@ -4,9 +4,9 @@ function ClickablePokeball({ value, onClick, selected }) {
   const imageURL = () => `/static/items/${String(value).padStart(3, '0')}.png`;
   const className = () => {
     if (selected()) {
-      return 'w-8 rounded-full bg-green-400';
+      return 'w-8 rounded-full outline outline-2 outline-solid outline-black';
     }
-    return 'w-8 rounded-full hover:bg-red-400';
+    return 'w-8 rounded-full hover:outline hover:outline-2 hover:outline-dotted hover:outline-black';
   };
   return (
     <img class={className()} src={imageURL()} onClick={onClick} role="button" tabindex="0" />
