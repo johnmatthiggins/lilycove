@@ -109,7 +109,6 @@ function PokemonEditorDialog({
     pokemonData().setPokeballWithItemId(itemId);
     setPokemonData(pokemonData().copy());
   };
-  const pokeballImageURL = () => `/static/items/${String(pokeballIndex() + 1).padStart(3, '0')}.png`;
 
   const pokemonSpecies = () =>
     speciesList()
@@ -282,10 +281,9 @@ function PokemonEditorDialog({
                   </div>
                   <div class="flex items-center min-h-9">
                     <Show when={itemCode() > 0}>
-                      <LazyImage
-                        sharp
-                        class="w-8"
-                        src={() => `/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
+                      <img
+                        class="sharp-pixels w-8"
+                        src={`/static/items/${String(itemCode() + 1).padStart(3, '0')}.png`}
                       />
                     </Show>
                   </div>

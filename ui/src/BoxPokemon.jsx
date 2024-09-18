@@ -563,6 +563,7 @@ class BoxPokemon {
       ...newDataSectionOffsets,
     };
 
+
     const b0 = personalityValue & 0xFFn;
     const b1 = (personalityValue >> 8n) & 0xFFn;
     const b2 = (personalityValue >> 16n) & 0xFFn;
