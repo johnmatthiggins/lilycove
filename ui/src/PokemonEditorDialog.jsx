@@ -15,7 +15,6 @@ import { recomputeSaveChecksums } from './utils/save';
 import { itemList } from './ItemList';
 import PokemonTextInput from './PokemonTextInput';
 import LazyImage from './LazyImage';
-import StatDisplay from './StatDisplay';
 import Button from './Button';
 import PokeballSelector from './PokeballSelector';
 
@@ -220,7 +219,7 @@ function PokemonEditorDialog({
                 <div class="w-full flex justify-center" ref={setImageRef}>
                   <LazyImage
                     sharp
-                    class="hover:cursor-pointer w-32 mt-2 pb-2"
+                    class="hover:cursor-pointer w-32 mt-2 pb-2 h-32"
                     src={imageURL}
                   />
                 </div>
