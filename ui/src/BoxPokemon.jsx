@@ -608,7 +608,7 @@ class BoxPokemon {
   }
 
   getMoveIds() {
-    console.log(this._buffer.reduce((a, b) => a + ',' + b.toString(16).padStart(2, '0'), ''))
+    this._buffer.reduce((a, b) => a + ',' + b.toString(16).padStart(2, '0'), '')
     this._decrypt();
     const movesOffset = this._offsetMap['data_section_attacks'];
     const moves = [];

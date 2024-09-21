@@ -11,7 +11,50 @@ const testBytes = testBuffer.split(",").map((b) => parseInt(b, 16));
 const testIndexes = [];
 
 test('Test pokemon has 1059860 experience', () => {
-  const testPokemon = BoxPokemon(testBytes, testIndexes);
+  const testPokemon = new BoxPokemon(testBytes.slice(), testIndexes.slice());
   const exp = Number(testPokemon.getExperiencePoints());
   expect(exp).toBe(1059860);
+});
+
+test('Changing personality value does not effect EVs, IVs, or moveset', () => {
+  const testPokemon = new BoxPokemon(testBytes.slice(), testIndexes.slice());
+  testPokemon.setIndividualValues([31, 31, 31, 31, 31, 31]);
+  testPokemon.setEffortValues([0, 0, 0, 0, 0, 0]);
+
+  // Change personality value...
+  const newPersonalityValue = testPokemon.getPersonalityValue() - 1n;
+  testPokemon.setPersonalityValue(newPersonalityValue);
+
+  const {
+    hp,
+    attack,
+    defense,
+    speed,
+    specialAttack,
+    specialDefense
+  } = testPokemon.getIndividualValues();
+
+  expect(hp).toBe(31);
+  expect(attack).toBe(31);
+  expect(defense).toBe(31);
+  expect(speed).toBe(31);
+  expect(specialAttack).toBe(31);
+  expect(specialDefense).toBe(31);
+
+  const {
+    hp: hp2,
+    attack: attack2,
+    defense: defense2,
+    speed: speed2,
+    specialAttack: specialAttack2,
+    specialDefense: specialDefense2,
+  } = testPokemon.getIndividualValues();
+
+  expect(hp2).toBe(0);
+  expect(attack2).toBe(0);
+  expect(defense2).toBe(0);
+  expect(speed2).toBe(0);
+  expect(specialAttack2).toBe(0);
+  expect(specialDefense2).toBe(0);
+
 });
