@@ -45,6 +45,7 @@ function PokemonCard({ pokemon }) {
   return (
     <>
       <div
+        tabindex={0}
         class="flex flex-col bg-white rounded-md w-24 h-24 border-2 border-solid border-gray-200 hover:outline hover:outline-2 hover:outline-solid hover:outline-black p-2 shadow-sm hover:shadow-lg"
         onClick={handleClick}
       >
