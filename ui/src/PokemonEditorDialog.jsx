@@ -472,6 +472,23 @@ function PokemonEditorDialog({
           </div>
           <div class="flex flex-row justify-center w-full my-1 pt-8 gap-3">
             <Button
+              class="w-32 p-1 bg-white text-red-500"
+              onClick={(event) => {
+                const save = bits();
+                const pokemonRef = pokemonData().makeEmpty();
+
+                // serialize pokemon to binary
+                pokemonRef.save(save);
+
+                recomputeSaveChecksums(save);
+                setBits([...save]);
+                event.stopPropagation();
+                onClose();
+              }}
+            >
+              Delete
+            </Button>
+            <Button
               class="w-32 p-1 bg-white"
               onClick={(event) => {
                 const save = bits();
@@ -489,6 +506,7 @@ function PokemonEditorDialog({
             >
               Save
             </Button>
+
           </div>
         </div>
       </dialog>

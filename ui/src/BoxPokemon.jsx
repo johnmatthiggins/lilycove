@@ -905,6 +905,11 @@ class BoxPokemon {
       .map((b) => parseInt(b, 16));
     return new BoxPokemon(buffer, this._indexes);
   }
+
+  makeEmpty() {
+    const buffer = Array(80).fill(0).map(() => 0);
+    return new BoxPokemon(buffer, this._indexes);
+  }
 }
 
 export default BoxPokemon;
