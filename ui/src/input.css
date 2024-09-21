@@ -20,15 +20,28 @@ html:has(dialog[open]) {
 }
 
 #ev-total[data-value="too-high"]::-webkit-progress-bar {
-  background-color: #38bdf8;
+  border-radius: 0.25em;
+  background-color: white;
+  color: #f87171;
 }
 #ev-total[data-value="not-too-high"]::-webkit-progress-bar {
-  background-color: #f87171;
+  border-radius: 0.25em;
+  background-color: white;
+  color: #38bdf8;
+}
+
+#ev-total[data-value="not-too-high"]::-webkit-progress-value {
+  border-radius: 0.25em;
+  background-color: #38bdf8;
 }
 #ev-total[data-value="not-too-high"]::-moz-progress-bar {
-  background-color: #38bdf8;
+  color: #38bdf8;
 }
 
 #ev-total[data-value="too-high"]::-moz-progress-bar {
+  color: #f87171;
+}
+#ev-total[data-value="too-high"]::-webkit-progress-value {
+  border-radius: 0.25em;
   background-color: #f87171;
 }
