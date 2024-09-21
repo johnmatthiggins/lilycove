@@ -34,7 +34,12 @@ function PokemonCard({ pokemon }) {
     return `/static/pokemon-images/${pokedexId()}.png`;
   };
 
-  const handleClick = () => setOpen(true);
+  const handleClick = () => {
+    if (!pokemonData().hasSpecies()) {
+      setPokemonData(pokemonData().makeDefault());
+    }
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
 
   return (

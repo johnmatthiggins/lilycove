@@ -1,6 +1,8 @@
 import { convertPokemonStrToASCII } from './utils/hex.jsx';
 import NATURES from './utils/Natures.jsx';
 
+const DEFAULT_POKEMON_BUFFER = 'f4,d7,2f,de,05,46,d7,32,cc,c2,d3,be,c9,c8,ff,ff,00,00,02,02,c7,d5,ed,ff,e3,e6,ff,00,5f,da,00,00,f1,94,78,35,0e,6e,07,d3,f1,91,f8,ec,d1,91,a6,ed,a8,91,18,ec,f4,9b,ec,f8,81,91,f8,ec,21,83,eb,ec,f1,6c,f8,ec,f7,6d,f8,10,f1,91,f8,ec,f1,91,f8,ec';
+
 function _getDataSectionOffsets(
   personalityValue
 ) {
@@ -319,6 +321,9 @@ class BoxPokemon {
   }
 
   getPokeballItemId() {
+    console.log(
+      this._buffer.reduce((a, b) => a + ',' + b.toString(16).padStart(2, '0'), '')
+    );
     this._decrypt();
     const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
     const buffer = BigInt(this._buffer[originsOffset]);
@@ -894,6 +899,12 @@ class BoxPokemon {
     return levelTable;
   }
 
+  makeDefault() {
+    const buffer = DEFAULT_POKEMON_BUFFER
+      .split(",")
+      .map((b) => parseInt(b, 16));
+    return new BoxPokemon(buffer, this._indexes);
+  }
 }
 
 export default BoxPokemon;
