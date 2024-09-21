@@ -521,37 +521,38 @@ class BoxPokemon {
     const conditionSectionOffset = this._offsetMap['data_section_condition'];
     const miscSectionOffset = this._offsetMap['data_section_misc'];
 
-    const growth = structuredClone(this._buffer.slice(
+    const growth = this._buffer.slice(
       growthSectionOffset,
       growthSectionOffset + DATA_SECTION_LENGTH
-    ));
+    );
+    const attacks = this._buffer.slice(
+      attacksSectionOffset,
+      attacksSectionOffset + DATA_SECTION_LENGTH
+    );
+    const condition = this._buffer.slice(
+      conditionSectionOffset,
+      conditionSectionOffset + DATA_SECTION_LENGTH
+    );
+    const misc = this._buffer.slice(
+      miscSectionOffset,
+      miscSectionOffset + DATA_SECTION_LENGTH
+    );
+
     const newGrowthOffset = newDataSectionOffsets['data_section_growth'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newGrowthOffset + i] = growth[i];
     }
 
-    const attacks = structuredClone(this._buffer.slice(
-      attacksSectionOffset,
-      attacksSectionOffset + DATA_SECTION_LENGTH
-    ));
     const newAttackOffset = newDataSectionOffsets['data_section_attacks'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newAttackOffset + i] = attacks[i];
     }
 
-    const condition = structuredClone(this._buffer.slice(
-      conditionSectionOffset,
-      conditionSectionOffset + DATA_SECTION_LENGTH
-    ));
     const newConditionOffset = newDataSectionOffsets['data_section_condition'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newConditionOffset + i] = condition[i];
     }
 
-    const misc = structuredClone(this._buffer.slice(
-      miscSectionOffset,
-      miscSectionOffset + DATA_SECTION_LENGTH
-    ));
     const newMiscOffset = newDataSectionOffsets['data_section_misc'];
     for (let i = 0; i < DATA_SECTION_LENGTH; i += 1) {
       this._buffer[newMiscOffset + i] = misc[i];

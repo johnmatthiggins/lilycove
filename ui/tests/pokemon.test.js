@@ -48,7 +48,7 @@ test('Changing personality value does not effect EVs, IVs, or moveset', () => {
     speed: speed2,
     specialAttack: specialAttack2,
     specialDefense: specialDefense2,
-  } = testPokemon.getIndividualValues();
+  } = testPokemon.getEffortValues();
 
   expect(hp2).toBe(0);
   expect(attack2).toBe(0);
