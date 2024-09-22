@@ -39,7 +39,7 @@ const ADJUSTMENTS = {
   'E': ' ',
   'Y': ' ',
   'S': ' ',
-}
+};
 
 /* JS implementation of the strcmp95 C function written by
 Bill Winkler, George McLaughlin, Matt Jaro and Maureen Lynch,
@@ -64,14 +64,14 @@ function distance(a, b) {
   // Looking only within the search range, count and flag the matched pairs. 
   let Num_com = 0;
   let yl1 = b_len - 1;
-  for (let i = 0; i < a_len; i++) {
+  for (let i = 0; i < a_len; i += 1) {
     let lowlim = (i >= search_range) ? i - search_range : 0;
     let hilim = ((i + search_range) <= yl1) ? (i + search_range) : yl1;
-    for (let j = lowlim; j <= hilim; j++) {
+    for (let j = lowlim; j <= hilim; j += 1) {
       if (b_flag[j] !== 1 && a[j] === b[i]) {
         a_flag[j] = 1;
         b_flag[i] = 1;
-        Num_com++;
+        Num_com += 1;
         break;
       }
     }
@@ -82,16 +82,16 @@ function distance(a, b) {
 
   // Count the number of transpositions
   let k = 0; let N_trans = 0;
-  for (let i = 0; i < a_len; i++) {
+  for (let i = 0; i < a_len; i += 1) {
     if (a_flag[i] === 1) {
       let j;
-      for (j = k; j < b_len; j++) {
+      for (j = k; j < b_len; j += 1) {
         if (b_flag[j] === 1) {
           k = j + 1;
           break;
         }
       }
-      if (a[i] !== b[j]) { N_trans++; }
+      if (a[i] !== b[j]) { N_trans += 1; }
     }
   }
   N_trans = Math.floor(N_trans / 2);
@@ -100,9 +100,9 @@ function distance(a, b) {
   let N_simi = 0;
   let adjwt = ADJUSTMENTS;
   if (minv > Num_com) {
-    for (let i = 0; i < a_len; i++) {
+    for (let i = 0; i < a_len; i += 1) {
       if (!a_flag[i]) {
-        for (let j = 0; j < b_len; j++) {
+        for (let j = 0; j < b_len; j += 1) {
           if (!b_flag[j]) {
             if (adjwt[a[i]] === b[j]) {
               N_simi += 3;
@@ -126,7 +126,7 @@ function distance(a, b) {
     // Adjust for having up to the first 4 characters in common
     let j = (minv >= 4) ? 4 : minv;
     let i;
-    for (i = 0; (i < j) && a[i] === b[i]; i++) { }
+    for (i = 0; (i < j) && a[i] === b[i]; i += 1) { }
     if (i) { weight += i * 0.1 * (1.0 - weight) };
 
     // Adjust for long strings.
@@ -137,9 +137,7 @@ function distance(a, b) {
       weight += (1 - weight) * ((Num_com - i - 1) / (a_len * b_len - i * 2 + 2));
     }
   }
-
   return weight
-
 };
 
 export { distance };
