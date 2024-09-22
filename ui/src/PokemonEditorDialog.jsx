@@ -248,16 +248,7 @@ function PokemonEditorDialog({
                     label="Species"
                     onChange={(value) => setSpeciesId(Number(value))}
                     selectedValue={speciesId}
-                    options={() => speciesList()
-                      .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
-                      .map((species) => {
-                        const label = `${species.name} #${String(species.pokedex_id).padStart(3, '0')}`;
-                        return {
-                          label,
-                          speciesId: species.species_id,
-                          pokedexId: species.pokedex_id,
-                        };
-                      })}
+                    options={speciesList}
                   />
                 </div>
                 <div class="flex flex-row items-end gap-2">

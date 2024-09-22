@@ -1,6 +1,33 @@
 import { createSignal, createEffect, Show } from 'solid-js';
 import { distance } from './JaroWinkler';
 import LazyImage from './LazyImage';
+import PokemonType from './PokemonType';
+
+function PokemonOption({ option }) {
+  const paddedPokedexId = () => {
+    return String(option().pokedex_id).padStart('3', 0);
+  };
+  return (
+    <div class="flex flex-row justify-start gap-1">
+      <div class="w-16 h-16 p-1">
+        <LazyImage src={() => `/static/pokemon-images/${paddedPokedexId()}.png`} />
+      </div>
+      <div>
+        <h1 class="text-lg font-bold">{option().name} #{paddedPokedexId()}</h1>
+        <div class="flex gap-1">
+          <For each={(() => {
+            if (option()?.type1 === option()?.type2) {
+              return [option()?.type1];
+            }
+            return [option()?.type1, option()?.type2];
+          })()}>
+            {(typeText) => (<PokemonType typeName={() => typeText} />)}
+          </For>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function PokemonAutocomplete({
   id,
@@ -8,7 +35,6 @@ function PokemonAutocomplete({
   options,
   selectedValue,
   onChange,
-  'class': className = '',
 }) {
   const [ref, setRef] = createSignal(null);
   const [text, setText] = createSignal('');
@@ -21,8 +47,8 @@ function PokemonAutocomplete({
   });
 
   const selectedLabel = () => {
-    const selectedOption = options().find((option) => option.speciesId === selectedValue());
-    return selectedOption?.label || '';
+    const selectedOption = options().find((option) => option.species_id === selectedValue());
+    return selectedOption?.name || '';
   };
 
   const topFiveOptions = () => {
@@ -30,7 +56,7 @@ function PokemonAutocomplete({
       return options().slice(0, 5);
     }
     const rankedOptions = options().map((option) => ({
-      rank: distance(option.label, text()),
+      rank: distance(option.name, text()),
       ...option,
     })).toSorted((a, b) => b.rank - a.rank);
 
@@ -47,7 +73,7 @@ function PokemonAutocomplete({
           onClick={() => setFocused(true)}
           tabindex={0}
           id={id}
-          class="px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-start"
+          class="shadow-sm px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-start"
         >
           {selectedLabel()}
         </span>
@@ -77,7 +103,7 @@ function PokemonAutocomplete({
               ref={setRef}
               onKeyUp={(event) => {
                 if (event.key.toLowerCase() === 'enter') {
-                  onChange(topFiveOptions()[0].speciesId);
+                  onChange(topFiveOptions()[0].species_id);
                   setFocused(false);
                   setText('');
                 }
@@ -91,33 +117,23 @@ function PokemonAutocomplete({
                     <div
                       class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
                       onClick={() => {
-                        onChange(option.speciesId);
+                        onChange(option.species_id);
                         setFocused(false);
                         setText('');
                       }}
                     >
-                      <div class="flex flex-row justify-start gap-1">
-                        <div class="w-8 h-8 p-1">
-                          <LazyImage src={() => `/static/pokemon-images/${String(option.pokedexId).padStart('3', 0)}.png`} />
-                        </div>
-                        <h1 class="text-lg">{option.label}</h1>
-                      </div>
+                      <PokemonOption option={() => option} />
                     </div>
                   }>
                     <div
                       class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline-solid outline outline-2 outline-dashed outline-black"
                       onClick={() => {
-                        onChange(option.speciesId);
+                        onChange(option.species_id);
                         setFocused(false);
                         setText('');
                       }}
                     >
-                      <div class="flex flex-row justify-start gap-1">
-                        <div class="w-8 h-8 p-1">
-                          <LazyImage src={() => `/static/pokemon-images/${String(option.pokedexId).padStart('3', 0)}.png`} />
-                        </div>
-                        <h1 class="text-lg">{option.label}</h1>
-                      </div>
+                      <PokemonOption option={() => option} />
                     </div>
                   </Show>
                 )}
