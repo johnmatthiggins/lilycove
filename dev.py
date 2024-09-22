@@ -7,7 +7,7 @@ path = Path(os.path.dirname(os.path.realpath(__file__)))
 jsCWD = path / "ui"
 
 p_django = Popen(
-    ["poetry", "run", "python", "./manage.py", "runserver", "0.0.0.0:3001"]
+    ["uv", "run", "./manage.py", "runserver", "0.0.0.0:3001"]
 )
 p_solidjs = Popen(["npm", "run", "dev"], cwd=jsCWD)
 p_tailwindcss = Popen(["sh", "tailwind.sh"], cwd=jsCWD)
