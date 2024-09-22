@@ -321,9 +321,6 @@ class BoxPokemon {
   }
 
   getPokeballItemId() {
-    console.log(
-      this._buffer.reduce((a, b) => a + ',' + b.toString(16).padStart(2, '0'), '')
-    );
     this._decrypt();
     const originsOffset = this._offsetMap['data_section_misc'] + 0x3;
     const buffer = BigInt(this._buffer[originsOffset]);
