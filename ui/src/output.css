@@ -920,6 +920,10 @@ video {
   min-width: 18rem;
 }
 
+.min-w-\[24rem\] {
+  min-width: 24rem;
+}
+
 .min-w-\[55vw\] {
   min-width: 55vw;
 }
