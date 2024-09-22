@@ -3,27 +3,40 @@ import { distance } from './JaroWinkler';
 import LazyImage from './LazyImage';
 import PokemonType from './PokemonType';
 
-function PokemonOption({ option }) {
+function PokemonOption({ option, onClick }) {
   const paddedPokedexId = () => String(option().pokedex_id).padStart('3', 0);
   return (
-    <div class="flex flex-row justify-start gap-1">
-      <div class="w-16 h-16 p-1">
-        <LazyImage src={() => `/static/pokemon-images/${paddedPokedexId()}.png`} />
-      </div>
-      <div>
-        <h1 class="text-left text-lg font-bold">{option().name} #{paddedPokedexId()}</h1>
-        <div class="flex gap-1">
-          <For each={(() => {
-            if (option()?.type1 === option()?.type2) {
-              return [option()?.type1];
-            }
-            return [option()?.type1, option()?.type2];
-          })()}>
-            {(typeText) => (<PokemonType typeName={() => typeText} />)}
-          </For>
+    <button
+      tabindex={0}
+      class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black focus:outline-black focus:outline focus:outline-2 focus:outline-solid"
+      onClick={onClick}
+      onKeyUp={(event) => {
+        if (event.key.toLowerCase() === 'enter') {
+          onChange(option.species_id);
+          setFocused(false);
+          setText('');
+        }
+      }}
+    >
+      <div class="flex flex-row justify-start gap-1">
+        <div class="w-16 h-16 p-1">
+          <LazyImage src={() => `/static/pokemon-images/${paddedPokedexId()}.png`} />
+        </div>
+        <div>
+          <h1 class="text-left text-lg font-bold">{option().name} #{paddedPokedexId()}</h1>
+          <div class="flex gap-1">
+            <For each={(() => {
+              if (option()?.type1 === option()?.type2) {
+                return [option()?.type1];
+              }
+              return [option()?.type1, option()?.type2];
+            })()}>
+              {(typeText) => (<PokemonType typeName={() => typeText} />)}
+            </For>
+          </div>
         </div>
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -110,31 +123,21 @@ function PokemonAutocomplete({
             />
             <div class="flex flex-col gap-2 pt-2">
               <For each={topFiveOptions()}>
-                {(option, index) => (
-                  <button
-                    tabindex={0}
-                    class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black focus:outline-black focus:outline focus:outline-2 focus:outline-solid"
+                {(option) => (
+                  <PokemonOption
+                    option={() => option}
                     onClick={() => {
                       onChange(option.species_id);
                       setFocused(false);
                       setText('');
                     }}
-                    onKeyUp={(event) => {
-                      if (event.key.toLowerCase() === 'enter') {
-                        onChange(option.species_id);
-                        setFocused(false);
-                        setText('');
-                      }
-                    }}
-                  >
-                    <PokemonOption option={() => option} />
-                  </button>
+                  />
                 )}
               </For>
             </div>
           </div>
         </div>
-      </Show>
+      </Show >
     </>
   );
 }
