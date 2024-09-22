@@ -867,6 +867,10 @@ video {
   width: 2rem;
 }
 
+.w-80 {
+  width: 20rem;
+}
+
 .w-96 {
   width: 24rem;
 }
@@ -910,6 +914,10 @@ video {
 
 .min-w-96 {
   min-width: 24rem;
+}
+
+.min-w-\[18rem\] {
+  min-width: 18rem;
 }
 
 .min-w-\[55vw\] {

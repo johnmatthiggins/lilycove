@@ -4,16 +4,14 @@ import LazyImage from './LazyImage';
 import PokemonType from './PokemonType';
 
 function PokemonOption({ option }) {
-  const paddedPokedexId = () => {
-    return String(option().pokedex_id).padStart('3', 0);
-  };
+  const paddedPokedexId = () => String(option().pokedex_id).padStart('3', 0);
   return (
     <div class="flex flex-row justify-start gap-1">
       <div class="w-16 h-16 p-1">
         <LazyImage src={() => `/static/pokemon-images/${paddedPokedexId()}.png`} />
       </div>
       <div>
-        <h1 class="text-lg font-bold">{option().name} #{paddedPokedexId()}</h1>
+        <h1 class="text-left text-lg font-bold">{option().name} #{paddedPokedexId()}</h1>
         <div class="flex gap-1">
           <For each={(() => {
             if (option()?.type1 === option()?.type2) {
@@ -94,7 +92,7 @@ function PokemonAutocomplete({
           }}
         >
           <div
-            class="bg-white rounded-md flex justify-center w-96 border border-gray-400 border-solid p-2 flex-col"
+            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid p-2 flex-col"
             onClick={(event) => event.stopPropagation()}
           >
             <input
@@ -113,29 +111,24 @@ function PokemonAutocomplete({
             <div class="flex flex-col gap-2 pt-2">
               <For each={topFiveOptions()}>
                 {(option, index) => (
-                  <Show when={index() === 0} fallback={
-                    <div
-                      class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
-                      onClick={() => {
+                  <button
+                    tabindex={0}
+                    class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black focus:outline-black focus:outline focus:outline-2 focus:outline-solid"
+                    onClick={() => {
+                      onChange(option.species_id);
+                      setFocused(false);
+                      setText('');
+                    }}
+                    onKeyUp={(event) => {
+                      if (event.key.toLowerCase() === 'enter') {
                         onChange(option.species_id);
                         setFocused(false);
                         setText('');
-                      }}
-                    >
-                      <PokemonOption option={() => option} />
-                    </div>
-                  }>
-                    <div
-                      class="border border-gray-400 border-solid rounded-md text-gray-700 px-1 hover:cursor-pointer hover:outline-solid outline outline-2 outline-dashed outline-black"
-                      onClick={() => {
-                        onChange(option.species_id);
-                        setFocused(false);
-                        setText('');
-                      }}
-                    >
-                      <PokemonOption option={() => option} />
-                    </div>
-                  </Show>
+                      }
+                    }}
+                  >
+                    <PokemonOption option={() => option} />
+                  </button>
                 )}
               </For>
             </div>
