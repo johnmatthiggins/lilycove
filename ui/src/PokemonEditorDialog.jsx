@@ -130,7 +130,6 @@ function PokemonEditorDialog({
 
   const abilityList = () => pokemonSpecies().abilities;
 
-  const [imageRef, setImageRef] = createSignal(null);
   const id = () => String(pokemonSpecies()?.pokedex_id).padStart(3, '0');
 
   const pokemonTypes = createMemo(() => {
@@ -158,18 +157,6 @@ function PokemonEditorDialog({
     .getMoveIds()
     .map((id) => moveList()
       .find((m) => Number(m.id) === Number(id)));
-
-  const [top, setTop] = createSignal(0);
-  const [left, setLeft] = createSignal(0);
-
-  createEffect(() => {
-    if (imageRef()) {
-      const actualImageRef = imageRef();
-      const { left: x, top: y, width, height } = actualImageRef.getBoundingClientRect();
-      setLeft(x + (width / 2));
-      setTop(y + (height / 2));
-    }
-  });
 
   return (
     <div
@@ -216,7 +203,7 @@ function PokemonEditorDialog({
                     </div>
                   </div>
                 </div>
-                <div class="w-full flex justify-center" ref={setImageRef}>
+                <div class="w-full flex justify-center">
                   <LazyImage
                     sharp
                     class="hover:cursor-pointer w-32 mt-2 pb-2 h-32"

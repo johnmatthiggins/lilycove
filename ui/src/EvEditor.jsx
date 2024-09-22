@@ -21,10 +21,10 @@ function EvEditor({ evArray, setEvArray }) {
             <label for="defense-ev-slider" class="font-bold">Def</label>
           </div>
           <div class="min-h-9 flex items-center">
-            <label for="spdef-ev-slider" class="font-bold">SpD</label>
+            <label for="spatk-ev-slider" class="font-bold">SpA</label>
           </div>
           <div class="min-h-9 flex items-center">
-            <label for="spatk-ev-slider" class="font-bold">SpA</label>
+            <label for="spdef-ev-slider" class="font-bold">SpD</label>
           </div>
           <div class="min-h-9 flex items-center">
             <label for="speed-ev-slider" class="font-bold">Spe</label>
