@@ -86,7 +86,7 @@ function PokemonAutocomplete({
           id={id}
           class="shadow-sm px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-between"
         >
-          <p>{selectedLabel()}</p><img src="/static/search.svg" class="w-4" />
+          {selectedLabel()}
         </span>
       </div>
       <Show when={focused()}>
@@ -108,19 +108,24 @@ function PokemonAutocomplete({
             class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid p-2 flex-col"
             onClick={(event) => event.stopPropagation()}
           >
-            <input
-              class="bg-white border border-gray-400 border-solid rounded-md min-h-9 px-2"
-              value={text()}
-              ref={setRef}
-              onKeyUp={(event) => {
-                if (event.key.toLowerCase() === 'enter') {
-                  onChange(topFiveOptions()[0].species_id);
-                  setFocused(false);
-                  setText('');
-                }
-              }}
-              onInput={(event) => setText(event.target.value)}
-            />
+            <div class="flex flex-row w-full">
+              <input
+                class="bg-white border border-gray-400 border-solid rounded-md min-h-9 px-2 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
+                value={text()}
+                ref={setRef}
+                onKeyUp={(event) => {
+                  if (event.key.toLowerCase() === 'enter') {
+                    onChange(topFiveOptions()[0].species_id);
+                    setFocused(false);
+                    setText('');
+                  }
+                }}
+                onInput={(event) => setText(event.target.value)}
+              />
+              <img src="/static/search.svg" class="w-4" style={{
+                "margin-left": '-1.5rem',
+              }} />
+            </div>
             <div class="flex flex-col gap-2 pt-2">
               <For each={topFiveOptions()}>
                 {(option) => (
