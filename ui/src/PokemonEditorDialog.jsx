@@ -17,6 +17,7 @@ import PokemonTextInput from './PokemonTextInput';
 import LazyImage from './LazyImage';
 import Button from './Button';
 import PokeballSelector from './PokeballSelector';
+import PokemonAutocomplete from './PokemonAutocomplete';
 
 function PokemonEditorDialog({
   onClose,
@@ -169,8 +170,7 @@ function PokemonEditorDialog({
         left: 0,
         "height": '100vh',
         "width": '100vw',
-        "backdrop-filter": 'blur(2px)',
-        "background-color": 'rgba(0,0,0,0.1)',
+        "background-color": 'rgba(0,0,0,0.4)',
         position: 'fixed',
       }}
     >
@@ -215,7 +215,7 @@ function PokemonEditorDialog({
                     {(typeText) => (<PokemonType typeName={() => typeText} />)}
                   </For>
                 </div>
-                <div>
+                {/*<div>
                   <Selector
                     id="species-input"
                     class="w-44 min-h-9"
@@ -230,7 +230,7 @@ function PokemonEditorDialog({
                         return { label, value };
                       })}
                   />
-                </div>
+                </div> */}
                 <div>
                   <Selector
                     id="ability-input"
@@ -239,6 +239,25 @@ function PokemonEditorDialog({
                     selectedValue={() => abilityIndex() % abilityList().length}
                     options={() => abilityList().map((ability, index) => ({ value: index, label: ability }))}
                     onChange={(event) => setAbilityIndex(Number(event.target.value))}
+                  />
+                </div>
+                <div>
+                  <PokemonAutocomplete
+                    id="species-input"
+                    class="w-44 min-h-9"
+                    label="Species"
+                    onChange={(value) => setSpeciesId(Number(value))}
+                    selectedValue={speciesId}
+                    options={() => speciesList()
+                      .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
+                      .map((species) => {
+                        const label = `${species.name} #${String(species.pokedex_id).padStart(3, '0')}`;
+                        return {
+                          label,
+                          speciesId: species.species_id,
+                          pokedexId: species.pokedex_id,
+                        };
+                      })}
                   />
                 </div>
                 <div class="flex flex-row items-end gap-2">
@@ -493,7 +512,6 @@ function PokemonEditorDialog({
             >
               Save
             </Button>
-
           </div>
         </div>
       </dialog>

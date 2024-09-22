@@ -79,7 +79,6 @@ function PokemonTextInput({
             height: '100vh',
             width: '100vw',
             position: 'fixed',
-
           }}>
           <dialog
             open
@@ -117,9 +116,7 @@ function PokemonTextInput({
                             onChange(truncated().concat([cell]));
                           }}
                         >
-                          <PokemonTextChar
-                            byte={cell}
-                          />
+                          <PokemonTextChar byte={cell} />
                         </button>
                       </td>
                     )}
