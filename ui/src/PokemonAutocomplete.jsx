@@ -84,9 +84,9 @@ function PokemonAutocomplete({
           onClick={() => setFocused(true)}
           tabindex={0}
           id={id}
-          class="shadow-sm px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-start"
+          class="shadow-sm px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-between"
         >
-          {selectedLabel()}
+          <p>{selectedLabel()}</p><img src="/static/search.svg" class="w-4" />
         </span>
       </div>
       <Show when={focused()}>
