@@ -112,7 +112,7 @@ function PokemonAutocomplete({
           }}
         >
           <div
-            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid p-2 mt-32 flex-col"
+            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid pt-2 px-2 mt-32 flex-col"
             onClick={(event) => event.stopPropagation()}
           >
             <div class="flex flex-row w-full pb-2 border-b border-b-solid border-b-gray-400">
