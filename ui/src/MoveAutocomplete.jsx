@@ -116,10 +116,16 @@ function MoveAutocomplete({
     if (!text()) {
       return options();
     }
-    const rankedOptions = options().map((option) => ({
-      rank: distance(option.name, text()),
-      ...option,
-    })).toSorted((a, b) => b.rank - a.rank).slice(0, 50);
+    const rankedOptions = options()
+      .map((option) => {
+        const searchText = [option.move_type, option.name, option.effect];
+        const scores = searchText.map((word) => distance(word, text()));
+        return {
+          rank: Math.max(...scores),
+          ...option,
+        };
+      }
+      ).toSorted((a, b) => b.rank - a.rank).slice(0, 50);
 
     return rankedOptions;
   };
@@ -155,12 +161,12 @@ function MoveAutocomplete({
           }}
         >
           <div
-            class="bg-white rounded-md flex justify-center border border-gray-400 border-solid p-2 flex-col mt-32 mx-1"
+            class="bg-white rounded-md flex justify-center border border-gray-400 border-solid flex-col mt-32 mx-2"
             onClick={(event) => event.stopPropagation()}
           >
-            <div class="flex flex-row w-full">
+            <div class="flex flex-row w-full pb-2 border-b border-b-solid border-b-gray-400 px-2 pt-2">
               <input
-                class="bg-white border border-gray-400 border-solid rounded-md min-h-9 px-2 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
+                class="bg-white p-2 border border-gray-400 border-solid rounded-md min-h-9 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
                 value={text()}
                 ref={setRef}
                 onKeyUp={(event) => {
@@ -177,7 +183,7 @@ function MoveAutocomplete({
               }} />
             </div>
             <div
-              class="flex flex-col gap-2 mt-3 py-1"
+              class="flex flex-col gap-2 py-2 mx-1"
               style={{ "overflow-y": "auto", "max-height": "70vh" }}
             >
               <For each={(() => rankedOptions())()}>

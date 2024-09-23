@@ -62,16 +62,23 @@ function PokemonAutocomplete({
     return selectedOption?.name || '';
   };
 
-  const topFiveOptions = () => {
+  const topFiftyOptions = () => {
     if (!text()) {
-      return options().slice(0, 5);
+      return options();
     }
-    const rankedOptions = options().map((option) => ({
-      rank: distance(option.name, text()),
-      ...option,
-    })).toSorted((a, b) => b.rank - a.rank);
+    const rankedOptions = options()
+      .map(
+        (option) => {
+          const searchText = [option.type1, option.type2, option.name, String(option.pokedex_id)];
+          const scores = searchText.map((word) => distance(word, text()));
+          return {
+            rank: Math.max(...scores),
+            ...option,
+          };
+        }
+      ).toSorted((a, b) => b.rank - a.rank);
 
-    return rankedOptions.slice(0, 5);
+    return rankedOptions.slice(0, 50);
   };
 
   return (
@@ -92,7 +99,7 @@ function PokemonAutocomplete({
       <Show when={focused()}>
         <div
           id="search-input-backdrop"
-          class="flex justify-center items-center"
+          class="flex justify-center items-start"
           onClick={() => setFocused(false)}
           style={{
             position: 'fixed',
@@ -105,17 +112,17 @@ function PokemonAutocomplete({
           }}
         >
           <div
-            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid p-2 flex-col"
+            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid p-2 mt-32 flex-col"
             onClick={(event) => event.stopPropagation()}
           >
-            <div class="flex flex-row w-full">
+            <div class="flex flex-row w-full pb-2 border-b border-b-solid border-b-gray-400">
               <input
                 class="bg-white border border-gray-400 border-solid rounded-md min-h-9 px-2 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
                 value={text()}
                 ref={setRef}
                 onKeyUp={(event) => {
                   if (event.key.toLowerCase() === 'enter') {
-                    onChange(topFiveOptions()[0].species_id);
+                    onChange(topFiftyOptions()[0].species_id);
                     setFocused(false);
                     setText('');
                   }
@@ -126,8 +133,11 @@ function PokemonAutocomplete({
                 "margin-left": '-1.5rem',
               }} />
             </div>
-            <div class="flex flex-col gap-2 pt-2">
-              <For each={topFiveOptions()}>
+            <div
+              class="flex flex-col gap-2 pt-2 px-1"
+              style={{ "overflow-y": 'scroll', "max-height": "70vh" }}
+            >
+              <For each={topFiftyOptions()}>
                 {(option) => (
                   <PokemonOption
                     option={() => option}
