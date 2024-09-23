@@ -45,7 +45,7 @@ function MoveOption({ option, onClick, pokemonData }) {
   };
   return (
     <button
-      class="p-2 bg-white border border-gray-400 border-solid rounded-md min-w-[24rem] hover:outline hover:outline-2 hover:outline-black hover:outline-solid focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
+      class="p-2 bg-white border border-gray-400 border-solid rounded-md min-w-[24rem] hover:outline hover:outline-2 hover:outline-black hover:outline-solid focus:outline focus:outline-2 focus:outline-black focus:outline-solid mx-1"
       onClick={onClick}
     >
       <div class="flex flex-row items-center justify-between text-md">
@@ -112,16 +112,16 @@ function MoveAutocomplete({
     return selectedOption?.name || '';
   };
 
-  const topFiveOptions = () => {
+  const rankedOptions = () => {
     if (!text()) {
-      return options().slice(0, 5);
+      return options();
     }
     const rankedOptions = options().map((option) => ({
       rank: distance(option.name, text()),
       ...option,
-    })).toSorted((a, b) => b.rank - a.rank);
+    })).toSorted((a, b) => b.rank - a.rank).slice(0, 50);
 
-    return rankedOptions.slice(0, 5);
+    return rankedOptions;
   };
 
   return (
@@ -142,7 +142,7 @@ function MoveAutocomplete({
       <Show when={focused()}>
         <div
           id="search-input-backdrop"
-          class="flex justify-center items-center"
+          class="flex justify-center items-start"
           onClick={() => setFocused(false)}
           style={{
             position: 'fixed',
@@ -155,7 +155,7 @@ function MoveAutocomplete({
           }}
         >
           <div
-            class="bg-white rounded-md flex justify-center border border-gray-400 border-solid p-2 flex-col"
+            class="bg-white rounded-md flex justify-center border border-gray-400 border-solid p-2 flex-col mt-32 mx-1"
             onClick={(event) => event.stopPropagation()}
           >
             <div class="flex flex-row w-full">
@@ -165,7 +165,7 @@ function MoveAutocomplete({
                 ref={setRef}
                 onKeyUp={(event) => {
                   if (event.key.toLowerCase() === 'enter') {
-                    onChange(topFiveOptions()[0].id);
+                    onChange(rankedOptions()[0].id);
                     setFocused(false);
                     setText('');
                   }
@@ -176,8 +176,11 @@ function MoveAutocomplete({
                 "margin-left": '-1.5rem',
               }} />
             </div>
-            <div class="flex flex-col gap-2 pt-2">
-              <For each={topFiveOptions()}>
+            <div
+              class="flex flex-col gap-2 mt-3 py-1"
+              style={{ "overflow-y": "auto", "max-height": "70vh" }}
+            >
+              <For each={(() => rankedOptions())()}>
                 {(option) => (
                   <MoveOption
                     pokemonData={pokemonData}

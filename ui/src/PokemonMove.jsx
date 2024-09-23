@@ -79,6 +79,7 @@ function PokemonMove({
               options={moveList}
               selectedValue={currentMoveId}
               onChange={handleMoveChange}
+              pokemonData={pokemonData}
             />
           </div>
         </div>

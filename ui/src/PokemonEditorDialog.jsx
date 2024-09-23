@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, Show, Switch, Match } from 'solid-js';
+import { createMemo, createSignal, Show, Switch, Match } from 'solid-js';
 
 import { hiddenPowerType } from './utils/pokemonDataStructure';
 import BoxPokemon from './BoxPokemon';
