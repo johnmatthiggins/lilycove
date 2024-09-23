@@ -39,14 +39,23 @@ function App() {
     >
       <div class="grow justify-center items-center w-full">
         <Show when={bits().length === 0}>
-          <div class="rounded-lg p-2 w-1/2 mx-auto">
+          <div class="rounded-lg p-1 w-1/2 mx-auto">
             <h3
-              class="text-3xl font-bold text-center text-white min-h-36 font-pacifico"
-              style={{ 'font-size': '8rem' }}
+              class="font-bold text-center text-white min-h-36"
+              style={{
+                'font-family': "Courier New",
+                'font-size': '7rem',
+                'text-shadow': '0.0625em 0.0625em rgba(0,0,0,0.5)',
+              }}
             >
-              Lilycove
+              LILYCOVE
             </h3>
-            <h2 class="font-pacifico text-center text-white text-2xl">A Pokemon Save Editor</h2>
+            <h2
+              class="text-center text-white text-2xl font-bold"
+              style={{ 'text-shadow': '0.0625em 0.0625em rgba(0,0,0,0.5)' }}
+            >
+              A Save Editor for Generation III Pok&#233;mon Games
+            </h2>
             <div class="my-2 mx-auto w-fit rounded-md" style={{ "background-color": "black" }}>
               <label class="flex justify-center rounded-md w-fit bg-black">
                 <span
@@ -74,8 +83,8 @@ function App() {
             bits={bits}
           />
         </Show>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
