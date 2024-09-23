@@ -118,7 +118,7 @@ function MoveAutocomplete({
     }
     const rankedOptions = options()
       .map((option) => {
-        const searchText = [option.move_type, option.name, option.effect];
+        const searchText = [option.move_type, option.name, ...option.effect.split(" ")];
         const scores = searchText.map((word) => distance(word, text()));
         return {
           rank: Math.max(...scores),
