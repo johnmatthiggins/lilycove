@@ -1680,6 +1680,10 @@ html:has(dialog[open]) {
   background-color: #f87171;
 }
 
+input {
+  -webkit-appearance: none;
+}
+
 html {
   font-family: system-ui, sans-serif;
 }

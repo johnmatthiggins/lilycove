@@ -112,10 +112,10 @@ function PokemonAutocomplete({
           }}
         >
           <div
-            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid pt-2 px-2 mt-32 flex-col"
+            class="bg-white rounded-md flex justify-center min-w-[18rem] border border-gray-400 border-solid pt-2 mt-32 flex-col"
             onClick={(event) => event.stopPropagation()}
           >
-            <div class="flex flex-row w-full pb-2 border-b border-b-solid border-b-gray-400">
+            <div class="flex flex-row w-full pb-2 border-b border-b-solid border-b-gray-400 px-2">
               <input
                 class="bg-white border border-gray-400 border-solid rounded-md min-h-9 px-2 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
                 value={text()}
@@ -134,7 +134,7 @@ function PokemonAutocomplete({
               }} />
             </div>
             <div
-              class="flex flex-col gap-2 pt-2 px-1"
+              class="flex flex-col gap-2 pt-2 px-1 mx-2"
               style={{ "overflow-y": 'scroll', "max-height": "70vh" }}
             >
               <For each={topFiftyOptions()}>
