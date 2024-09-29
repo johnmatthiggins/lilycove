@@ -17,7 +17,7 @@ function PPCounter({
       }>
         <button
           tabindex={0}
-          class="bg-white rounded-md w-8 text-center shadow-sm border border-solid border-gray-400 hover:cursor-pointer"
+          class="bg-white rounded-md w-8 text-center shadow-sm border border-solid border-gray-400 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black active:outline active:outline-2 active:outline-solid active:outline-black"
           onClick={decrement}>
           {'-'}
         </button>
@@ -38,7 +38,7 @@ function PPCounter({
       }>
         <span
           tabindex={0}
-          class="bg-white rounded-md w-8 text-center shadow-sm border border-solid border-gray-400 hover:cursor-pointer"
+          class="bg-white rounded-md w-8 text-center shadow-sm border border-solid border-gray-400 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-solid hover:outline-black active:outline active:outline-2 active:outline-solid active:outline-black"
           onClick={increment}>
           {'+'}
         </span>
