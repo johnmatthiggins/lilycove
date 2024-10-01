@@ -29,7 +29,14 @@ async def all_moves(_):
 
     json_result = "[" + ",".join([str(move) for move in movelist]) + "]"
 
-    return HttpResponse(json_result.encode('utf8'), headers={"Content-Type": "application/json"})
+    return HttpResponse(
+        json_result.encode('utf8'),
+        headers={
+            "Content-Type": "application/json",
+            # cache content for a week
+            "Cache-Control": "max-age=604800",
+        }
+    )
 
 @cache_page(60)
 async def all_pokemon(_):
@@ -39,7 +46,14 @@ async def all_pokemon(_):
 
     json_results = ",".join(species)
 
-    return HttpResponse(f"[{json_results}]", headers={"Content-Type": "application/json"})
+    return HttpResponse(
+        f"[{json_results}]",
+        headers={
+            "Content-Type": "application/json",
+            # cache content for a week
+            "Cache-Control": "max-age=604800",
+        }
+    )
 
 @cache_page(60)
 async def all_items(_):
@@ -50,7 +64,14 @@ async def all_items(_):
 
     json_result = "[" + ",".join([str(item) for item in items]) + "]"
 
-    return HttpResponse(json_result, headers={"Content-Type": "application/json"})
+    return HttpResponse(
+        json_result,
+        headers={
+            "Content-Type": "application/json",
+            # cache content for a week
+            "Cache-Control": "max-age=604800",
+        }
+    )
 
 # TODO: Write method that returns available moves for pokemon species
 async def pokemon_moves(_, species_id):
