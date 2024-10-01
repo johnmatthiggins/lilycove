@@ -98,13 +98,12 @@ function distance(a, b) {
 
   // Adjust for similarities in nonmatched characters
   let N_simi = 0;
-  let adjwt = ADJUSTMENTS;
   if (minv > Num_com) {
     for (let i = 0; i < a_len; i += 1) {
       if (!a_flag[i]) {
         for (let j = 0; j < b_len; j += 1) {
           if (!b_flag[j]) {
-            if (adjwt[a[i]] === b[j]) {
+            if (ADJUSTMENTS[a[i]] === b[j]) {
               N_simi += 3;
               b_flag[j] = 2;
               break;

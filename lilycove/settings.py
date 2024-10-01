@@ -125,6 +125,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "ui" / "dist",
     BASE_DIR / "ui" / "public",
+    BASE_DIR / "ui" / "src" / "assets",
 ]
 
 # Default primary key field type
