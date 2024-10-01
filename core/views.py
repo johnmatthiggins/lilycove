@@ -12,15 +12,6 @@ def assets(_, path):
     asset_path = Path("/static/assets/") / Path(path)
     return HttpResponseRedirect(str(asset_path))
 
-# cache for a long time...
-@cache_page(60 * 1000)
-def site_webmanifest(_):
-    return HttpResponseRedirect("/static/site.webmanifest")
-
-@cache_page(60 * 1000)
-def favicon(_):
-    return HttpResponseRedirect("/static/favicon.ico");
-
 @cache_page(60)
 async def all_moves(_):
     movelist = []
