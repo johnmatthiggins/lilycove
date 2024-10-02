@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
+import os
 import httpx
 
 from bs4 import BeautifulSoup
 
 def main():
+    if not os.path.isdir('ui/public/pokemon-images/'):
+        os.mkdir('ui/public/pokemon-images/')
+
     fstring = 'ui/public/pokemon-images/%s.png'
 
     # get non-shiny images
