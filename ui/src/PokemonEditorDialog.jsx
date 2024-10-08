@@ -18,6 +18,7 @@ import LazyImage from './LazyImage';
 import Button from './Button';
 import PokeballSelector from './PokeballSelector';
 import PokemonAutocomplete from './PokemonAutocomplete';
+import ItemAutocomplete from './ItemAutocomplete';
 
 function PokemonEditorDialog({
   onClose,
@@ -215,22 +216,6 @@ function PokemonEditorDialog({
                     {(typeText) => (<PokemonType typeName={() => typeText} />)}
                   </For>
                 </div>
-                {/*<div>
-                  <Selector
-                    id="species-input"
-                    class="w-44 min-h-9"
-                    label="Species"
-                    onChange={(event) => setSpeciesId(Number(event.target.value))}
-                    selectedValue={speciesId}
-                    options={() => speciesList()
-                      .toSorted((a, b) => a.pokedex_id - b.pokedex_id)
-                      .map((species) => {
-                        const label = `${species.name} #${String(species.pokedex_id).padStart(3, '0')}`;
-                        const value = species.species_id;
-                        return { label, value };
-                      })}
-                  />
-                </div> */}
                 <div>
                   <Selector
                     id="ability-input"
@@ -253,9 +238,8 @@ function PokemonEditorDialog({
                 </div>
                 <div class="flex flex-row items-end gap-2">
                   <div>
-                    <Selector
+                    <ItemAutocomplete
                       id="item-input"
-                      class="w-32 min-h-9"
                       label="Held Item"
                       selectedValue={() => itemCode()}
                       options={() => {
@@ -272,7 +256,7 @@ function PokemonEditorDialog({
                           }
                         });
                       }}
-                      onChange={(event) => setItemCode(Number(event.target.value))}
+                      onChange={(newValue) => setItemCode(Number(newValue))}
                     />
                   </div>
                   <div class="flex items-center min-h-9">
