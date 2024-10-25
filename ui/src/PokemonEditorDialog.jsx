@@ -446,19 +446,24 @@ function PokemonEditorDialog({
                         </div>
                         <div class="flex flex-col justify-start">
                           <label class="font-bold text-gray-700">Shiny</label>
-                          <input type="checkbox" onChange={(event) => {
-                            if (event.target.checked) {
-                              setPokemonData((p) => {
-                                p.makeShiny();
-                                return p.copy();
-                              });
-                            } else {
-                              setPokemonData((p) => {
-                                p.makeNotShiny();
-                                return p.copy();
-                              });
-                            }
-                          }} class="pr-1" />
+                          <input
+                            type="checkbox"
+                            onChange={() => {
+                              if (!isShiny()) {
+                                setPokemonData((p) => {
+                                  p.makeShiny();
+                                  return p.copy();
+                                });
+                              } else {
+                                setPokemonData((p) => {
+                                  p.makeNotShiny();
+                                  return p.copy();
+                                });
+                              }
+                            }}
+                            class="pr-1"
+                            checked={isShiny() || undefined}
+                          />
                         </div>
                       </div>
                     </Match>
