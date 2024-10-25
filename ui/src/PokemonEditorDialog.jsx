@@ -145,7 +145,7 @@ function PokemonEditorDialog({
     return [species?.type1, species?.type2];
   });
 
-  const [isShiny, setIsShiny] = createSignal(pokemonData().isShiny());
+  const isShiny = () => pokemonData().isShiny();
   const imageURL = () => {
     if (isShiny()) {
       return `/static/pokemon-images/${id()}s.png`;
@@ -443,6 +443,22 @@ function PokemonEditorDialog({
                         <div class="flex flex-col justify-start">
                           <label class="font-bold block text-gray-700">Pokeball</label>
                           <PokeballSelector value={pokeballIndex} onChange={setPokeballIndex} />
+                        </div>
+                        <div class="flex flex-col justify-start">
+                          <label class="font-bold text-gray-700">Shiny</label>
+                          <input type="checkbox" onChange={(event) => {
+                            if (event.target.checked) {
+                              setPokemonData((p) => {
+                                p.makeShiny();
+                                return p.copy();
+                              });
+                            } else {
+                              setPokemonData((p) => {
+                                p.makeNotShiny();
+                                return p.copy();
+                              });
+                            }
+                          }} class="pr-1" />
                         </div>
                       </div>
                     </Match>

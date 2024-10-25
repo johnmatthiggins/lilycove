@@ -440,6 +440,20 @@ class BoxPokemon {
     return otId;
   }
 
+  // takes bigint
+  setFullOTID(fullTrainerId) {
+    console.log(fullTrainerId);
+    const otIdOffset = 0x4;
+    const b0 = fullTrainerId & 0xFFn;
+    const b1 = (fullTrainerId & 0xFF00n) >> 8n;
+    const b2 = (fullTrainerId & 0xFF0000n) >> (8n * 2n);
+    const b3 = (fullTrainerId & 0xFF000000n) >> (8n * 3n);
+    this._buffer[otIdOffset] = Number(b0);
+    this._buffer[otIdOffset + 1] = Number(b1);
+    this._buffer[otIdOffset + 2] = Number(b2);
+    this._buffer[otIdOffset + 3] = Number(b3);
+  }
+
   getAbilityBit() {
     this._decrypt();
     const abilityOffset = this._offsetMap['data_section_misc'] + 7;
@@ -906,6 +920,40 @@ class BoxPokemon {
   makeEmpty() {
     const buffer = Array(80).fill(0).map(() => 0);
     return new BoxPokemon(buffer, this._indexes);
+  }
+
+  makeShiny() {
+    this._decrypt();
+    const pValue = this.getPersonalityValue();
+    const secretId = pValue >> 16n;
+    const otId = pValue & 0xFFFFn;
+    const key = BigInt(secretId ^ otId) << 16n;
+    const newFullId = key;
+    this.setFullOTID(newFullId);
+    this._encrypt();
+  }
+
+  makeNotShiny() {
+    this._decrypt();
+    const pValue = this.getPersonalityValue();
+    let secretId = pValue >> 16n;
+    let otId = (pValue & 0xFFFFn);
+    const otOne = (otId & 0x10n >> 4n) > 0n;
+    const secretOne = (secretId & 0x10n >> 4n) > 0n;
+
+    if (otOne && secretOne) {
+      let otId = pValue & 0xFFEFn;
+    } else if (otOne && !secretOne) {
+      secretId = secretId | 0x10n;
+    } else if (!otOne && secretOne) {
+      otId = otId | 0x10n;
+    } else {
+      otId = otId | 0x10n;
+    }
+    const key = BigInt(secretId ^ otId) << 16n;
+    const newFullId = key;
+    this.setFullOTID(newFullId);
+    this._encrypt();
   }
 }
 
