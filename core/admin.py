@@ -14,7 +14,7 @@ class AbilityAdmin(admin.ModelAdmin):
 class ItemAdmin(admin.ModelAdmin):
     pass
 
-admin.register(models.Move, MoveAdmin)
-admin.register(models.Species, SpeciesAdmin)
-admin.register(models.Ability, AbilityAdmin)
-admin.register(models.Item, ItemAdmin)
+admin.site.register(models.Move, MoveAdmin)
+admin.site.register(models.Species, SpeciesAdmin)
+admin.site.register(models.Ability, AbilityAdmin)
+admin.site.register(models.Item, ItemAdmin)
