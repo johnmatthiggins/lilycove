@@ -27,6 +27,15 @@ function App() {
       });
   });
 
+  const fetchSave = async () => {
+    fetch('/static/test.sav')
+      .then(async (response) => {
+        const buffer = await response.bytes();
+        const bytes = Array.from(new Uint8Array(buffer));
+        setBits(bytes);
+      });
+  };
+
   return (
     <div
       class="flex h-full w-full justify-center sharp-pixel min-h-[100vh] items-center"
@@ -63,10 +72,10 @@ function App() {
             <div class="mt-2 mb-4 mx-auto w-fit rounded-md" style={{ "background-color": "black" }}>
               <label class="flex justify-center rounded-md w-fit bg-black">
                 <span
-                  class="text-black font-bold text-lg text-center w-40 py-1 bg-white rounded-md shadow-sm hover:shadow-lg hover:cursor-pointer border-2 border-solid border-gray-200 hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
+                  class="text-black font-bold text-lg text-center w-44 py-1 bg-white rounded-md shadow-sm hover:shadow-lg hover:cursor-pointer border-2 border-solid border-gray-200 hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
                   role="button"
                 >
-                  Upload Save
+                  Upload Your Save
                 </span>
                 <input
                   type="file"
@@ -79,6 +88,14 @@ function App() {
                     setBits(bytes);
                   }} />
               </label>
+            </div>
+            <div class="mt-2 mb-4 mx-auto w-fit rounded-md" style={{ "background-color": "black" }}>
+              <button
+                class="text-black font-bold text-lg text-center w-44 py-1 bg-white rounded-md shadow-sm hover:shadow-lg hover:cursor-pointer border-2 border-solid border-gray-200 hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
+                onClick={fetchSave}
+              >
+                Use a Test Save
+              </button>
             </div>
           </div>
         </Show>
