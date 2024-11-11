@@ -1,3 +1,5 @@
 # Lilycove
 
-A save editor for generation iii pokemon games.
+An online save editor for generation 3 Pokemon games.
+
+![./readme_images/gengar.png]
