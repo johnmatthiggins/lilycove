@@ -20,7 +20,11 @@ function PokemonOption({ option, onClick }) {
     >
       <div class="flex flex-row justify-start gap-1">
         <div class="w-16 h-16 p-1">
-          <LazyImage src={() => `/static/pokemon-images/${paddedPokedexId()}.png`} sharp />
+          <LazyImage
+            sharp
+            src={() => `/static/pokemon-images/${paddedPokedexId()}.png`}
+            class="drop-shadow-md"
+          />
         </div>
         <div>
           <h1 class="text-left text-lg font-bold">{option().name} #{paddedPokedexId()}</h1>

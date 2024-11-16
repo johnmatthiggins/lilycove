@@ -19,7 +19,7 @@ function ItemOption({ option, onClick }) {
     >
       <div class="flex flex-row justify-start gap-1">
         <div class="w-16 h-16 p-1">
-          <LazyImage src={() => `/static/items/${paddedId()}.png`} class="w-full h-auto" />
+          <LazyImage src={() => `/static/items/${paddedId()}.png`} class="w-full h-auto drop-shadow-lg" />
         </div>
         <div>
           <h1 class="text-left text-lg font-bold">{option().label}</h1>
