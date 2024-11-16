@@ -85,10 +85,10 @@ function PokemonMove({
           </div>
         </div>
         <div class="w-fit flex flex-row justify-end rounded-md">
-          <table class="h-8 pr-1">
+          <table class="h-8 pr-1 font-mono">
             <thead>
               <tr>
-                <td class="px-1 w-16 text-center">
+                <td class="px-1 w-16 text-left">
                   <div class="flex gap-2 pl-2">
                     <Show when={Number(power())} fallback={
                       <p>--</p>

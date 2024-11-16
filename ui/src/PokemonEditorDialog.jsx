@@ -354,7 +354,7 @@ function PokemonEditorDialog({
                 >
                   <Switch>
                     <Match when={tab() === "moves"}>
-                      <div class="flex flex-col gap-1 p-1 grow" id="moveset">
+                      <div class="flex flex-col gap-1 py-1 pl-1 pr-2 grow" id="moveset">
                         <For each={pokemonMoves()}>
                           {(move, index) => (
                             <PokemonMove
