@@ -5,6 +5,7 @@ import PokemonType from "./PokemonType";
 import { moveList } from "./MoveList";
 import { hiddenPowerPower, hiddenPowerType } from "./utils/pokemonDataStructure";
 import MoveAutocomplete from "./MoveAutocomplete";
+import EyeIcon from "./EyeIcon";
 
 function PokemonMove({
   pokemonData,
@@ -83,24 +84,29 @@ function PokemonMove({
             />
           </div>
         </div>
-        <div class="w-fit flex flex-row justify-end border border-solid border-gray-400 rounded-md">
-          <table class="border-1 border-solid border-gray-400 h-8">
+        <div class="w-fit flex flex-row justify-end rounded-md">
+          <table class="h-8 pr-1">
             <thead>
               <tr>
                 <td class="px-1 w-16 text-center">
-                  <Show when={Number(power())} fallback={"--"}>
-                    <div class="flex gap-2 pl-2">
-                      <p>{power()}</p>
-                      <img class="w-4" src="/static/fist.svg" />
-                    </div>
-                  </Show>
+                  <div class="flex gap-2 pl-2">
+                    <Show when={Number(power())} fallback={
+                      <p>--</p>
+                    }>
+                      <p>{Number(power())}</p>
+                    </Show>
+                    <img class="w-4" src="/static/fist.svg" />
+                  </div>
                 </td>
-                <td class="px-1 w-14 text-center">
-                  <Show when={Number(accuracy())} fallback={"--"}>
-                    {accuracy()}%
-                  </Show>
+                <td class="pl-1 w-14 text-center h-full">
+                  <div class="flex gap-2">
+                    <Show when={Number(accuracy())} fallback={<p>--</p>}>
+                      <p>{accuracy()}</p>
+                    </Show>
+                    <EyeIcon class="w-4" />
+                  </div>
                 </td>
-                <td class="px-1 w-14 text-center">
+                <td class="pl-2 w-fit text-right">
                   {adjustedPowerPoints()}/{adjustedPowerPoints()}
                 </td>
               </tr>

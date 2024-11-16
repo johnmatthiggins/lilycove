@@ -61,7 +61,7 @@ function PokemonTextInput({
           "outline-color": focused() ? 'black' : undefined,
           "outline-style": focused() ? 'solid' : undefined,
         }}
-        class={"flex items-center bg-white hover:cursor-pointer px-1 min-h-9 rounded-md border border-solid border-gray-400 hover:outline hover:outline-2 hover:outline-solid hover:outline-black " + className}
+        class={"flex items-center shadow-inner bg-white hover:cursor-pointer px-1 min-h-9 rounded-md border border-solid border-gray-400 hover:outline hover:outline-2 hover:outline-solid hover:outline-black " + className}
       >
         <For each={truncated()}>
           {(byte) => <PokemonTextChar byte={byte} />}

@@ -1,5 +1,3 @@
-import { createSignal } from 'solid-js';
-
 function RangeInput({
   onChange,
   step,
@@ -38,7 +36,7 @@ function RangeInput({
         />
       </Show>
       <input
-        class="w-12 border border-solid border-gray-400 px-1 rounded-md hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
+        class="w-12 shadow-inner border border-solid border-gray-400 px-1 rounded-md hover:outline hover:outline-2 hover:outline-solid hover:outline-black"
         type="number"
         min={min}
         max={max}

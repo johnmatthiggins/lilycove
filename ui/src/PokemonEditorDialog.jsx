@@ -241,11 +241,11 @@ function PokemonEditorDialog({
                     <ItemAutocomplete
                       id="item-input"
                       label="Held Item"
-                      selectedValue={() => itemCode()}
+                      selectedValue={itemCode}
                       options={() => {
                         const items = itemList()
                           .map((item) => ({ value: item.id, label: item.name }))
-                          .concat([{ value: 0, label: 'None' }])
+                          .concat([{ value: 0, label: 'None' }]);
                         return items.toSorted((a, b) => {
                           if (a.value === 0) {
                             return -1;
@@ -405,7 +405,7 @@ function PokemonEditorDialog({
                               <input
                                 id="experience-input"
                                 type="text"
-                                class="p-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-20"
+                                class="p-1 min-h-9 rounded-md border border-solid border-gray-400 focus:outline focus:outline-2 focus:outline-solid focus:outline-black hover:outline hover:outline-2 hover:outline-solid hover:outline-black w-20 shadow-inner"
                                 onInput={(event) => setExperience(event.target.value)}
                                 value={experience()}
                               />
@@ -422,7 +422,7 @@ function PokemonEditorDialog({
                                 />
                               </div>
                               <button
-                                class="bg-white text-black text-center hover:outline hover:outline-2 hover:outline-black hover:outline-solid border-2 border-2-solid border-2-gray-200 px-1 min-h-9 rounded-md hover:cursor-pointer hover:shadow-md shadow-sm font-bold"
+                                class="bg-white text-black text-center hover:outline hover:outline-2 hover:outline-black hover:outline-solid border-2 border-2-solid border-2-gray-200 px-1 min-h-9 rounded-md hover:cursor-pointer hover:shadow-lg shadow-md font-bold"
                                 onClick={() => setLevel(100)}
                               >
                                 MAX
@@ -461,7 +461,7 @@ function PokemonEditorDialog({
                                 });
                               }
                             }}
-                            class="pr-1"
+                            class="pr-1 shadow-sm"
                             checked={isShiny() || undefined}
                           />
                         </div>

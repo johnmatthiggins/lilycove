@@ -2,11 +2,12 @@ import { createSignal, createEffect, Show } from 'solid-js';
 import { distance } from './JaroWinkler';
 import { hiddenPowerType, hiddenPowerPower } from './utils/pokemonDataStructure';
 import PokemonType from './PokemonType';
+import EyeIcon from "./EyeIcon";
 
 function MoveOption({ option, onClick, pokemonData }) {
   const moveData = () => option;
   const description = () => moveData()?.effect || '(Empty move slots have no effects in battle.)';
-  const accuracy = () => moveData()?.accuracy || '--';
+  const accuracy = () => moveData()?.accuracy || 0;
   const powerPoints = () => moveData()?.pp || 0;
   const power = () => {
     if (moveData()?.name === 'Hidden Power') {
@@ -57,24 +58,29 @@ function MoveOption({ option, onClick, pokemonData }) {
             {moveData().name}
           </div>
         </div>
-        <div class="w-fit flex flex-row justify-end border border-solid border-gray-400 rounded-md">
-          <table class="border-1 border-solid border-gray-400 h-8">
+        <div class="w-fit flex flex-row justify-end rounded-md">
+          <table class="h-8 pr-1">
             <thead>
               <tr>
                 <td class="px-1 w-16 text-center">
-                  <Show when={Number(power())} fallback={"--"}>
-                    <div class="flex gap-2 pl-2">
-                      <p>{power()}</p>
-                      <img class="w-4" src="/static/fist.svg" />
-                    </div>
-                  </Show>
+                  <div class="flex gap-2 pl-2">
+                    <Show when={Number(power())} fallback={
+                      <p>--</p>
+                    }>
+                      <p>{Number(power())}</p>
+                    </Show>
+                    <img class="w-4" src="/static/fist.svg" />
+                  </div>
                 </td>
-                <td class="px-1 w-14 text-center">
-                  <Show when={Number(accuracy())} fallback={"--"}>
-                    {accuracy()}%
-                  </Show>
+                <td class="pl-1 w-14 text-center h-full">
+                  <div class="flex gap-2">
+                    <Show when={Number(accuracy())} fallback={<p>--</p>}>
+                      <p>{accuracy()}</p>
+                    </Show>
+                    <EyeIcon class="w-4" />
+                  </div>
                 </td>
-                <td class="px-1 w-14 text-center">
+                <td class="pl-2 w-fit text-right">
                   {powerPoints()}/{powerPoints()}
                 </td>
               </tr>
@@ -140,7 +146,7 @@ function MoveAutocomplete({
           onClick={() => setFocused(true)}
           tabindex={0}
           id={id}
-          class="shadow-sm px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-between"
+          class="shadow-md px-2 rounded-md min-h-9 border border-gray-400 border-solid w-44 hover:outline hover:outline-2 hover:outline-solid hover:outline-black hover:cursor-pointer flex items-center justify-between"
         >
           {selectedLabel()}
         </span>
@@ -166,7 +172,7 @@ function MoveAutocomplete({
           >
             <div class="flex flex-row w-full pb-2 border-b border-b-solid border-b-gray-400 px-2 pt-2">
               <input
-                class="bg-white p-2 border border-gray-400 border-solid rounded-md min-h-9 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
+                class="shadow-inner bg-white p-2 border border-gray-400 border-solid rounded-md min-h-9 w-full focus:outline focus:outline-2 focus:outline-black focus:outline-solid"
                 value={text()}
                 ref={setRef}
                 onKeyUp={(event) => {
