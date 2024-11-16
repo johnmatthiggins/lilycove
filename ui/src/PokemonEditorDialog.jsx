@@ -207,7 +207,7 @@ function PokemonEditorDialog({
                 <div class="w-full flex justify-center">
                   <LazyImage
                     sharp
-                    class="hover:cursor-pointer w-32 mt-2 pb-2 h-32"
+                    class="hover:cursor-pointer w-32 mt-2 pb-2 h-32 drop-shadow-lg"
                     src={imageURL}
                   />
                 </div>

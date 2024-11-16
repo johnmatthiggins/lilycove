@@ -1,6 +1,5 @@
 import { createSignal, Show } from 'solid-js';
 
-import PokemonTextChar from './PokemonTextChar';
 import PokemonEditorDialog from './PokemonEditorDialog';
 import { speciesList } from './PokemonList';
 import LazyImage from './LazyImage';
@@ -60,7 +59,7 @@ function PokemonCard({ pokemon }) {
               </svg>
             </div>
           }>
-            <LazyImage sharp src={imageURL} />
+            <LazyImage sharp src={imageURL} class="drop-shadow-md" />
           </Show>
         </div>
       </div>

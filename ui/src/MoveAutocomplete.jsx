@@ -63,21 +63,21 @@ function MoveOption({ option, onClick, pokemonData }) {
             <thead>
               <tr>
                 <td class="px-1 w-16 text-left">
-                  <div class="flex gap-2 pl-2">
+                  <div class="flex gap-1 pl-2">
+                    <img class="w-4" src="/static/fist.svg" />
                     <Show when={Number(power())} fallback={
                       <p>--</p>
                     }>
                       <p>{Number(power())}</p>
                     </Show>
-                    <img class="w-4" src="/static/fist.svg" />
                   </div>
                 </td>
                 <td class="pl-1 w-14 text-center h-full">
-                  <div class="flex gap-2">
+                  <div class="flex gap-1">
+                    <EyeIcon class="w-4" />
                     <Show when={Number(accuracy())} fallback={<p>--</p>}>
                       <p>{accuracy()}</p>
                     </Show>
-                    <EyeIcon class="w-4" />
                   </div>
                 </td>
                 <td class="pl-2 w-fit text-right">
