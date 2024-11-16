@@ -30,8 +30,11 @@ function App() {
   const fetchSave = async () => {
     fetch('/static/test.sav')
       .then(async (response) => {
-        const buffer = await response.bytes();
-        const bytes = Array.from(new Uint8Array(buffer));
+        let buffer = [];
+        for await (const chunk of response.body) {
+          buffer = [...buffer, ...chunk];
+        }
+        const bytes = buffer;
         setBits(bytes);
       });
   };
