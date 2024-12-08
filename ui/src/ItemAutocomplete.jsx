@@ -124,7 +124,7 @@ function ItemAutocomplete({
               style={{ "overflow-y": 'scroll', "max-height": "70vh" }}
             >
               <For each={topFiftyOptions()}>
-                {(option) => console.log(option) || (
+                {(option) => (
                   <ItemOption
                     option={() => option}
                     onClick={() => {

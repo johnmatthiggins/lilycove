@@ -64,10 +64,8 @@ function getSaveBlockOffset(bits) {
   // to be fixed so that you don't need both save indexes to
   // figure out save block offset.
   if (saveIndexA > saveIndexB) {
-    console.log('reading from save block A');
     return 0x0000;
   }
-  console.log('reading from save block B');
   return 0xE000;
 }
 
@@ -138,10 +136,8 @@ function isSaveBlockValid(bits) {
 // takes in a byte array...
 function areChecksumsValid(bits) {
   if (!isSaveBlockValid(bits.slice(0, SAVE_BLOCK_SIZE))) {
-    console.log('first block is not valid!');
     return false;
   } else if (!isSaveBlockValid(bits.slice(SAVE_BLOCK_SIZE, SAVE_BLOCK_SIZE * 2))) {
-    console.log('second block is not valid!');
     return false;
   }
   return true;

@@ -442,7 +442,6 @@ class BoxPokemon {
 
   // takes bigint
   setFullOTID(fullTrainerId) {
-    console.log(fullTrainerId);
     const otIdOffset = 0x4;
     const b0 = fullTrainerId & 0xFFn;
     const b1 = (fullTrainerId & 0xFF00n) >> 8n;
