@@ -52,7 +52,7 @@ function App() {
     >
       <div class="grow justify-center items-center w-full">
         <Show when={bits().length === 0}>
-          <div class="rounded-lg px-1 pb-1 w-1/2 mx-auto">
+          <div class="rounded-lg px-1 pb-1 w-2/3 mx-auto">
             <h3
               class="font-bold text-center text-white min-h-36"
               style={{
@@ -107,8 +107,8 @@ function App() {
             bits={bits}
           />
         </Show>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }
 
