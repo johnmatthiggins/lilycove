@@ -1,6 +1,7 @@
-import { createMemo, createSignal, For } from 'solid-js';
+import { createMemo, createSignal, For, Show } from 'solid-js';
 
 import { findSectionAddresses, areChecksumsValid } from './utils/save.jsx';
+import { byteArrayToBigInt, parseTrainerName } from './utils/hex.jsx';
 import SaveButton from './SaveButton.jsx';
 import PCBoxView from './PCBoxView.jsx';
 
@@ -14,10 +15,26 @@ function GameInfo({ bits }) {
   const boxNames = () => new Array(14).fill(0).map(
     (_, i) => ({ name: `Box ${i + 1}`, index: i })
   );
+  const trainerName = () => {
+    const offset = trainerInfoOffset();
+    const trainerName = parseTrainerName(bits().slice(offset, offset + 7));
+    return trainerName;
+  };
+  const trainerGender = () => {
+    const offset = trainerInfoOffset() + 8;
+    const isFemale = Boolean(bits()[offset]);
+    return isFemale;
+  };
+  const trainerID = () => {
+    const offset = trainerInfoOffset() + 0xA;
+    const bytes = bits().slice(offset, offset + 4);
+    const trainerId = byteArrayToBigInt(bytes);
+    return trainerId;
+  };
   return (
     <div class="bg-white p-2 my-1 mx-auto rounded-lg border border-gray-200 border-solid w-2/3">
       <div class="flex justify-between gap-2">
-        <div class="grow border-2 border-gray-200 border-solid rounded-md p-1">
+        <div class="grow border-2 border-gray-200 border-solid rounded-md py-1 px-2 mb-1 shadow-sm">
           <div class="">
             {/*
               Need to include:
@@ -29,7 +46,29 @@ function GameInfo({ bits }) {
                 - configure which non-key items you have.
                 - configure which key items you have.
             */}
-            <SaveButton bits={bits} trainerOffset={trainerInfoOffset} />
+            <h3 class="text-3xl font-bold text-gray-700">Trainer Info</h3>
+            <div>
+              <label class="text-lg text-gray-700 font-bold">
+                Name -&nbsp;
+              </label>
+              <input class="text-lg text-gray-700" value={trainerName()}></input>
+            </div>
+            <div>
+              <label class="text-lg text-gray-700 font-bold">
+                Gender -&nbsp;
+              </label>
+              <Show when={!trainerGender()} fallback={
+                <input class="text-lg" value="Female"></input>
+              }>
+                <input class="text-lg" value="Male"></input>
+              </Show>
+            </div>
+            <div>
+              <label class="text-lg text-gray-700 font-bold">
+                Trainer ID -&nbsp;
+              </label>
+              <input class="text-lg" value={trainerID()}></input>
+            </div>
           </div>
         </div>
         <div class="flex flex-col justify-center">
@@ -52,6 +91,9 @@ function GameInfo({ bits }) {
             <PCBoxView bits={bits} sectionOffsets={sectionOffsets} boxIndex={selectedBox} />
           </div>
         </div>
+      </div>
+      <div class="mt-1">
+        <SaveButton bits={bits} trainerOffset={trainerInfoOffset} />
       </div>
     </div>
   );

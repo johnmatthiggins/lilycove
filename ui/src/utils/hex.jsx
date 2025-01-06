@@ -107,11 +107,25 @@ function byteArrayToInt(byteArray) {
   return value;
 };
 
+function byteArrayToBigInt(byteArray) {
+  let value = 0n;
+  for (let i = 0; i < byteArray.length; i++) {
+    const asBigInt = BigInt(byteArray[byteArray.length - i - 1]);
+    console.log(asBigInt);
+    value += asBigInt << (8n * BigInt(i));
+    console.log(byteArray);
+    console.log(value);
+  }
+
+  return value;
+};
+
 export {
   findBitVector,
   parseTrainerName,
   convertPokemonStrToASCII,
   barrelShiftRight,
   byteArrayToInt,
+  byteArrayToBigInt,
   bytesToBase64,
 };
