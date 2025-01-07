@@ -6,7 +6,6 @@ function LazyImage({
   style = () => ({}),
   sharp = false,
   fullWidth = false,
-  spinnerProps = { width: '90%', height: '90%' },
 }) {
   const [error, setError] = createSignal(false);
   const [loading, setLoading] = createSignal(true);
